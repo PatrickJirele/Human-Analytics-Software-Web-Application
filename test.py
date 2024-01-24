@@ -12,5 +12,9 @@ app = Flask(__name__, static_url_path='/static')
 def home():
     return render_template('home.html')
 
+@app.route('/createGraph', methods = ['GET', 'POST'])
+def createGraph():
+    return render_template('createGraph.html')
+
 if __name__ == "__main__":
     app.run(debug=True)
