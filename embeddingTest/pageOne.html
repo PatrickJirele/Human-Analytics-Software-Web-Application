@@ -1,0 +1,83 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.onload = function() {
+            canvas = document.getElementById('canvas');
+            labels = ['1','2','3'];
+            data = [1,2,3]
+            chart = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    borderWidth: 1
+                }]
+                },
+                options: {
+                responsive: false,
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                }
+                }
+            }); 
+
+            canvas = document.getElementById('canvas2');
+            labels = ['4','5','6'];
+            data = [4,5,6]
+            chart = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    borderWidth: 1
+                }]
+                },
+                options: {
+                responsive: false,
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                }
+                }
+            }); 
+
+            canvas = document.getElementById('canvas3');
+            labels = ['7','8','9'];
+            data = [7,8,9]
+            chart = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    borderWidth: 1
+                }]
+                },
+                options: {
+                responsive: false,
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                }
+                }
+            }); 
+        }
+    </script>
+</head>
+
+<body>
+    <div>    
+        <form action="pageTwo.html">
+            <input type="submit">
+        </form>
+        <canvas id='canvas'></canvas>
+        <canvas id='canvas2'></canvas>
+        <canvas id='canvas3'></canvas>
+    </div>
+</body>
