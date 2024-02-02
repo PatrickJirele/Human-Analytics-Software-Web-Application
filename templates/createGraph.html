@@ -1,39 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
     <head>
-        <style>
-            .additional-inputs {
-                display: none;
-                margin-top: 10px;
-            }
-        </style>
     </head>
 
     <form action="/createGraph" method="post">
     <h2>Diversity Statistics Form</h2>
 
-    <label>Population:</label>
+    <label>Employee Type:</label>
     <br>
-    <input type="checkbox" id="student" name="population" value="student">
-    <label for="student">Student</label>
-    <input type="checkbox" id="teacher" name="population" value="teacher">
-    <label for="teacher">Teacher</label>
-    <input type="checkbox" id="staff" name="population" value="staff">
-    <label for="staff">Staff</label>
+    <input type="checkbox" id="professional" name="employeeType" value="professional">
+    <label for="professional">Professional</label>
+    <input type="checkbox" id="academic" name="population" value="academic">
+    <label for="academic">Academic</label>
+    <input type="checkbox" id="stateClassified" name="population" value="stateClassified">
+    <label for="stateClassified">State Classified</label>
 
     <br>
-
-    <div class="additional-inputs" id="studentOptions">
-        <input type="checkbox" name="year" value="freshman">
-        <label>Freshman</label>
-        <input type="checkbox" name="year" value="sophomore">
-        <label>Sophomore</label>
-        <input type="checkbox" name="year" value="junior">
-        <label>Junior</label>
-        <input type="checkbox" name="year" value="senior">
-        <label>Senior</label>
-    </div>
-
 
     <label>Gender:</label>
     <br>
@@ -43,6 +25,8 @@
     <label for="female">Female</label>
     <input type="checkbox" id="nonBinary" name="gender" value="nonBinary">
     <label for="nonBinary">Non-Binary</label>
+    <input type="checkbox" id="notDeclared" name="gender" value="notDeclared">
+    <label for="notDeclared">Not Declared</label>
 
     <br>
 
@@ -56,37 +40,18 @@
     <label for="white">White</label>
     <input type="checkbox" id="hispanic" name="ethnicity" value="hispanic">
     <label for="white">Hispanic</label>
+    <input type="checkbox" id="americanIndian" name="ethnicity" value="americanIndian">
+    <label for="americanIndian">Amarican Indian</label>
+    <input type="checkbox" id="pacificIslander" name="ethnicity" value="pacificIslander]">
+    <label for="pacificIslander">Pacific Islander</label>
+    <input type="checkbox" id="someOther" name="ethnicity" value="someOther">
+    <label for="someOther">Some Other</label>
+    <input type="checkbox" id="unknown" name="ethnicity" value="unknown">
+    <label for="unknown">Unknown</label>
+
 
     <br>
 
-    <label >Disability: </label>
-    <br>
-    <input type="radio" id="yesDisability" name="disability" value="yes">
-    <label for="yesDisability">Yes</label>
-    <input type="radio" id="noDisability" name="disability" value="no">
-    <label for="noDisability">No</label>
-
-    <br>
-
-    <label >Veteran: </label>
-    <br>
-    <input type="radio" id="yesVeteran" name="veteran" value="yes">
-    <label for="yesVeteran">Yes</label>
-    <input type="radio" id="noVeteran" name="veteran" value="no">
-    <label for="noVeteran">No</label>
-
-    <br>
-
-    <label>Sexual Orientation:</label>
-    <br>
-    <input type="checkbox" id="heterosexual" name="sexualOrientation" value="heterosexual">
-    <label for="heterosexual">Heterosexual</label>
-    <input type="checkbox" id="homosexual" name="sexualOrientation" value="homosexual">
-    <label for="homosexual">Homosexual</label>
-    <input type="checkbox" id="bisexual" name="sexualOrientation" value="bisexual">
-    <label for="bisexual">Bisexual</label>
-
-    <br>
 
     <label>Select an Option:</label>
     <br>
@@ -110,12 +75,5 @@
 
     <input type="submit" value="Submit">
 </form>
-
-<script>
-    document.getElementById('student').addEventListener('change', function() {
-        var studentOptions = document.getElementById('studentOptions');
-        studentOptions.style.display = this.checked ? 'block' : 'none';
-    });
-</script>
 
 {% endblock %}
