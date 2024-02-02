@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Login User{% endblock %}
+
+{% block head %}Login a User Page! {% endblock %}
+
+{% block nav %}
+<nav>
+    <ul>
+        <li>
+            <a href="/">HOME</a>
+        </li>
+        <li>
+            <a href="/createUser">Create New User</a>
+        </li>
+        <li>
+            <a href="/login">Login</a>
+        </li>
+    </ul>
+</nav>
+{% endblock %}
+
+{% block body %}
+<html>
+    <form action="/login" method='POST'>
+        <label for="username">Username:</label>
+        <input type="text" name="username">
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" name="password">
+        <br>
+        <input type="submit" name="submit">
+    </form>
+</html>
+
+{% if uniqueName == False %}
+<h3>Error logging in... try again</h3>
+{% endif %}
+
+{% endblock %}

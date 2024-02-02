@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}HOME{% endblock %}
+
+{% block head %} THIS IS THE HOME PAGE!!!! {% endblock %}
+
+{% block nav %}
+    {% if login %}
+        <nav>
+            <ul>
+                <li>
+                    <a href="/create">Create New Entry</a>
+                </li>
+                <li>
+                    <a href="/read">Retrieve</a>
+                </li>
+                <li>
+                    <a href="/logout">Logout</a>
+                </li>
+            </ul>
+        </nav>
+    {% else %}
+        <nav>
+            <ul>
+                <li>
+                    <a href="/">HOME</a>
+                </li>
+                <li>
+                    <a href="/createUser">Create New User</a>
+                </li>
+                <li>
+                    <a href="/login">Login</a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
+{% endblock %}
+
+
+{% block body %}
+{% endblock %}
