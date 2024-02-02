@@ -1,0 +1,32 @@
+<body>
+    <input class="calendar" type = "date">
+    <button onclick="getPic();">Generate Picture</button>
+    <h1></h1>
+    <img></img>
+    <p></p>
+
+    <script>
+
+        function getPic() {
+            var date = document.getElementsByClassName("calendar");
+            var site = new XMLHttpRequest();
+            site.onreadystatechange = function() {
+                if (this.readyState === 4 && this.status === 200) {
+                    var objString = this.responseText;
+                    var obj = JSON.parse(objString);
+                    document.getElementsByTagName("h1")[0].innerHTML = obj.title;
+                    document.getElementsByTagName("img")[0].src = obj.url;
+                    document.getElementsByTagName("p")[0].innerHTML = obj.explanation;
+                } else {
+                    document.getElementsByTagName("h1")[0].innerHTML = "Error 400: Bad Request";
+                    document.getElementsByTagName("img")[0].src = "";
+                    document.getElementsByTagName("p")[0].innerHTML = "";
+                }
+            }
+            var link = "https://api.nasa.gov/planetary/apod?api_key=zgeaSPTiOh9TqYLqlzULEP3zwI2HfZsZerB7Tlmv&date=" + date[0].value;
+            site.open("GET", link);
+            site.send();
+        };
+
+    </script>
+</body>
