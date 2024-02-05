@@ -1,12 +1,34 @@
 <html>
-<nav>
-        <ul>
-            <li><a href='/'>Home</a></li>
-            <li><a href='/createGraph'>Create Graph</a></li>
-        </ul>
-</nav>
     <link href="/static/style.css" rel="stylesheet">
-    <body>
+    {% if current_user.is_authenticated %}
+  <body>
+    <nav>
+      <ul>
+        <li><a href='/'>Home</a></li>
+        <li><a href='/createGraph'>Create Graphs</a></li>
+        <li><a href='/uploadGraph'>Upload Graphs</a></li>
+          <div class="dropdown">
+            <button class="dropbtn">Account
+              <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+            <a href="/updatePassword">Change Password</a>
+            <a href="/logout">Logout</a>
+            </div>
+          </div>
+        </ul>
+    </nav>
+{% else %}
+  <nav>
+    <ul>
+      <li><a href='/'>Home</a></li>
+      <li><a href='/search'>Find Assignments</a></li>
+      <div class="topnav-right">
+        <li><a href='/login'>Login</a></li>
+      </div>
+      </ul>
+  </nav>
+{% endif %}
         {% block content %}
         {% endblock %}
     </body>
