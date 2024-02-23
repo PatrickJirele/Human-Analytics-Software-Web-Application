@@ -29,6 +29,16 @@ employeeDict = {
     'State Classified': 1
 }
 
+nameDict = {
+    'John': 1,
+    'Joe': 1,
+    'Jack': 1,
+    'Jerry': 1,
+    "Jason": 1,
+    "Jamie": 1,
+    "Jasmine": 1
+}
+
 def generateString(dict):
     combinedDict = {};
     maxVal = 0
@@ -49,9 +59,9 @@ def generateDate():
 
  
 if __name__ == "__main__":
-    df = pd.DataFrame(columns=["Race/Ethnicity", "Gender", "Employee Type", "Years At Western"])
+    df = pd.DataFrame(columns=["Name","Race/Ethnicity", "Gender", "Employee Type", "Years At Western"])
     for i in range(500):
-        df.loc[i] = [generateString(raceEthDict), generateString(genderDict), generateString(employeeDict), generateDate()]
+        df.loc[i] = [generateString(nameDict),generateString(raceEthDict), generateString(genderDict), generateString(employeeDict), generateDate()]
     
     try:
         dir = os.path.dirname(__file__)
