@@ -3,7 +3,9 @@ from random import randint
 from datetime import datetime, timedelta
 import os
 
-fileName = "data.csv"
+excelMode = True
+excelFileName = 'data.xlsx'
+csvFileName = 'data.csv'
 
 raceEthDict = {
     'A': 1,
@@ -64,11 +66,15 @@ if __name__ == "__main__":
         df.loc[i] = [generateString(nameDict),generateString(raceEthDict), generateString(genderDict), generateString(employeeDict), generateDate()]
     
     try:
+        fileName = excelFileName if excelMode else csvFileName
         dir = os.path.dirname(__file__)
         path = os.path.join(dir, fileName)
         if os.path.exists(path):
             os.unlink(path)
-        df.to_csv(path, index=False)
+        if (excelMode):
+            df.to_excel(path, index=False)
+        else:
+            df.to_csv(path, index=False)
     except Exception as e:
         print("FAILED TO CREATE FILE")
         print(e)

@@ -6,7 +6,9 @@ import os
 # TO DO:
 # Combine Race & Ethnicity
 
-originalFileName = 'data.csv'
+excelMode = True
+excelFileName = 'data.xlsx'
+csvFileName = 'data.csv'
 destinationFileName = 'preprocessed.csv'
 maxNumberOfMissingCells = 2
 
@@ -91,10 +93,13 @@ def formatDataPerColumn(df, columnName, values):
                 df.loc[i, columnName] = values[value]
     return df
 
-     
+originalFileName = excelFileName if excelMode else csvFileName
 dir = os.path.dirname(__file__)
 originalPath = os.path.join(dir, originalFileName)
-df = pd.read_csv(originalPath)
+if (excelMode):
+    df = pd.read_excel(originalPath)
+else:
+    df = pd.read_csv(originalPath)
 df = dropNameColumn(df)
 df = combineRaceAndEthnicity(df)
 df = reformatYearsColumn(df)
