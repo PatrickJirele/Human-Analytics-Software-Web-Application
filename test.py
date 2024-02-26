@@ -5,7 +5,8 @@ from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, date
+import shutil
 
 app = Flask(__name__, static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usersDB.db'
@@ -14,12 +15,6 @@ login_manager = LoginManager(app)
 login_manager.init_app(app)
 db = SQLAlchemy(app)
 
-#df = pd.read_csv('tempFileName.csv')
-def hireDateConversion():
-    df['Hire Date'] = pd.to_datetime(df['Hire Date'])
-    current_date = datetime.now()
-    df['Years Since Hire'] = (current_date - df['Hire Date']).dt.days / 365.25
-    print(df)
 
 def check(email):
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -84,6 +79,49 @@ def updatePass():
         return flask.redirect('/')
     return render_template('updatePassword.html')
 
+@login_required
+@app.route('/createAdmin', methods = ['GET', 'POST'])
+def create():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['pWord']
+        if check(email) == False:
+            return render_template('createAdmin.html'), 'Invalid Email Address'
+        temp = User(email = email, password = password)
+        user = User.query.filter_by(email=request.form['email']).first()
+        if user != None:
+            return render_template('createAdmin.html'), 'user already exists'
+        else:
+            db.session.add(temp)
+            db.session.commit()
+            user = User.query.filter_by(email=request.form['email']).first()
+            login_user(user)
+            return flask.redirect('/')
+    return render_template('createAdmin.html')
+
+@login_required
+@app.route('/uploadDataset', methods = ['GET', 'POST'])
+def uploadDataset():
+    """
+    get file name, then save the file
+    set the destination folder
+    check if file for the same date exists, if it does remove it(could be edited later)
+    rename the file, then save it to datasets folder
+    delete the file from project directory
+    """
+    if request.method == 'POST':
+        file = request.files['file']
+        file.save(file.filename)
+        destination = './static/datasets'
+        newFileName = str(date.today())+'.xlsx'
+        if os.path.isfile(newFileName):
+            os.remove(newFileName)
+        os.rename(file.filename, newFileName)
+        shutil.copy2(newFileName, destination)
+        os.remove(newFileName)
+
+
+    return render_template('uploadDataset.html')
 
 @login_required
 @app.route('/createGraph', methods = ['GET', 'POST'])
