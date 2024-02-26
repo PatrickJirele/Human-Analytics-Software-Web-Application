@@ -6,16 +6,12 @@ import os
 # TO DO:
 # Combine Race & Ethnicity
 
-
 originalFileName = 'data.csv'
 destinationFileName = 'preprocessed.csv'
 maxNumberOfMissingCells = 2
 
-
-# Format:
-#   Spreadsheet Name: Displayed Name
-#
-# If displayed name = 1, spreadsheet name will be used as the displayed name.
+# UNABBREVIATION DICTIONARIES
+# Note: If a key:value pair has a value of 1, the key will be used as the unabbreviation.
 
 raceEthDict = {
     'A': 'Asian',
@@ -41,6 +37,8 @@ employeeDict = {
     'State Classified': 1
 }
 
+# PRECONDITION: Any dataframe is provided that may or may not contain a "Name" column.
+# POSTCONDITION: The dataframe is returned without a "Name" column.
 def dropNameColumn(df):
     try:
         df = df.drop('Name', axis=1)
@@ -48,9 +46,15 @@ def dropNameColumn(df):
         print('Column "Name" does not exist.')
     return df
 
+# PRECONDITION: A dataframe is provided containing both a "Race" and "Ethnicity" column.
+# POSTCONDITION: The dataframe is returned with neither of the above columns, and instead it contains a "Race/Ethnicity" column that displays the previous information
+#                of their respective columns. The ethnicity value take priority.
 def combineRaceAndEthnicity(df):
     return df
 
+
+# PRECONDITION: A dataframe is provided containing a column named "Years At Western" with values formated at "%m/%d/%Y"
+# POSTCONDITION: The dataframe is returned with every value in the "Years At Western" column reformatted as the number of years since the current date, rounded down.
 def reformatYearsColumn(df):
     columnName = 'Years At Western'
     for i in range(len(df)):
@@ -64,6 +68,9 @@ def reformatYearsColumn(df):
             df.loc[i,columnName] = ''
     return df
 
+# PRECONDITION: A dataframe is provided with the columns "Race/Ethnicity", "Gender", and "Employee Type".
+# POSTCONDITION: The dataframe is returned with all info unabreviated and invalid values removed. Entire rows with multiple invalid values are potentially removed 
+#                depending on maxNumberOfMissingCells value.
 def formatData(df):
     for columnName, values in [('Race/Ethnicity', raceEthDict), ('Gender',genderDict), ('Employee Type', employeeDict)]:
         formatDataPerColumn(df, columnName, values)
@@ -71,6 +78,9 @@ def formatData(df):
     df.replace('', 'NaN', inplace = True)
     return df
 
+# PRECONDITION: A dataframe is provided with a column with the same name as the value columnName. A valid dictionary related to the columnName is also provided.
+# POSTCONDITION: Each value in the provided column is matched against the dictionary. If the value is valid, the value is replaced with its unabreviated form.
+#                If the value is invalid, it is removed.
 def formatDataPerColumn(df, columnName, values):
     for i in range(len(df)):
         value = df.loc[i, columnName]
