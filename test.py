@@ -8,6 +8,8 @@ import pandas as pd
 from datetime import datetime, date
 from dateutil import relativedelta
 import shutil
+import csv
+
 
 app = Flask(__name__, static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usersDB.db'
@@ -118,6 +120,7 @@ def formatDataPerColumn(df, columnName, values):
 
 
 
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False)
@@ -216,6 +219,8 @@ def uploadDataset():
 
         #save the csv file to datasets directory
         shutil.copy2(newFileName, destination)
+        #make a current copy to use as the current dataset
+        shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
 
         #Remove files from main directory
         os.remove(newFileName)
@@ -227,7 +232,27 @@ def uploadDataset():
 @login_required
 @app.route('/createGraph', methods = ['GET', 'POST'])
 def createGraph():
-    return render_template('createGraph.html')
+    # Read 'current.csv' file
+    df = pd.read_csv('./static/datasets/current.csv')
+    headers = df.columns.tolist()
+
+    checkboxes_html = ''
+    for header in headers:
+        if header == 'Years At Western':
+            continue
+        checkboxes_html += f'<h3>{header}</h3>'
+        options = df[header].unique()
+        for option in options:
+            checkboxes_html += f'<input type="checkbox" id="{header}_{option}" name="{header}_{option}">'
+            checkboxes_html += f'<label for="{header}_{option}">{option}</label><br>'
+
+    """
+    Goes through each header of the current.csv file
+    it the selects unique variables for each header(except 'Years At Western')
+    for each option a checkbox is created, from this we can select criteria for graph creation
+    """
+
+    return render_template('createGraph.html', checkboxes_html=checkboxes_html)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,79 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
-    <head>
-    </head>
-
-    <form action="/createGraph" method="post">
-    <h2>Diversity Statistics Form</h2>
-
-    <label>Employee Type:</label>
-    <br>
-    <input type="checkbox" id="professional" name="employeeType" value="professional">
-    <label for="professional">Professional</label>
-    <input type="checkbox" id="academic" name="population" value="academic">
-    <label for="academic">Academic</label>
-    <input type="checkbox" id="stateClassified" name="population" value="stateClassified">
-    <label for="stateClassified">State Classified</label>
-
-    <br>
-
-    <label>Gender:</label>
-    <br>
-    <input type="checkbox" id="male" name="gender" value="male">
-    <label for="male">Male</label>
-    <input type="checkbox" id="female" name="gender" value="female">
-    <label for="female">Female</label>
-    <input type="checkbox" id="nonBinary" name="gender" value="nonBinary">
-    <label for="nonBinary">Non-Binary</label>
-    <input type="checkbox" id="notDeclared" name="gender" value="notDeclared">
-    <label for="notDeclared">Not Declared</label>
-
-    <br>
-
-    <label >Ethnicity:</label>
-    <br>
-    <input type="checkbox" id="asian" name="ethnicity" value="asian">
-    <label for="asian">Asian</label>
-    <input type="checkbox" id="black" name="ethnicity" value="black">
-    <label for="black">Black</label>
-    <input type="checkbox" id="white" name="ethnicity" value="white">
-    <label for="white">White</label>
-    <input type="checkbox" id="hispanic" name="ethnicity" value="hispanic">
-    <label for="white">Hispanic</label>
-    <input type="checkbox" id="americanIndian" name="ethnicity" value="americanIndian">
-    <label for="americanIndian">Amarican Indian</label>
-    <input type="checkbox" id="pacificIslander" name="ethnicity" value="pacificIslander]">
-    <label for="pacificIslander">Pacific Islander</label>
-    <input type="checkbox" id="someOther" name="ethnicity" value="someOther">
-    <label for="someOther">Some Other</label>
-    <input type="checkbox" id="unknown" name="ethnicity" value="unknown">
-    <label for="unknown">Unknown</label>
-
-
-    <br>
-
-
-    <label>Select an Option:</label>
-    <br>
-    <select id="selectDiversity" name="selectedOption">
-        <option value="promotions">Promotions</option>
-        <option value="hires">Hires</option>
-        <option value="fires">Fires</option>
-    </select>
-
-    <br>
-
-    <label>Select an Graph Type:</label>
-    <br>
-    <select id="selectGraphType" name="selectedOption">
-        <option value="percentage">Percentage</option>
-        <option value="pieChart">Pie Chart</option>
-        <option value="barGraph">Bar Graph</option>
-    </select>
-
-    <br>
-
-    <input type="submit" value="Submit">
-</form>
+    <body>
+        <h1>Graph Creation Form</h1>
+        <form action="/createGraph" method="post">
+            {{ checkboxes_html | safe }}
+            <input type="submit" value="Submit">
+        </form>
+    </body>
 
 {% endblock %}
