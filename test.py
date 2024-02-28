@@ -83,6 +83,8 @@ def combineRaceAndEthnicity(df):
 # POSTCONDITION: The dataframe is returned with every value in the "Years At Western" column reformatted as the number of years since the current date, rounded down.
 def reformatYearsColumn(df):
     columnName = 'Years At Western'
+    #df.rename(columns={'Hire Date' : 'Years At Western'}, inplace=True) #For when we use official dataset
+
     for i in range(len(df)):
         value = df.loc[i, columnName]
         try:
@@ -239,18 +241,65 @@ def createGraph():
     checkboxes_html = ''
     for header in headers:
         if header == 'Years At Western':
+            checkboxes_html += f'<h3>{header}</h3>'
+            min = df["Years At Western"].min()
+            max = df["Years At Western"].max()
+            id = f'{header}'.replace(" ", "")
+            checkboxes_html += f'<input type="checkbox" id="useYears" name="useYears">'
+            checkboxes_html += f'<label for="useYears">Enable Years</label><br>'
+            checkboxes_html += f'<input type = "number" min = "{min}" max = "{max}" value = "{min}"  id="{id}_min" name="{id}_min">'
+            checkboxes_html += f'<label for="{id}_min">Years At Western (Min):</label><br>'
+            checkboxes_html += f'<input type = "number" min = "{min}" max = "{max}" value = "{max}" id="{id}_max" name="{id}_max">'
+            checkboxes_html += f'<label for="{id}_max">Years At Western End Value</label><br>'
+            checkboxes_html += f'<p id = "range_error_message" style = "color: red;"> </p><br>'
             continue
+
         checkboxes_html += f'<h3>{header}</h3>'
         options = df[header].unique()
         for option in options:
-            checkboxes_html += f'<input type="checkbox" id="{header}_{option}" name="{header}_{option}">'
-            checkboxes_html += f'<label for="{header}_{option}">{option}</label><br>'
+            id = f'{header}_{option}'.replace(" ", "")
+            checkboxes_html += f'<input type="checkbox" id="{id}" name="{id}">'
+            checkboxes_html += f'<label for="{id}">{option}</label><br>'
+        checkboxes_html += f'<p id = "{header.replace(" ", "")}_error_message" style = "color: red;"> </p>'
 
     """
     Goes through each header of the current.csv file
     it the selects unique variables for each header(except 'Years At Western')
     for each option a checkbox is created, from this we can select criteria for graph creation
     """
+
+    if request.method == "POST":
+        queries = {}
+        column_pattern = r'^[A-Za-z0-9/_-]+(?=_)'
+        query_pattern = r'(?<=_).*'
+        for key, value in request.form.items():
+            column_match = re.search(column_pattern, key)
+            query_match = re.search(query_pattern, key)
+            if column_match:
+                column_name = column_match.group(0)
+                if column_name not in queries:
+                    queries[column_name] = []
+                if query_match:
+                    query_name = query_match.group(0)
+                    if column_name == 'YearsAtWestern':
+                        if query_name == 'max':
+                            queries[f'{column_name}'].insert(1, value)
+                        if query_name == 'min':
+                            queries[f'{column_name}'].insert(0, value)
+                    else:
+                        queries[f'{column_name}'].append(query_name)
+                else:
+                    print("query match failed")
+
+            else:
+                print("column match failed")
+                print(column_match)
+
+        if 'useYears' not in request.form:
+            del queries['YearsAtWestern']
+        print(queries)
+
+
 
     return render_template('createGraph.html', checkboxes_html=checkboxes_html)
 
