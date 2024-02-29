@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+<head>
+<title>Graph Selector</title>
+<style>
+  .thumbnail-img {
+    width: 100px;
+    height: auto;
+  }
+  .image-container {
+    display: inline-block;
+    width: 30%;
+    margin: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  .checkbox-label {
+    display: block;
+    margin-bottom: 5px;
+  }
+</style>
+</head>
+
+<body>
+
+<h2>Select Images</h2>
+
+<form id="selectedImages" action="/uploadGraphs" method="post">
+  <div id="checkboxes">
+    {% for image in images %}
+    <div>
+      <div class="image-container">
+      <input type="checkbox" name="images[]" value="{{ image }}" id="{{ image }}">
+      <label for="{{ image }}" class="checkbox-label">{{ image }}</label>
+      <img src="{{ url_for('static', filename='graphs/' + image) }}" class="thumbnail-img">
+    </div>
+    </div>
+    {% endfor %}
+  </div>
+  <button type="submit">Submit</button>
+</form>
+
+</body>
+
+
+{% endblock %}

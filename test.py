@@ -145,16 +145,11 @@ def createGraphsFromDict(df, dictionary):
             column_name = modifyName(column_key)
             todaysdate = date.today()
             fileName = f'{column_name}_{queries}_{todaysdate}.png'
-            print(fileName)
-            directory = './graphs'
-            if not os.path.exists(directory):
-                os.makedirs(directory)
 
             dir = os.path.dirname(__file__)
             path = os.path.join(dir, 'static')
             path = os.path.join(path, 'graphs')
             path = os.path.join(path, fileName)
-            print(path)
             fig.savefig(path)
 
             plt.show()
@@ -347,6 +342,13 @@ def createGraph():
 
 
     return render_template('createGraph.html', checkboxes_html=checkboxes_html)
+
+@login_required
+@app.route("/uploadGraphs", methods = ['GET', 'POST'])
+def selectGraphsForDashboard():
+    images_dir = './static/graphs'
+    images = [f for f in os.listdir(images_dir) if os.path.isfile(os.path.join(images_dir, f))]
+    return render_template('uploadGraphs.html', images=images)
 
 if __name__ == "__main__":
     app.run(debug=True)
