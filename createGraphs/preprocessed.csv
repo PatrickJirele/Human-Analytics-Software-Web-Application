@@ -1,15 +1,4 @@
 Race/Ethnicity,Gender,Employee Type,Years At Western
-TBD - U,Male,Professional,4
-TBD - U,Non Binary,Professional,3
-TBD - P,Non Binary,State Classified,2
-TBD - S,Non Binary,Professional,8
-TBD - S,Female,Academic,11
-TBD - U,Not Declared,Professional,12
-TBD - U,Female,Academic,6
-TBD - I,Female,State Classified,11
-Asian,Non Binary,State Classified,1
-White,Female,Professional,0
-White,Female,State Classified,7
 Asian,Not Declared,Professional,5
 White,Male,Professional,0
 TBD - I,Female,Professional,8
@@ -128,9 +117,11 @@ TBD - I,Male,Professional,9
 White,Non Binary,Professional,13
 White,Non Binary,State Classified,2
 TBD - U,Non Binary,Professional,3
+Asian,Female,State Classified,6
 TBD - S,Male,Professional,1
 TBD - I,Female,Professional,6
 TBD - S,Not Declared,Professional,12
+Asian,Non Binary,Academic,3
 TBD - I,Female,Professional,13
 Hispanic,Female,Professional,9
 White,Male,Professional,8
