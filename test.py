@@ -9,6 +9,8 @@ from datetime import datetime, date
 from dateutil import relativedelta
 import shutil
 import csv
+import matplotlib.pyplot as plt
+
 
 
 app = Flask(__name__, static_url_path='/static')
@@ -102,7 +104,7 @@ def reformatYearsColumn(df):
 def formatData(df):
     for columnName, values in [('Race/Ethnicity', raceEthDict), ('Gender',genderDict), ('Employee Type', employeeDict)]:
         formatDataPerColumn(df, columnName, values)
-    df.dropna(thresh=maxNumberOfMissingCells, inplace = True);
+    df.dropna(thresh=maxNumberOfMissingCells, inplace = True)
     df.replace('', 'NaN', inplace = True)
     return df
 
@@ -118,6 +120,47 @@ def formatDataPerColumn(df, columnName, values):
             if (values[value] != 1):
                 df.loc[i, columnName] = values[value]
     return df
+
+def modifyName(column_name):
+    if "/" in column_name:
+        return column_name.replace("/", "-")
+    else:
+        return column_name
+
+def createGraphsFromDict(df, dictionary):
+    for column_key in dictionary.keys():
+        for queries in dictionary[column_key]:
+            total_population = len(df[column_key])
+            true_rows = len(df[df[column_key] == queries])
+
+            labels = ['True Population', 'Total Population']
+            sizes = [true_rows, total_population - true_rows]
+            colors = ['#ff9999', '#66b3ff']
+            explode = (0.1, 0)
+            fig, ax = plt.subplots()
+            ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
+            ax.axis('equal')
+            ax.set_title(f'True Population vs Total Population for Query: {queries}')
+
+            column_name = modifyName(column_key)
+            todaysdate = date.today()
+            fileName = f'{column_name}_{queries}_{todaysdate}.png'
+            print(fileName)
+            directory = './graphs'
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+            dir = os.path.dirname(__file__)
+            path = os.path.join(dir, 'static')
+            path = os.path.join(path, 'graphs')
+            path = os.path.join(path, fileName)
+            print(path)
+            fig.savefig(path)
+
+            plt.show()
+            plt.close()
+
+
 
 
 
@@ -297,7 +340,9 @@ def createGraph():
 
         if 'useYears' not in request.form:
             del queries['YearsAtWestern']
-        print(queries)
+
+        df = pd.read_csv('./static/datasets/current.csv')
+        createGraphsFromDict(df, queries)
 
 
 
