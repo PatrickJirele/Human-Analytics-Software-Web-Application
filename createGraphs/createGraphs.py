@@ -19,9 +19,26 @@ def makeAndStoreGraph(name, fileName):
     path = os.path.join(path, fileName)
     fig.savefig(path)
     
+def yearsBarChart(fileName):
+    unsortedDict = df['Years At Western'].value_counts().to_dict()
+    keysMax = max(list(unsortedDict.keys()))
+    for i in range(keysMax+1):
+        if (i not in unsortedDict.keys()):
+            unsortedDict[i] = 0
+    sortedDict = dict(sorted(unsortedDict.items()))
+    keys = list(sortedDict.keys())
+    vals = list(sortedDict.values())
+    fig, axs = plt.subplots()
+    axs.bar(keys, vals) 
+    path = os.path.join(dir, 'graphs')
+    path = os.path.join(path, fileName)
+    fig.savefig(path)
+    
+    
+    
         
 
 makeAndStoreGraph('Race/Ethnicity', 'raceEth.png')
-makeAndStoreGraph('Years At Western', 'years.png')
 makeAndStoreGraph('Gender', 'gender.png')
 makeAndStoreGraph('Employee Type', 'employeeType.png')
+yearsBarChart('years.png')
