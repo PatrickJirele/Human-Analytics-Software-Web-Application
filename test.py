@@ -347,7 +347,7 @@ def createGraph():
 @app.route("/uploadGraphs", methods = ['GET', 'POST'])
 def selectGraphsForDashboard():
     images_dir = './static/graphs'
-    images = [f for f in os.listdir(images_dir) if os.path.isfile(os.path.join(images_dir, f))]
+    images = [f for f in os.listdir(images_dir) if os.path.isfile(os.path.join(images_dir, f))] #Sends all images in graphs to uploadGraphs.html
     return render_template('uploadGraphs.html', images=images)
 
 if __name__ == "__main__":
