@@ -351,4 +351,5 @@ def selectGraphsForDashboard():
     return render_template('uploadGraphs.html', images=images)
 
 if __name__ == "__main__":
+    print("we made it")
     app.run(debug=True)
