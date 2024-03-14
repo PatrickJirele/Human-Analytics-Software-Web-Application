@@ -10,6 +10,8 @@ from dateutil import relativedelta
 import shutil
 import csv
 import matplotlib.pyplot as plt
+#from flask_simple_crypt import SimpleCrypt
+
 
 
 
@@ -179,6 +181,8 @@ def login():
         email = request.form['email']
         if check(email) == True:
             user = User.query.filter_by(email=email).first()
+            #cipher = SimpleCrypt()
+            #userPass = cipher.decrypt(user.password)
             if user != None:
                 if request.form['pWord'] != user.password:
                     return render_template('login.html')
@@ -205,9 +209,12 @@ def logout():
 def updatePass():
     if request.method == 'POST':
         oldPassword = request.form['oldP']
+        #cipher = SimpleCrypt()
+        #currPass = cipher.decrypt(current_user.password)
         if current_user.password != oldPassword:
             return render_template('updatePassword.html')
         updatedUser = User.query.filter_by(id=current_user.id).first()
+        #updatedUser.password = cipher.encrypt(request.form['newP'])
         updatedUser.password = request.form['newP']
         db.session.commit()
         return flask.redirect('/')
@@ -219,6 +226,8 @@ def create():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['pWord']
+        #cipher = SimpleCrypt()
+        #password = cipher.decrypt(current_user.password)
         if check(email) == False:
             return render_template('createAdmin.html'), 'Invalid Email Address'
         temp = User(email = email, password = password)
@@ -237,34 +246,41 @@ def create():
 @app.route('/uploadDataset', methods = ['GET', 'POST'])
 def uploadDataset():
     if request.method == 'POST':
-        #Get the excel file from website upload
-        file = request.files['file']
-        file.save(file.filename)
-        destination = './static/datasets'
-        newFileName = str(date.today())+'.csv'
-        if os.path.isfile(newFileName):
+        if request.files['file']:
+            # Get the excel file from website upload
+            file = request.files['file']
+            file.save(file.filename)
+            destination = './static/datasets'
+            newFileName = str(date.today()) + '.csv'
+            if os.path.isfile(newFileName):
+                os.remove(newFileName)
+
+            # Preprocess the excel file and convert to csv
+            dir = os.path.dirname(__file__)
+            df = pd.DataFrame(pd.read_excel(file.filename))
+            df = dropNameColumn(df)
+            df = combineRaceAndEthnicity(df)
+            df = reformatYearsColumn(df)
+            df = formatData(df)
+            destinationPath = os.path.join(dir, newFileName)
+            if os.path.exists(destinationPath):
+                os.unlink(destinationPath)
+            df.to_csv(destinationPath, index=False)
+
+            # save the csv file to datasets directory
+            shutil.copy2(newFileName, destination)
+            # make a current copy to use as the current dataset
+            shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
+
+            isAnnual = request.form['annual_dataset']
+            if isAnnual == 'on':
+                annualPath = './static/datasets/annualDatasets'
+                shutil.copy2(destinationPath, os.path.join(annualPath, str(date.today().year)))
+            
+            # Remove files from main directory
             os.remove(newFileName)
+            os.remove(file.filename)
 
-        #Preprocess the excel file and convert to csv
-        dir = os.path.dirname(__file__)
-        df = pd.DataFrame(pd.read_excel(file.filename))
-        df = dropNameColumn(df)
-        df = combineRaceAndEthnicity(df)
-        df = reformatYearsColumn(df)
-        df = formatData(df)
-        destinationPath = os.path.join(dir, newFileName)
-        if os.path.exists(destinationPath):
-            os.unlink(destinationPath)
-        df.to_csv(destinationPath, index=False)
-
-        #save the csv file to datasets directory
-        shutil.copy2(newFileName, destination)
-        #make a current copy to use as the current dataset
-        shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
-
-        #Remove files from main directory
-        os.remove(newFileName)
-        os.remove(file.filename)
 
 
     return render_template('uploadDataset.html')
@@ -346,9 +362,49 @@ def createGraph():
 @login_required
 @app.route("/uploadGraphs", methods = ['GET', 'POST'])
 def selectGraphsForDashboard():
-    images_dir = './static/graphs'
-    images = [f for f in os.listdir(images_dir) if os.path.isfile(os.path.join(images_dir, f))] #Sends all images in graphs to uploadGraphs.html
-    return render_template('uploadGraphs.html', images=images)
+    def getImgs():
+        images_dir = './static/graphs'
+        selected_dir = './static/currentlyDisplayed'
+        images = [f for f in os.listdir(images_dir) if os.path.isfile(os.path.join(images_dir, f))] #Sends all images in graphs to uploadGraphs.html
+        selected = [f for f in os.listdir(selected_dir) if os.path.isfile(os.path.join(selected_dir, f))] #sends currently displayed imaged to uploadGraphs.html
+        return images, selected
+
+    images, selected = getImgs()
+
+    if request.method == "POST":
+        destination = './static/currentlyDisplayed'
+        list_of_graphs = request.form.getlist('images[]')
+        for graph in list_of_graphs:
+            srcPath = os.path.join('./static/graphs', graph)
+            shutil.copy2(srcPath, destination)
+
+        _, selected_imgs = getImgs()
+        for img in selected_imgs:
+            if img not in list_of_graphs:
+                img_to_rm = os.path.join(destination, img)
+                os.remove(img_to_rm)
+
+        updated_Images, updated_Selected = getImgs()
+        return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
+
+
+    return render_template('uploadGraphs.html', images=images, selected = selected)
+
+@login_required
+@app.route('/deleteGraph/<imgName>', methods = ['GET', 'POST'])
+def delete(imgName):
+    if request.method == 'POST':
+        graphDir = './static/graphs'
+        currDir = './static/currentlyDisplayed'
+        img_to_rm = os.path.join(graphDir, imgName)
+        os.remove(img_to_rm)
+        if os.path.isfile(os.path.join(currDir, imgName)):
+            img_to_rm = os.path.join(currDir, imgName)
+            os.remove(img_to_rm)
+        return flask.redirect('/')
+
+    return flask.redirect('/uploadGraphs')
+
 
 if __name__ == "__main__":
     print("we made it")

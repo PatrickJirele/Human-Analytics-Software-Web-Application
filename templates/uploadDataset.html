@@ -11,6 +11,12 @@
     <form action="/uploadDataset" method="post" enctype="multipart/form-data">
         <input type="file" name="file"
             accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+        <br>
+        <br>
+        <input type="checkbox" name="annual_dataset" id="annual_dataset">
+        <label for="annual_dataset">Label Dataset as Annual?</label>
+        <br>
+        <br>
         <input type="submit" value="Upload">
     </form>
 </body>

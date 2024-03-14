@@ -4,7 +4,7 @@
 <title>Graph Selector</title>
 <style>
   .thumbnail-img {
-    width: 100px;
+    width: 200px;
     height: auto;
   }
   .image-container {
@@ -19,27 +19,32 @@
     display: block;
     margin-bottom: 5px;
   }
+  .delete-form {
+    margin-top: 10px;
+  }
 </style>
 </head>
-
 <body>
 
-<h2>Select Images</h2>
-
-<form id="selectedImages" action="/uploadGraphs" method="post">
-  <div id="checkboxes">
-    {% for image in images %}
-    <div>
-      <div class="image-container">
-      <input type="checkbox" name="images[]" value="{{ image }}" id="{{ image }}">
+<h2>Select Graphs To Be Displayed</h2>
+<div id="checkboxes">
+  {% for image in images %}
+  <div class="image-container">
+    <div class="delete-form">
+      <form action="/deleteGraph/{{ image }}" method="POST">
+        <input type="hidden" name="image_name" value="{{ image }}">
+        <input type="submit" value="Delete">
+      </form>
+    </div>
+    <form action="/uploadGraphs" method="post">
+      <input type="checkbox" name="images[]" value="{{ image }}" id="{{ image }}" {% if image in selected %} checked {% endif %}>
       <label for="{{ image }}" class="checkbox-label">{{ image }}</label>
       <img src="{{ url_for('static', filename='graphs/' + image) }}" class="thumbnail-img">
-    </div>
-    </div>
-    {% endfor %}
+    </form>
   </div>
-  <button type="submit">Submit</button>
-</form>
+  {% endfor %}
+</div>
+<button type="submit">Submit</button>
 
 </body>
 
