@@ -11,7 +11,7 @@ import shutil
 import csv
 import matplotlib.pyplot as plt
 import json
-#from flask_simple_crypt import SimpleCrypt
+from flask_simple_crypt import SimpleCrypt
 
 
 
@@ -161,8 +161,9 @@ def createGraphsFromDict(df, dictionary):
 
 
 
-
-
+#Simple Crypt declaration
+cipher = SimpleCrypt()
+cipher.init_app(app)
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -182,17 +183,16 @@ def login():
         email = request.form['email']
         if check(email) == True:
             user = User.query.filter_by(email=email).first()
-            #cipher = SimpleCrypt()
-            #userPass = cipher.decrypt(user.password)
+            userPass = (cipher.decrypt(user.password)).decode('utf-8')
             if user != None:
-                if request.form['pWord'] != user.password:
+                if request.form['pWord'] != userPass:
                     return render_template('login.html')
                 else:
                     login_user(user)
                     return flask.redirect('/')
             return render_template('login.html')
         else:
-            return render_template('/')
+            return render_template('login.html')
     return render_template('login.html')
 
 @login_manager.user_loader
@@ -210,13 +210,11 @@ def logout():
 def updatePass():
     if request.method == 'POST':
         oldPassword = request.form['oldP']
-        #cipher = SimpleCrypt()
-        #currPass = cipher.decrypt(current_user.password)
-        if current_user.password != oldPassword:
+        if cipher.decrypt(current_user.password) != oldPassword:
             return render_template('updatePassword.html')
         updatedUser = User.query.filter_by(id=current_user.id).first()
-        #updatedUser.password = cipher.encrypt(request.form['newP'])
-        updatedUser.password = request.form['newP']
+        updatedUser.password = cipher.encrypt(request.form['newP'])
+        #updatedUser.password = request.form['newP']
         db.session.commit()
         return flask.redirect('/')
     return render_template('updatePassword.html')
@@ -226,9 +224,8 @@ def updatePass():
 def create():
     if request.method == 'POST':
         email = request.form['email']
-        password = request.form['pWord']
-        #cipher = SimpleCrypt()
-        #password = cipher.decrypt(current_user.password)
+        #password = request.form['pWord']
+        password = cipher.encrypt(request.form['pWord'])
         if check(email) == False:
             return render_template('createAdmin.html'), 'Invalid Email Address'
         temp = User(email = email, password = password)
