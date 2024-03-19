@@ -10,6 +10,7 @@ from dateutil import relativedelta
 import shutil
 import csv
 import matplotlib.pyplot as plt
+import json
 #from flask_simple_crypt import SimpleCrypt
 
 
@@ -371,9 +372,11 @@ def selectGraphsForDashboard():
 
     images, selected = getImgs()
 
+
     if request.method == "POST":
         destination = './static/currentlyDisplayed'
-        list_of_graphs = request.form.getlist('images[]')
+        list_of_graphs = request.form.getlist('image_list[]')
+
         for graph in list_of_graphs:
             srcPath = os.path.join('./static/graphs', graph)
             shutil.copy2(srcPath, destination)
@@ -401,11 +404,10 @@ def delete(imgName):
         if os.path.isfile(os.path.join(currDir, imgName)):
             img_to_rm = os.path.join(currDir, imgName)
             os.remove(img_to_rm)
-        return flask.redirect('/')
+        return flask.redirect('/uploadGraphs')
 
     return flask.redirect('/uploadGraphs')
 
 
 if __name__ == "__main__":
-    print("we made it")
     app.run(debug=True)

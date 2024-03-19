@@ -2,6 +2,9 @@
 {% block content %}
 <head>
 <title>Graph Selector</title>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <style>
   .thumbnail-img {
     width: 200px;
@@ -36,17 +39,34 @@
         <input type="submit" value="Delete">
       </form>
     </div>
-    <form action="/uploadGraphs" method="post">
+    <form action="/uploadGraphs" method="POST">
       <input type="checkbox" name="images[]" value="{{ image }}" id="{{ image }}" {% if image in selected %} checked {% endif %}>
       <label for="{{ image }}" class="checkbox-label">{{ image }}</label>
       <img src="{{ url_for('static', filename='graphs/' + image) }}" class="thumbnail-img">
     </form>
   </div>
   {% endfor %}
+
 </div>
-<button type="submit">Submit</button>
+<script>
+  function submitSelectedGraphs() {
+    const data = [];
+    {% for image in images %}
+    var tempImg = document.getElementById('{{ image }}');
+      if (tempImg.checked){
+        data.push(tempImg.value);
+      }
+    {% endfor %}
+
+    console.log(data);
+
+    $.post( "/uploadGraphs", {
+      image_list: data
+    });
+  }
+</script>
+
+<button type="button" onclick="submitSelectedGraphs();">Submit</button>
 
 </body>
-
-
 {% endblock %}
