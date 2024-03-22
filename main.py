@@ -126,10 +126,7 @@ def uploadDataset():
         #Preprocess the excel file and convert to csv
         dir = os.path.dirname(__file__)
         df = pd.DataFrame(pd.read_excel(file.filename))
-        df = dropNameColumn(df)
-        df = combineRaceAndEthnicity(df)
         df = reformatYearsColumn(df)
-        df = formatData(df)
         destinationPath = os.path.join(dir, newFileName)
         if os.path.exists(destinationPath):
             os.unlink(destinationPath)

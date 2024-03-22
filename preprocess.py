@@ -5,36 +5,19 @@ from appConfig import *
 
 
 # UNABBREVIATION DICTIONARIES
-# Note: If a key:value pair has a value of 1, the key will be used as the unabbreviation.
-
-
-# PRECONDITION: Any dataframe is provided that may or may not contain a "Name" column.
-# POSTCONDITION: The dataframe is returned without a "Name" column.
-def dropNameColumn(df):
-    try:
-        df = df.drop('Name', axis=1)
-    except:
-        print('Column "Name" does not exist.')
-    return df
-
-# PRECONDITION: A dataframe is provided containing both a "Race" and "Ethnicity" column.
-# POSTCONDITION: The dataframe is returned with neither of the above columns, and instead it contains a "Race/Ethnicity" column that displays the previous information
-#                of their respective columns. The ethnicity value take priority.
-def combineRaceAndEthnicity(df):
-    return df
+# NOTE: If a key:value pair has a value of 1, the key will be used as the unabbreviation.
 
 
 # PRECONDITION: A dataframe is provided containing a column named "Years At Western" with values formated at "%m/%d/%Y"
 # POSTCONDITION: The dataframe is returned with every value in the "Years At Western" column reformatted as the number of years since the current date, rounded down.
 def reformatYearsColumn(df):
     columnName = 'Years At Western'
-    #df.rename(columns={'Hire Date' : 'Years At Western'}, inplace=True) #For when we use official dataset
+    df.rename(columns={'Hire Date':columnName}, inplace=True)
 
     for i in range(len(df)):
         value = df.loc[i, columnName]
         try:
-            date = datetime.strptime(value, "%m/%d/%Y")
-            rd = relativedelta.relativedelta(datetime.now(), date)
+            rd = relativedelta.relativedelta(datetime.now(), value)
             df.loc[i,columnName] = rd.years
         except Exception as e:
             print(e)
@@ -44,6 +27,7 @@ def reformatYearsColumn(df):
 # PRECONDITION: A dataframe is provided with the columns "Race/Ethnicity", "Gender", and "Employee Type".
 # POSTCONDITION: The dataframe is returned with all info unabreviated and invalid values removed. Entire rows with multiple invalid values are potentially removed
 #                depending on maxNumberOfMissingCells value.
+# NOTE: NOT IN USE
 def formatData(df):
     for columnName, values in [('Race/Ethnicity', raceEthDict), ('Gender',genderDict), ('Employee Type', employeeDict)]:
         formatDataPerColumn(df, columnName, values)
