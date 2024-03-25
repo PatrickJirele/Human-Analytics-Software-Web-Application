@@ -13,7 +13,7 @@ def makeAndStoreGraph(name, fileName):
     vals = list(dict.values())
     for i, val in enumerate(vals):
         vals[i] = int(val)
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=[9,6])
     ax.pie(vals, labels=keys, autopct='%1.1f%%')
     path = os.path.join(dir, 'graphs')
     path = os.path.join(path, fileName)
@@ -32,13 +32,11 @@ def yearsBarChart(fileName):
     axs.bar(keys, vals) 
     path = os.path.join(dir, 'graphs')
     path = os.path.join(path, fileName)
-    fig.savefig(path)
+    fig.savefig(path, dpi=100)
     
     
     
         
 
 makeAndStoreGraph('Race/Ethnicity', 'raceEth.png')
-makeAndStoreGraph('Gender', 'gender.png')
-makeAndStoreGraph('Employee Type', 'employeeType.png')
-yearsBarChart('years.png')
+makeAndStoreGraph('Department', 'department.png')
