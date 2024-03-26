@@ -30,6 +30,15 @@
 <body>
 
 <h2>Select Graphs To Be Displayed</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 <div id="checkboxes">
   {% for image in images %}
   <div class="image-container">
@@ -49,6 +58,8 @@
 
 </div>
 <script>
+<!--Function for submitting all selected graphs-->
+
   function submitSelectedGraphs() {
     const data = [];
     {% for image in images %}
@@ -61,8 +72,13 @@
     console.log(data);
 
     $.post( "/uploadGraphs", {
-      image_list: data
-    });
+            image_list: data
+        }).done(function(response) {
+            alert('Graphs selected successfully');
+            location.reload();
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            alert('Error selecting graphs: ' + textStatus);
+        });
   }
 </script>
 

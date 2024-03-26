@@ -4,21 +4,115 @@
 {% block content %}
 <head>
     <title>Upload/View Excel</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
+
+<style>
+  .dataset-list-quote {
+    width: 300px;
+    height: 100px;
+    border: 1px solid;
+    overflow: scroll;
+    scrollbar-color: red orange;
+    scrollbar-width: thin;
+  }
+
+  .dataset-file {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+
+  .file-name {
+    flex: 1;
+  }
+
+  .delete-btn {
+    margin-left: 10px;
+  }
+
+  .container {
+    display: flex;
+  }
+
+  .form-container {
+    flex: 1;
+  }
+
+  .dataset-list {
+    flex: 1;
+    margin-left: 20px;
+  }
+
+  .annual-list {
+    flex: 1;
+    margin-left: 20px;
+  }
+</style>
 
 <body>
     <h1>Upload Excel File (.xlsx)</h1>
-    <form action="/uploadDataset" method="post" enctype="multipart/form-data">
-        <input type="file" name="file"
-            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-        <br>
-        <br>
-        <input type="checkbox" name="annual_dataset" id="annual_dataset">
-        <label for="annual_dataset">Label Dataset as Annual?</label>
-        <br>
-        <br>
-        <input type="submit" value="Upload">
-    </form>
+    <div class="container">
+        <div class="form-container">
+            <form action="/uploadDataset" method="post" enctype="multipart/form-data">
+                <input type="file" name="file"
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+            <br>
+            <br>
+            <input type="checkbox" name="annual_dataset" id="annual_dataset">
+            <label for="annual_dataset">Label Dataset as Annual?</label>
+            <br>
+            <br>
+            <input type="submit" value="Upload">
+            </form>
+        </div>
+
+        <div class="dataset-list">
+            <h1>All Datasets</h1>
+            <blockquote class="dataset-list-quote">
+            {% for file in dataset_files %}
+                <div class="dataset-file">
+                    <span class="file-name">{{ file }}</span>
+                    <button class="delete-btn" onclick="deleteFile('{{ file }}')">Delete</button>
+                </div>
+            {% endfor %}
+            </blockquote>
+        </div>
+
+        <div class="annual-list">
+            <h1>Annual Datasets</h1>
+            <blockquote class="dataset-list-quote">
+            {% for file in annual_files %}
+                <div class="dataset-file">
+                    <span class="file-name">{{ file }}</span>
+                    <button class="delete-btn" onclick="deleteFile('{{ file }}')">Delete</button>
+                </div>
+            {% endfor %}
+            </blockquote>
+        </div>
+    </div>
+    <script>
+<!--Function for deleting datasets-->
+
+        function deleteFile(filename) {
+            $.ajax({
+                url: '/deleteDataset',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ filename: filename }),
+                success: function(response) {
+                    if (response.success) {
+                        alert('File deleted successfully');
+                        location.reload();
+                    } else {
+                        alert('Error deleting file: ' + response.error);
+                    }
+                }
+            });
+        }
+    </script>
+
 </body>
 {% endblock %}
 </html>

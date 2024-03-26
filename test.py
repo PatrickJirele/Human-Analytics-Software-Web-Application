@@ -1,7 +1,7 @@
 import flask
 import os
 import re
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 import pandas as pd
@@ -161,6 +161,20 @@ def createGraphsFromDict(df, dictionary):
 
 
 
+#RETURNS all csv files from datasets dir AND all files from the annualDatasets dir
+def getDatasets():
+    dataset_files = [f for f in os.listdir('./static/datasets') if f.endswith('.csv')]
+    annual_files = [f for f in os.listdir('./static/datasets/annualDatasets')]
+    return dataset_files, annual_files
+
+#RETURNS all graphs AND all currently displayed graphs
+def getImgs():
+    images = [f for f in os.listdir('./static/graphs') if os.path.isfile(os.path.join('./static/graphs', f))] #Sends all images in graphs to uploadGraphs.html
+    selected = [f for f in os.listdir('./static/currentlyDisplayed') if os.path.isfile(os.path.join('./static/currentlyDisplayed', f))] #sends currently displayed imaged to uploadGraphs.html
+    return images, selected
+
+
+
 #Simple Crypt declaration
 cipher = SimpleCrypt()
 cipher.init_app(app)
@@ -243,6 +257,7 @@ def create():
 @login_required
 @app.route('/uploadDataset', methods = ['GET', 'POST'])
 def uploadDataset():
+    dataset_files, annual_files = getDatasets()
     if request.method == 'POST':
         if request.files['file']:
             # Get the excel file from website upload
@@ -265,23 +280,40 @@ def uploadDataset():
                 os.unlink(destinationPath)
             df.to_csv(destinationPath, index=False)
 
-            # save the csv file to datasets directory
+            # Save the csv file to datasets directory
             shutil.copy2(newFileName, destination)
-            # make a current copy to use as the current dataset
+            # Make a current copy to use as the current dataset
             shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
-
-            isAnnual = request.form['annual_dataset']
-            if isAnnual == 'on':
-                annualPath = './static/datasets/annualDatasets'
-                shutil.copy2(destinationPath, os.path.join(annualPath, str(date.today().year)))
+            if 'annual_dataset' in request.form:
+                isAnnual = request.form['annual_dataset']
+                if isAnnual == 'on':
+                    annualPath = './static/datasets/annualDatasets'
+                    shutil.copy2(destinationPath, os.path.join(annualPath, str(date.today().year)))
             
             # Remove files from main directory
             os.remove(newFileName)
             os.remove(file.filename)
+            dataset_files, annual_files = getDatasets()
 
 
+    return render_template('uploadDataset.html', dataset_files=dataset_files, annual_files=annual_files)
 
-    return render_template('uploadDataset.html')
+
+@login_required
+@app.route('/deleteDataset', methods=['POST'])
+def delete_file():
+    filename = request.json['filename']
+    if len(filename) > 4:
+        file_path = os.path.join('./static/datasets', filename)
+    else:
+        file_path = os.path.join('./static/datasets/annualDatasets', filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'File not found'})
+
 
 @login_required
 @app.route('/createGraph', methods = ['GET', 'POST'])
@@ -360,16 +392,7 @@ def createGraph():
 @login_required
 @app.route("/uploadGraphs", methods = ['GET', 'POST'])
 def selectGraphsForDashboard():
-    def getImgs():
-        images_dir = './static/graphs'
-        selected_dir = './static/currentlyDisplayed'
-        images = [f for f in os.listdir(images_dir) if os.path.isfile(os.path.join(images_dir, f))] #Sends all images in graphs to uploadGraphs.html
-        selected = [f for f in os.listdir(selected_dir) if os.path.isfile(os.path.join(selected_dir, f))] #sends currently displayed imaged to uploadGraphs.html
-        return images, selected
-
     images, selected = getImgs()
-
-
     if request.method == "POST":
         destination = './static/currentlyDisplayed'
         list_of_graphs = request.form.getlist('image_list[]')
@@ -385,7 +408,9 @@ def selectGraphsForDashboard():
                 os.remove(img_to_rm)
 
         updated_Images, updated_Selected = getImgs()
-        return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
+        flash('Graphs selected successfully', 'success')
+        return flask.redirect('/uploadGraphs')
+        #return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
 
 
     return render_template('uploadGraphs.html', images=images, selected = selected)

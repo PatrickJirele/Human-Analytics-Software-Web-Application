@@ -52,7 +52,7 @@ Black,Not Declared,State Classified,0
 White,Female,Professional,2
 TBD - U,Female,Academic,8
 White,Male,Professional,8
-TBD - P,Female,State Classified,1
+TBD - P,Female,State Classified,2
 White,Female,Academic,2
 TBD - P,Female,Academic,1
 Asian,Female,Academic,3
@@ -65,7 +65,7 @@ White,Female,Professional,7
 Black,Female,Professional,7
 TBD - U,Female,Professional,12
 TBD - P,Not Declared,Academic,12
-TBD - U,Male,Professional,8
+TBD - U,Male,Professional,9
 TBD - U,Not Declared,Professional,10
 Hispanic,Female,Professional,10
 Hispanic,Female,Academic,1
@@ -89,7 +89,7 @@ TBD - S,Not Declared,Professional,6
 White,Female,Professional,9
 TBD - S,Female,Academic,11
 Black,Male,Academic,4
-Hispanic,Male,Academic,2
+Hispanic,Male,Academic,3
 White,Female,Professional,10
 Asian,Non Binary,Professional,6
 Hispanic,Non Binary,Professional,13
@@ -131,7 +131,7 @@ Hispanic,Female,Professional,8
 White,Male,Academic,5
 White,Not Declared,Professional,3
 TBD - I,Female,Academic,7
-TBD - P,Male,State Classified,10
+TBD - P,Male,State Classified,11
 Hispanic,Not Declared,Professional,3
 TBD - P,Female,Professional,9
 Asian,Non Binary,Professional,5
@@ -166,7 +166,7 @@ TBD - P,Female,State Classified,3
 Asian,Female,Professional,3
 White,Female,Academic,9
 TBD - S,Female,Professional,8
-TBD - P,Female,Academic,8
+TBD - P,Female,Academic,9
 TBD - P,Non Binary,Academic,4
 TBD - I,Male,State Classified,4
 Black,Not Declared,Professional,12
@@ -189,7 +189,7 @@ Asian,Female,Professional,12
 TBD - P,Female,Professional,11
 TBD - U,Female,State Classified,9
 TBD - U,Not Declared,Professional,1
-Hispanic,Male,State Classified,8
+Hispanic,Male,State Classified,9
 Asian,Female,Professional,3
 TBD - P,Male,Professional,8
 Hispanic,Male,Professional,4
@@ -207,7 +207,7 @@ Hispanic,Male,Professional,5
 White,Female,Professional,10
 Asian,Non Binary,State Classified,6
 TBD - S,Female,Academic,2
-Black,Male,Academic,4
+Black,Male,Academic,5
 TBD - U,Male,Professional,1
 Black,Female,Academic,0
 Asian,Female,Academic,5
@@ -254,7 +254,7 @@ Asian,Female,State Classified,9
 Asian,Female,State Classified,12
 TBD - P,Not Declared,Professional,9
 TBD - I,Female,State Classified,8
-Hispanic,Non Binary,Academic,11
+Hispanic,Non Binary,Academic,12
 Asian,Female,Professional,11
 TBD - S,Female,Professional,2
 White,Female,State Classified,9
@@ -293,7 +293,7 @@ Asian,Male,Academic,1
 TBD - I,Not Declared,Professional,11
 TBD - I,Female,Professional,3
 TBD - S,Not Declared,Professional,2
-TBD - S,Non Binary,Professional,9
+TBD - S,Non Binary,Professional,10
 TBD - P,Female,Academic,10
 Asian,Not Declared,Professional,8
 White,Female,State Classified,1
@@ -323,7 +323,7 @@ TBD - P,Female,Academic,13
 White,Female,Professional,6
 Black,Male,Professional,5
 TBD - P,Not Declared,State Classified,10
-TBD - I,Non Binary,Academic,5
+TBD - I,Non Binary,Academic,6
 White,Not Declared,Professional,8
 Asian,Not Declared,Academic,9
 TBD - P,Female,Professional,0
@@ -407,7 +407,7 @@ Black,Female,Professional,5
 Black,Male,Academic,4
 Black,Non Binary,State Classified,3
 TBD - P,Not Declared,Professional,9
-TBD - I,Non Binary,Professional,8
+TBD - I,Non Binary,Professional,9
 TBD - U,Non Binary,Academic,1
 Asian,Female,Professional,1
 TBD - I,Female,Professional,2
@@ -483,7 +483,7 @@ TBD - U,Not Declared,Professional,2
 Black,Non Binary,Professional,6
 TBD - I,Female,State Classified,6
 Asian,Not Declared,Professional,3
-Asian,Non Binary,State Classified,2
+Asian,Non Binary,State Classified,3
 TBD - U,Not Declared,Professional,6
 TBD - S,Male,Professional,2
 Black,Female,State Classified,12
