@@ -78,31 +78,4 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName):
         # add to list
         # list should be of format ['key', val1, val2, ... , valn]
     #
-    
-    data = {
-        'Labels': ['A', 'B', 'C', 'D'],
-        'Colors': ['red', 'blue', 'green', 'orange']
-    }
-    df = pd.DataFrame(data)
-
-    # Create a figure and axis
-    fig, ax = plt.subplots()
-
-    # Convert colors to categorical
-    colors = pd.Categorical(df['Colors'])
-
-    # Plot stacked bars
-    ax.bar(df['Labels'], 1, color=colors)
-
-    # Create legend from colors
-    handles = [plt.Rectangle((0,0),1,1, color=color) for color in colors.categories]
-    ax.legend(handles, colors.categories)
-
-    # Set labels and title
-    ax.set_xlabel('Labels')
-    ax.set_ylabel('Value')
-    ax.set_title('Stacked Bar Chart')
-    path = os.path.join(dir, 'static', 'graphs', fileName)
-    fig.savefig(path, bbox_inches="tight")
-
     None
