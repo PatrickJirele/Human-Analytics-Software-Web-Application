@@ -47,6 +47,21 @@ def formatDataPerColumn(df, columnName, values):
                 df.loc[i, columnName] = values[value]
     return df
 
+
+# PRECONDITION:
+# POSTCONDITION: 
+def combineRaceAndEthnicity(df):
+    for i in range(len(df)):
+        race = df.loc[i, 'Race/Ethnicity']
+        isHispanicLatino = (df.loc[i, 'Hispanic or Latino'] == 'Yes')
+        if (race == 'White (United States of America)' and isHispanicLatino):
+            df.loc[i,'Race/Ethnicity'] = 'Histpanic or Latino'
+        elif (isHispanicLatino):
+            df.loc[i,'Race/Ethnicity'] = 'Two or More Races (United States of America)'
+    return df
+
+# PRECONDITION:
+# POSTCONDITION: 
 def modifyName(column_name):
     if "/" in column_name:
         return column_name.replace("/", "-")

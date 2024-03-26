@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+    <body>
+        <h1>Graph Creation Form</h1>
+        <form action="/createGraph" method="post" onsubmit="return validateForm()">
+            {{ checkboxes_html | safe }}
+            <input type="submit" value="Submit">
+        </form>
+    </body>
+
+<script>
+function validateForm() {
+    var min = document.getElementById("YearsAtWestern_min").value;
+    var max = document.getElementById("YearsAtWestern_max").value;
+    min = parseInt(min);
+    max = parseInt(max);
+    if (max < min) {
+        document.getElementById("range_error_message").innerHTML = "Enter valid number range";
+        return false;
+    } else {
+        document.getElementById("range_error_message").innerHTML = "";
+        return true;
+    }
+}
+</script>
+
+{% endblock %}

@@ -2,26 +2,47 @@
 {% block content %}
     <body>
         <h1>Graph Creation Form</h1>
-        <form action="/createGraph" method="post" onsubmit="return validateForm()">
-            {{ checkboxes_html | safe }}
-            <input type="submit" value="Submit">
+        <form action="/createGraph" method="post">
+            <p>Graph Type:</p>
+            <label><input type='radio' name='chartType' id='pie' value='pie'>Pie</label><br>
+            <label><input type='radio' name='chartType' id='donut' value='donut'>Donut</label><br>
+            <label><input type='radio' name='chartType' id='bar' value='bar'>Bar</label><br>
+            <label><input type='radio' name='chartType' id='stackedBar' value='stackedBar'>Stacked Bar</label><br>
+            <label><input type='radio' name='chartType' id='histogram' value='histogram'>Histogram</label><br>
+            <br>
+            <div id='singleCategory'>
+                <p>Single Category</p>                
+                <p>Select Graphs:</p>
+                <label><input type='checkbox' name='category' id='timeType' value='timeType'>Time Type</label><br>
+                <label><input type='checkbox' name='category' id='jobFamily' value='jobFamily'>Job Family</label><br>
+                <label><input type='checkbox' name='category' id='department' value='department'>Department</label><br>
+                <label><input type='checkbox' name='category' id='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
+                <label><input type='checkbox' name='category' id='gender' value='gender'>Gender</label><br>
+            </div>
+            <br>
+            <div id='stackedBarCategories'>
+                <p>Stacked Bar Categories</p>                
+                <p>Select Primary Category:</p>
+                <label><input type='radio' name='category' id='timeType' value='timeType'>Time Type</label><br>
+                <label><input type='radio' name='category' id='jobFamily' value='jobFamily'>Job Family</label><br>
+                <label><input type='radio' name='category' id='department' value='department'>Department</label><br>
+                <label><input type='radio' name='category' id='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
+                <label><input type='radio' name='category' id='gender' value='gender'>Gender</label><br>
+
+                <p>Select Secondary Category:</p>
+                <label><input type='radio' name='category' id='timeType' value='timeType'>Time Type</label><br>
+                <label><input type='radio' name='category' id='jobFamily' value='jobFamily'>Job Family</label><br>
+                <label><input type='radio' name='category' id='department' value='department'>Department</label><br>
+                <label><input type='radio' name='category' id='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
+                <label><input type='radio' name='category' id='gender' value='gender'>Gender</label><br>
+            </div>
+            <br>
+            <div id='histogramCategories'>
+                <p>Histogram Categories</p> 
+                <label><input type='checkbox' name='category' id='years' value='years'>Years At Western</label><br>
+                <label><input type='checkbox' name='category' id='age' value='age'>Age</label><br>
+            </div>
+            <input type="submit" value="Generate">
         </form>
     </body>
-
-<script>
-function validateForm() {
-    var min = document.getElementById("YearsAtWestern_min").value;
-    var max = document.getElementById("YearsAtWestern_max").value;
-    min = parseInt(min);
-    max = parseInt(max);
-    if (max < min) {
-        document.getElementById("range_error_message").innerHTML = "Enter valid number range";
-        return false;
-    } else {
-        document.getElementById("range_error_message").innerHTML = "";
-        return true;
-    }
-}
-</script>
-
 {% endblock %}
