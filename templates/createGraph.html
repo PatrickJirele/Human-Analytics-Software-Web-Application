@@ -1,47 +1,59 @@
 {% extends 'base.html' %}
 {% block content %}
+    <head>
+        <script>
+            function changeGraphType(type) {
+                console.log(type)
+                document.getElementById('singleCategory').style.display = (type == 'singleCategory') ? 'block' : 'none'
+                document.getElementById('doubleCategory').style.display = (type == 'doubleCategory') ? 'block' : 'none'
+                document.getElementById('histogramCategory').style.display = (type == 'histogramCategory') ? 'block' : 'none'
+            }
+        </script>
+    </head>
+
     <body>
         <h1>Graph Creation Form</h1>
         <form action="/createGraph" method="post">
             <p>Graph Type:</p>
-            <label><input type='radio' name='chartType' id='pie' value='pie'>Pie</label><br>
-            <label><input type='radio' name='chartType' id='donut' value='donut'>Donut</label><br>
-            <label><input type='radio' name='chartType' id='bar' value='bar'>Bar</label><br>
-            <label><input type='radio' name='chartType' id='stackedBar' value='stackedBar'>Stacked Bar</label><br>
-            <label><input type='radio' name='chartType' id='histogram' value='histogram'>Histogram</label><br>
+            <label><input type='radio' name='chartType' id='pie' value='pie' onclick='changeGraphType("singleCategory")' checked>Pie</label><br>
+            <label><input type='radio' name='chartType' id='treemap' value='treemap' onclick='changeGraphType("singleCategory")'>Treemap</label><br>
+            <label><input type='radio' name='chartType' id='bar' value='bar' onclick='changeGraphType("singleCategory")'>Bar</label><br>
+            <label><input type='radio' name='chartType' id='stackedBar' value='stackedBar' onclick='changeGraphType("doubleCategory")'>Stacked Bar</label><br>
+            <label><input type='radio' name='chartType' id='histogram' value='histogram' onclick='changeGraphType("histogramCategory")'>Histogram</label><br>
             <br>
-            <div id='singleCategory'>
-                <p>Single Category</p>                
+            <div id='singleCategory'>              
                 <p>Select Graphs:</p>
-                <label><input type='checkbox' name='category' id='timeType' value='timeType'>Time Type</label><br>
-                <label><input type='checkbox' name='category' id='jobFamily' value='jobFamily'>Job Family</label><br>
-                <label><input type='checkbox' name='category' id='department' value='department'>Department</label><br>
-                <label><input type='checkbox' name='category' id='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
-                <label><input type='checkbox' name='category' id='gender' value='gender'>Gender</label><br>
+                <label><input type='checkbox' name='timeType' value='timeType'>Time Type</label><br>
+                <label><input type='checkbox' name='jobFamily' value='jobFamily'>Job Family</label><br>
+                <label><input type='checkbox' name='department' value='department'>Department</label><br>
+                <label><input type='checkbox' name='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
+                <label><input type='checkbox' name='gender' value='gender'>Gender</label><br>
             </div>
-            <br>
-            <div id='stackedBarCategories'>
-                <p>Stacked Bar Categories</p>                
+
+            <div id='doubleCategory' style='display:none;'>             
                 <p>Select Primary Category:</p>
-                <label><input type='radio' name='category' id='timeType' value='timeType'>Time Type</label><br>
-                <label><input type='radio' name='category' id='jobFamily' value='jobFamily'>Job Family</label><br>
-                <label><input type='radio' name='category' id='department' value='department'>Department</label><br>
-                <label><input type='radio' name='category' id='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
-                <label><input type='radio' name='category' id='gender' value='gender'>Gender</label><br>
+                <label><input type='radio' name='timeType' value='timeType'>Time Type</label><br>
+                <label><input type='radio' name='jobFamily' value='jobFamily'>Job Family</label><br>
+                <label><input type='radio' name='department' value='department'>Department</label><br>
+                <label><input type='radio' name='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
+                <label><input type='radio' name='gender' value='gender'>Gender</label><br>
 
                 <p>Select Secondary Category:</p>
-                <label><input type='radio' name='category' id='timeType' value='timeType'>Time Type</label><br>
-                <label><input type='radio' name='category' id='jobFamily' value='jobFamily'>Job Family</label><br>
-                <label><input type='radio' name='category' id='department' value='department'>Department</label><br>
-                <label><input type='radio' name='category' id='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
-                <label><input type='radio' name='category' id='gender' value='gender'>Gender</label><br>
+                <label><input type='radio' name='timeType' value='timeType'>Time Type</label><br>
+                <label><input type='radio' name='jobFamily' value='jobFamily'>Job Family</label><br>
+                <label><input type='radio' name='department' value='department'>Department</label><br>
+                <label><input type='radio' name='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
+                <label><input type='radio' name='gender' value='gender'>Gender</label><br>
+            </div>
+
+            <div id='histogramCategory' style='display:none;'>
+                <label><input type='checkbox' name='yearsAtWestern' value='yearsAtWestern'>Years At Western</label><br>
+                <label><input type='checkbox' name='age' value='age'>Age</label><br>
             </div>
             <br>
-            <div id='histogramCategories'>
-                <p>Histogram Categories</p> 
-                <label><input type='checkbox' name='category' id='years' value='years'>Years At Western</label><br>
-                <label><input type='checkbox' name='category' id='age' value='age'>Age</label><br>
-            </div>
+            <br>
+            <label><input type='checkbox' name='overwrite' id='overwrite' value='overwrite'>Store As Unique</label><br>
+            <br>
             <input type="submit" value="Generate">
         </form>
     </body>

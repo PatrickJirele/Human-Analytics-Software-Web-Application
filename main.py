@@ -1,5 +1,6 @@
 from appConfig import *
 from preprocess import *
+from createGraphs import *
 
 # GLOBAL VARIABLES - START
 
@@ -22,7 +23,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(50), nullable=False)
     admin = db.Column(db.Boolean, default=False, nullable=False)
 
-#Validates if entered email is in correct format
+
 #Validates if entered email is in correct format
 def check(email):
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -33,36 +34,25 @@ def check(email):
         print("Invalid")
         return False
 
+def getSingleCategories(request):
+    categories = []
+    categories.append('Time Type') if (request.form.get('timeType')) else None
+    categories.append('Job Family') if (request.form.get('jobFamily')) else None
+    categories.append('Department') if (request.form.get('department')) else None
+    categories.append('Race_Ethnicity') if (request.form.get('raceEthnicity')) else None
+    categories.append('Gender') if (request.form.get('gender')) else None
+    return categories
 
+def getHistogramCategories(request):
+    categories = []
+    categories.append('Years At Western') if (request.form.get('yearsAtWestern')) else None
+    categories.append('Age') if (request.form.get('age')) else None
+    print(request.form)
+    return categories
 
-
-def createGraphsFromDict(df, dictionary):
-    for column_key in dictionary.keys():
-        for queries in dictionary[column_key]:
-            total_population = len(df[column_key])
-            true_rows = len(df[df[column_key] == queries])
-
-            labels = ['True Population', 'Total Population']
-            sizes = [true_rows, total_population - true_rows]
-            colors = ['#ff9999', '#66b3ff']
-            explode = (0.1, 0)
-            fig, ax = plt.subplots()
-            ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
-            ax.axis('equal')
-            ax.set_title(f'True Population vs Total Population for Query: {queries}')
-
-            column_name = modifyName(column_key)
-            todaysdate = date.today()
-            fileName = f'{column_name}_{queries}_{todaysdate}.png'
-
-            dir = os.path.dirname(__file__)
-            path = os.path.join(dir, 'static')
-            path = os.path.join(path, 'graphs')
-            path = os.path.join(path, fileName)
-            fig.savefig(path)
-
-            plt.show()
-            plt.close()
+def makeImageName(category, type, isUnique):
+    return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
+    
 
 @app.route('/')
 def home():
@@ -150,6 +140,7 @@ def uploadDataset():
             df = pd.DataFrame(pd.read_excel(file.filename))
             df = combineRaceAndEthnicity(df)
             df = reformatYearsColumn(df)
+            df = modifyName(df, "Race/Ethnicity")
             destinationPath = os.path.join(dir, newFileName)
             if os.path.exists(destinationPath):
                 os.unlink(destinationPath)
@@ -174,6 +165,22 @@ def uploadDataset():
 @login_required
 @app.route('/createGraph', methods = ['GET', 'POST'])
 def createGraph():
+    if request.method == "POST":
+        try:
+            chartType = request.form.get('chartType')
+            if (chartType == 'pie' or chartType =='treemap' or chartType == 'bar'):
+                categories = getSingleCategories(request)
+                for category in categories:
+                    imageName = makeImageName(category, chartType, ("overwrite" in request.form))
+                    singleCategoryGraph(chartType, category, imageName)
+            if (chartType == 'histogram'):
+                categories = getHistogramCategories(request)
+                for category in categories:
+                    imageName = makeImageName(category, chartType, ("overwrite" in request.form))
+                    histogram(category, imageName)
+            return redirect("/uploadGraphs")
+        except Exception as e:
+            print(traceback.format_exc())
     return render_template('createGraph.html')
 
 @login_required
@@ -187,7 +194,6 @@ def selectGraphsForDashboard():
         return images, selected
 
     images, selected = getImgs()
-
 
     if request.method == "POST":
         destination = './static/currentlyDisplayed'
