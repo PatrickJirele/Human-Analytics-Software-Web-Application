@@ -1,4 +1,4 @@
-Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Latino,Veteran Status,Veteran Status (External),Disability Status,Disability Status (External),Age,Gender
+Years At Western,Time Type,Job Family,Department,Race_Ethnicity,Hispanic or Latino,Veteran Status,Veteran Status (External),Disability Status,Disability Status (External),Age,Gender
 39,Full time,Administrative,Academic Affairs,American Indian or Alaska Native (United States of America),,,,,,15,Female
 34,Full time,Administrative,Academic Affairs,American Indian or Alaska Native (United States of America),,,,,,20,Female
 29,Full time,Administrative,Academic Affairs,Asian (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",20,Female
@@ -8,7 +8,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 27,Full time,Administrative,Academic Resource Center,Asian (United States of America),,,,,,21,Female
 27,Full time,Administrative,Academic Resource Center,Asian (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",21,Female
 26,Full time,Administrative,Academic Support Services,Asian (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",22,Female
-26,Full time,Administrative,Academic Support Services,Asian (United States of America),Yes,,,,,22,Female
+26,Full time,Administrative,Academic Support Services,Two or More Races (United States of America),Yes,,,,,22,Female
 25,Full time,Administrative,Academic Support Services,Asian (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",22,Female
 25,Full time,Administrative,Academic Support Services,Black or African American (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",23,Female
 25,Full time,Administrative,Academic Support Services,Black or African American (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",23,Female
@@ -18,10 +18,10 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 24,Full time,Administrative,Accounting,Black or African American (United States of America),,,,,,23,Female
 24,Full time,Administrative,Accounting,Black or African American (United States of America),,,,,,23,Female
 23,Full time,Administrative,Accounting,Black or African American (United States of America),,,,,,23,Female
-23,Full time,Administrative,Accounting,Black or African American (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",23,Female
+23,Full time,Administrative,Accounting,Two or More Races (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",23,Female
 23,Full time,Administrative,Admissions,Black or African American (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",23,Female
 23,Full time,Administrative,Admissions,Black or African American (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",24,Female
-23,Full time,Administrative,Admissions,Black or African American (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",24,Female
+23,Full time,Administrative,Admissions,Two or More Races (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",24,Female
 21,Full time,Administrative,Admissions,Black or African American (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",24,Female
 21,Full time,Administrative,Admissions,Black or African American (United States of America),,,,,,24,Female
 20,Full time,Administrative,Admissions,I do not wish to answer. (United States of America),,,,,,24,Female
@@ -34,7 +34,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 19,Full time,Administrative,Advancement,I do not wish to answer. (United States of America),,,,,,24,Female
 19,Full time,Administrative,Advancement,I do not wish to answer. (United States of America),,,,,,24,Female
 19,Full time,Administrative,Advancement,I do not wish to answer. (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",24,Female
-18,Full time,Administrative,Advancement,I do not wish to answer. (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",24,Female
+18,Full time,Administrative,Advancement,Two or More Races (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",24,Female
 18,Full time,Administrative,Advancement,Two or More Races (United States of America),,,,,,24,Female
 18,Full time,Administrative,Alumni Relations,Two or More Races (United States of America),,,,,,25,Female
 18,Full time,Administrative,Art,Two or More Races (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",25,Female
@@ -54,7 +54,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 16,Full time,Administrative,Athletics,Two or More Races (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",26,Female
 16,Full time,Administrative,Athletics,Two or More Races (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",26,Female
 16,Full time,Administrative,Athletics,White (United States of America),,,,,,26,Female
-16,Full time,Administrative,Athletics,White (United States of America),Yes,,,,,26,Female
+16,Full time,Administrative,Athletics,Histpanic or Latino,Yes,,,,,26,Female
 16,Full time,Administrative,Athletics,White (United States of America),,,,,,26,Female
 16,Full time,Administrative,Athletics,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",26,Female
 16,Full time,Administrative,Athletics,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",26,Female
@@ -64,7 +64,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 15,Full time,Administrative,Athletics -  Communications,White (United States of America),,I AM NOT A VETERAN,,I Don't Wish To Answer,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",26,Female
 14,Full time,Administrative,Athletics - Business Operations,White (United States of America),,I AM NOT A VETERAN,,I Don't Wish To Answer,,26,Female
 14,Full time,Administrative,Athletics - Business Operations,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",26,Female
-14,Full time,Administrative,Athletics - Cross Country,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",26,Female
+14,Full time,Administrative,Athletics - Cross Country,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",26,Female
 14,Full time,Administrative,Athletics - Football,White (United States of America),,,,,,26,Female
 14,Full time,Administrative,Athletics - Football,White (United States of America),,,,,,26,Female
 14,Full time,Administrative,Athletics - Football,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",26,Female
@@ -82,8 +82,8 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 12,Full time,Administrative,Athletics - Women's Basketball,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",27,Female
 11,Full time,Administrative,Athletics - Women's Swimming and Diving,White (United States of America),,,,,,27,Female
 11,Full time,Administrative,Athletics - Women's Swimming and Diving,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",27,Female
-10,Full time,Administrative,Athletics - Women's Volleyball,White (United States of America),Yes,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",28,Female
-10,Full time,Administrative,Athletics - Women's Volleyball,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",28,Female
+10,Full time,Administrative,Athletics - Women's Volleyball,Histpanic or Latino,Yes,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",28,Female
+10,Full time,Administrative,Athletics - Women's Volleyball,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",28,Female
 10,Full time,Administrative,Behavioral and Social Sciences,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",28,Female
 10,Full time,Administrative,Behavioral and Social Sciences,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",28,Female
 10,Full time,Administrative,Behavioral and Social Sciences,White (United States of America),,,,,,28,Female
@@ -103,7 +103,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 9,Full time,Administrative,Behavioral and Social Sciences,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",29,Female
 9,Full time,Administrative,Behavioral and Social Sciences,White (United States of America),,,,,,29,Female
 9,Full time,Administrative,Bookstore,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",29,Female
-9,Full time,Administrative,Bookstore,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",29,Female
+9,Full time,Administrative,Bookstore,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",29,Female
 8,Full time,Administrative,Bookstore,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",29,Female
 8,Full time,Administrative,Bookstore,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",29,Female
 8,Full time,Administrative,Bookstore,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",29,Female
@@ -158,13 +158,13 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 5,Full time,Administrative,Center for Learning and Innovation,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",34,Female
 5,Full time,Administrative,Center for Learning and Innovation,White (United States of America),,,,,,34,Female
 5,Full time,Administrative,Center for Learning and Innovation,White (United States of America),,,,,,34,Female
-5,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),Yes,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",34,Female
-5,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),Yes,,,,,34,Female
+5,Full time,Administrative,Clark School of Environment and Sustainability,Histpanic or Latino,Yes,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",34,Female
+5,Full time,Administrative,Clark School of Environment and Sustainability,Histpanic or Latino,Yes,,,,,34,Female
 5,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,,35,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,,35,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,,35,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",35,Female
-4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),Yes,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",35,Female
+4,Full time,Administrative,Clark School of Environment and Sustainability,Histpanic or Latino,Yes,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",35,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,,36,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,,36,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",36,Female
@@ -173,7 +173,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",36,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",36,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,,36,Female
-4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),Yes,,,,,36,Female
+4,Full time,Administrative,Clark School of Environment and Sustainability,Histpanic or Latino,Yes,,,,,36,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,,37,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,,37,Female
 4,Full time,Administrative,Clark School of Environment and Sustainability,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",37,Female
@@ -197,13 +197,13 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 4,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,,39,Female
 4,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",39,Female
 4,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
-4,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),Yes,,,,,39,Female
+4,Full time,Administrative,"Communication Arts, Languages, and Literature",Histpanic or Latino,Yes,,,,,39,Female
 4,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
 4,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
 4,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,,39,Female
 4,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
 3,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
-3,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
+3,Full time,Administrative,"Communication Arts, Languages, and Literature",Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
 3,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
 3,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
 3,Full time,Administrative,"Communication Arts, Languages, and Literature",White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",39,Female
@@ -220,7 +220,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 3,Full time,Administrative,Computer Science and Mathematics,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",40,Female
 3,Full time,Administrative,Computer Science and Mathematics,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",40,Female
 3,Full time,Administrative,Computer Science and Mathematics,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",40,Female
-3,Full time,Administrative,Computer Science and Mathematics,White (United States of America),Yes,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability","No, I Don't Have A Disability, Or A History/Record Of Having A Disability",40,Female
+3,Full time,Administrative,Computer Science and Mathematics,Histpanic or Latino,Yes,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability","No, I Don't Have A Disability, Or A History/Record Of Having A Disability",40,Female
 3,Full time,Administrative,Computer Science and Mathematics,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",40,Female
 3,Full time,Administrative,Computer Science and Mathematics,White (United States of America),,,,,,41,Female
 3,Full time,Administrative,Concurrent Enrollment,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",41,Female
@@ -237,7 +237,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 2,Full time,Administrative,Custodial Services,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",41,Female
 2,Full time,Administrative,Custodial Services,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",41,Female
 2,Full time,Classified,Custodial Services,White (United States of America),,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past","YES, I HAVE A DISABILITY (or previously had a disability)",42,Female
-2,Full time,Classified,Custodial Services,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",42,Female
+2,Full time,Classified,Custodial Services,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",42,Female
 2,Full time,Classified,Custodial Services,White (United States of America),,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past","No, I Don't Have A Disability, Or A History/Record Of Having A Disability",42,Female
 2,Full time,Classified,Custodial Services,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",42,Female
 2,Full time,Classified,Custodial Services,White (United States of America),,,,,,42,Female
@@ -282,12 +282,12 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 2,Full time,Classified,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",44,Female
 2,Full time,Classified,Education,White (United States of America),,,,,,44,Female
 2,Full time,Classified,Education,White (United States of America),,,,,,44,Female
-2,Full time,Classified,Education,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",44,Female
-2,Full time,Classified,Education,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",44,Female
+2,Full time,Classified,Education,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",44,Female
+2,Full time,Classified,Education,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",44,Female
 2,Full time,Classified,Education,White (United States of America),,,,,,45,Female
 2,Full time,Classified,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",45,Female
 2,Full time,Classified,Education,White (United States of America),,,,,,45,Female
-2,Full time,Classified,Education,White (United States of America),Yes,,,,,45,Female
+2,Full time,Classified,Education,Histpanic or Latino,Yes,,,,,45,Female
 2,Full time,Classified,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",45,Female
 2,Full time,Classified,Education,White (United States of America),,,,,,45,Female
 2,Full time,Classified,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",45,Female
@@ -297,12 +297,12 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 2,Full time,Faculty,Education,White (United States of America),,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,45,Female
 2,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",45,Female
 2,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",45,Female
-2,Full time,Faculty,Education,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Female
+2,Full time,Faculty,Education,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Female
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Female
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Female
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Female
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
-1,Full time,Faculty,Education,White (United States of America),Yes,,,"Yes, I have a disability, or have had one in the past","No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
+1,Full time,Faculty,Education,Histpanic or Latino,Yes,,,"Yes, I have a disability, or have had one in the past","No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
 1,Full time,Faculty,Education,White (United States of America),,,,,,46,Male
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
@@ -312,30 +312,30 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
-1,Full time,Faculty,Education,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
-1,Full time,Faculty,Education,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
+1,Full time,Faculty,Education,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",46,Male
+1,Full time,Faculty,Education,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
 1,Full time,Faculty,Education,White (United States of America),,,,,,47,Male
 1,Full time,Faculty,Education,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
-1,Full time,Faculty,Finance and Administration,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
+1,Full time,Faculty,Finance and Administration,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
 1,Full time,Faculty,Finance and Administration,White (United States of America),,,,,,47,Male
 1,Full time,Faculty,Finance and Administration,White (United States of America),,I AM NOT A VETERAN,,"Yes, I have a disability, or have had one in the past","No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
 1,Full time,Faculty,Finance and Administration,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
-1,Full time,Faculty,Finance and Administration,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
+1,Full time,Faculty,Finance and Administration,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
 1,Full time,Faculty,Finance and Administration,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
 1,Full time,Faculty,Financial Aid,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
 1,Full time,Faculty,Financial Aid,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
-1,Full time,Faculty,Financial Aid,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
+1,Full time,Faculty,Financial Aid,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
 1,Full time,Faculty,Financial Aid - Student Accounts,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",47,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",48,Male
-1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),Yes,,,,,48,Male
+1,Full time,Faculty,Graduate Program in Creative Writing,Histpanic or Latino,Yes,,,,,48,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",48,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",48,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",48,Male
-1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),Yes,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",48,Male
+1,Full time,Faculty,Graduate Program in Creative Writing,Histpanic or Latino,Yes,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",48,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,,48,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",48,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"YES, I HAVE A DISABILITY (or previously had a disability)",48,Male
-1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,48,Male
+1,Full time,Faculty,Graduate Program in Creative Writing,Histpanic or Latino,Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,48,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,,48,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",48,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",48,Male
@@ -350,11 +350,11 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",49,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",49,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,,49,Male
-1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",49,Male
+1,Full time,Faculty,Graduate Program in Creative Writing,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",49,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",49,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",50,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",50,Male
-1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),Yes,,,,,50,Male
+1,Full time,Faculty,Graduate Program in Creative Writing,Histpanic or Latino,Yes,,,,,50,Male
 1,Full time,Faculty,Graduate Program in Creative Writing,White (United States of America),,,,,,50,Male
 1,Full time,Faculty,Graduate Studies,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",50,Male
 1,Full time,Faculty,Graduate Studies,White (United States of America),,,,,,50,Male
@@ -368,7 +368,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 1,Full time,Faculty,Human Resources,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",50,Male
 1,Full time,Faculty,Human Resources,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",50,Male
 1,Full time,Faculty,Information Technology Services,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",50,Male
-1,Full time,Faculty,Information Technology Services,White (United States of America),Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",51,Male
+1,Full time,Faculty,Information Technology Services,Histpanic or Latino,Yes,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",51,Male
 1,Full time,Faculty,Information Technology Services,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",51,Male
 1,Full time,Faculty,Information Technology Services,White (United States of America),,,,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",51,Male
 1,Full time,Faculty,Information Technology Services,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability","No, I Don't Have A Disability, Or A History/Record Of Having A Disability",51,Male
@@ -385,13 +385,13 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 1,Part time,Faculty,IT Services - Enterprise Information Systems,White (United States of America),,,,,,51,Male
 1,Part time,Faculty,IT Services - Enterprise Information Systems,White (United States of America),,,,,,52,Male
 1,Part time,Faculty,IT Services - Front Line Support,White (United States of America),,,,,,52,Male
-1,Part time,Faculty,IT Services - Front Line Support,White (United States of America),Yes,,,,,52,Male
+1,Part time,Faculty,IT Services - Front Line Support,Histpanic or Latino,Yes,,,,,52,Male
 1,Part time,Faculty,IT Services - Front Line Support,White (United States of America),,,,,,52,Male
 1,Part time,Faculty,IT Services - Networking,White (United States of America),,,,,,52,Male
 1,Part time,Faculty,IT Services - Systems,White (United States of America),,,,,,52,Male
 1,Part time,Faculty,IT Services - Systems,White (United States of America),,,,,,52,Male
 1,Part time,Faculty,IT Services - Web Services,White (United States of America),,,,,,52,Male
-1,Part time,Faculty,IT Services - Web Services,White (United States of America),Yes,,,,,52,Male
+1,Part time,Faculty,IT Services - Web Services,Histpanic or Latino,Yes,,,,,52,Male
 1,Part time,Faculty,Library Services,White (United States of America),,,,,,52,Male
 1,Part time,Faculty,Library Services,White (United States of America),,,,,,52,Male
 1,Part time,Faculty,Library Services,White (United States of America),,,,,,52,Male
@@ -406,8 +406,8 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 1,Part time,Faculty,Marketing and Enrollment,White (United States of America),,,,,,53,Male
 1,Part time,Faculty,Marketing and Enrollment,White (United States of America),,,,,,53,Male
 1,Part time,Faculty,Marketing and Enrollment,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,53,Male
-0,Part time,Faculty,Marketing and Enrollment,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,53,Male
-0,Part time,Faculty,Marketing and Enrollment,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,53,Male
+1,Part time,Faculty,Marketing and Enrollment,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,53,Male
+1,Part time,Faculty,Marketing and Enrollment,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,53,Male
 0,Part time,Faculty,Marketing and Enrollment,White (United States of America),,I AM NOT A VETERAN,,I Don't Wish To Answer,,54,Male
 0,Part time,Faculty,Master of Behavioral Science,White (United States of America),,I AM NOT A VETERAN,,"Yes, I Have A Disability, Or Have A History/Record Of Having A Disability",,54,Male
 0,Part time,Faculty,Master of Behavioral Science,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,54,Male
@@ -440,12 +440,12 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),,,,,,56,Male
 0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,56,Male
 0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,56,Male
-0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),Yes,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,56,Male
+0,Part time,Faculty,Natural and Environmental Sciences,Histpanic or Latino,Yes,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,56,Male
 0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),,I AM NOT A VETERAN,,I Don't Wish To Answer,,56,Male
 0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,56,Male
 0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),,,,,,56,Male
 0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),,I AM NOT A VETERAN,,I Don't Wish To Answer,,56,Male
-0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),Yes,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,56,Male
+0,Part time,Faculty,Natural and Environmental Sciences,Histpanic or Latino,Yes,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,56,Male
 0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,57,Male
 0,Part time,Faculty,Natural and Environmental Sciences,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,57,Male
 0,Part time,Faculty,Office of Inclusivity,White (United States of America),,I AM NOT A VETERAN,,"No, I Don't Have A Disability, Or A History/Record Of Having A Disability",,57,Male
@@ -525,12 +525,12 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 0,Part time,Faculty Adjunct,Residence Life,,,,,,,64,Male
 0,Part time,Faculty Adjunct,Residence Life,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,64,Male
 0,Part time,Faculty Adjunct,Residence Life,,,I AM NOT A VETERAN,,"Yes, I have a disability, or have had one in the past",,64,Male
-0,Part time,Faculty Adjunct,Residence Life,,Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,64,Male
+0,Part time,Faculty Adjunct,Residence Life,Two or More Races (United States of America),Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,64,Male
 0,Part time,Faculty Adjunct,Residence Life,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,64,Male
 0,Part time,Faculty Adjunct,Residence Life,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,65,Male
 0,Part time,Faculty Adjunct,Residence Life,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,65,Male
 0,Part time,Faculty Adjunct,School of Business,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,66,Male
-0,Part time,Faculty Adjunct,School of Business,,Yes,I AM NOT A VETERAN,,"Yes, I have a disability, or have had one in the past",,66,Male
+0,Part time,Faculty Adjunct,School of Business,Two or More Races (United States of America),Yes,I AM NOT A VETERAN,,"Yes, I have a disability, or have had one in the past",,66,Male
 0,Part time,Faculty Adjunct,School of Business,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,66,Male
 0,Part time,Faculty Adjunct,School of Business,,,,,,,66,Male
 0,Part time,Faculty Adjunct,School of Business,,,"IDENTIFY AS A VETERAN, JUST NOT A PROTECTED VETERAN",,"No, I do not have a disability and have not had one in the past",,66,Male
@@ -546,7 +546,7 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 0,Part time,Faculty Adjunct,School of Business,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,68,Male
 0,Part time,Faculty Adjunct,School of Business,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,68,Male
 0,Part time,Faculty Adjunct,School of Business,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,69,Male
-0,Part time,Faculty Adjunct,School of Business,,Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,69,Male
+0,Part time,Faculty Adjunct,School of Business,Two or More Races (United States of America),Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,69,Male
 0,Part time,Faculty Adjunct,School of Business,,,I AM NOT A VETERAN,,"Yes, I have a disability, or have had one in the past",,70,Male
 0,Part time,Faculty Adjunct,School of Business,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,70,Male
 0,Part time,Faculty Adjunct,School of Business,,,,,,,70,Male
@@ -559,13 +559,13 @@ Years At Western,Time Type,Job Family,Department,Race/Ethnicity,Hispanic or Lati
 0,Part time,Faculty Adjunct,Student Affairs,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,72,Male
 0,Part time,Faculty Adjunct,Student Affairs,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,72,Male
 0,Part time,Faculty Adjunct,Student Retention and Completion,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,72,Male
-0,Part time,Faculty Adjunct,Trades,,Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,72,Male
+0,Part time,Faculty Adjunct,Trades,Two or More Races (United States of America),Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,72,Male
 0,Part time,Faculty Adjunct,Trades,,,I DO NOT WISH TO SELF-IDENTIFY,,I do not want to answer,,72,Male
 0,Part time,Faculty Adjunct,Trades,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,73,Male
 0,Part time,Faculty Adjunct,Trades,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,74,Male
 0,Part time,Faculty Adjunct,Trades,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,74,Male
-0,Part time,Faculty Adjunct,Trades,,Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,75,Male
-0,Part time,Faculty Adjunct,Trades,,Yes,I AM NOT A VETERAN,,"Yes, I have a disability, or have had one in the past",,75,Non Binary
+0,Part time,Faculty Adjunct,Trades,Two or More Races (United States of America),Yes,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,75,Male
+0,Part time,Faculty Adjunct,Trades,Two or More Races (United States of America),Yes,I AM NOT A VETERAN,,"Yes, I have a disability, or have had one in the past",,75,Non Binary
 0,Part time,Faculty Adjunct,Trades,,,I AM NOT A VETERAN,,"Yes, I have a disability, or have had one in the past",,77,Non Binary
 0,Part time,Faculty Adjunct,Transportation Services,,,I AM NOT A VETERAN,,"No, I do not have a disability and have not had one in the past",,78,Not declared
 0,Part time,Faculty Adjunct,,,,,,,,89,Not declared

@@ -159,14 +159,12 @@ def uploadDataset():
             newFileName = str(date.today()) + '.csv'
             if os.path.isfile(newFileName):
                 os.remove(newFileName)
-
             # Preprocess the excel file and convert to csv
             dir = os.path.dirname(__file__)
             df = pd.DataFrame(pd.read_excel(file.filename))
-            df = dropNameColumn(df)
             df = combineRaceAndEthnicity(df)
             df = reformatYearsColumn(df)
-            df = formatData(df)
+            df = modifyName(df, "Race/Ethnicity")
             destinationPath = os.path.join(dir, newFileName)
             if os.path.exists(destinationPath):
                 os.unlink(destinationPath)
@@ -180,7 +178,7 @@ def uploadDataset():
                 isAnnual = request.form['annual_dataset']
                 if isAnnual == 'on':
                     annualPath = './static/datasets/annualDatasets'
-                    shutil.copy2(destinationPath, os.path.join(annualPath, str(date.today().year)))
+                    shutil.copy2(destinationPath, os.path.join(annualPath, str(date.today().year)+'.csv'))
             
             # Remove files from main directory
             os.remove(newFileName)
@@ -194,10 +192,9 @@ def uploadDataset():
 @app.route('/deleteDataset', methods=['POST'])
 def delete_file():
     filename = request.json['filename']
-    if len(filename) > 4:
-        file_path = os.path.join('./static/datasets', filename)
-    else:
-        file_path = os.path.join('./static/datasets/annualDatasets', filename)
+    normal_file_path = os.path.join('./static/datasets', filename)
+    annual_file_path = os.path.join('./static/datasets/annualDatasets', filename)
+    file_path = normal_file_path if os.path.exists(normal_file_path) else annual_file_path
 
     if os.path.exists(file_path):
         os.remove(file_path)
