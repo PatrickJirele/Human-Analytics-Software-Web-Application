@@ -2,7 +2,16 @@ from appConfig import *
 
 dir = os.path.dirname(__file__)
 path = os.path.join(dir,'static', 'datasets', 'current.csv')
+displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
 df = pd.read_csv(path)
+
+def saveImage(fileName, fig):
+    normalPath = os.path.join(dir, 'static', 'graphs', fileName)
+    displayPath = os.path.join(displayedDirPath, fileName)
+    fig.savefig(normalPath, bbox_inches="tight")
+    if (os.path.exists(displayPath)):
+        fig.savefig(displayPath, bbox_inches="tight")
+    
 
 def singleCategoryGraph(type, columnName, fileName):
     dict = df[columnName].value_counts().to_dict()
@@ -46,11 +55,8 @@ def singleCategoryGraph(type, columnName, fileName):
             plt.xlabel(columnName)
             plt.ylabel("# of Employees")
             plt.title("# of Employees per " + columnName)
-    
+    saveImage(fileName,fig)
 
-
-    path = os.path.join(dir, 'static', 'graphs', fileName)
-    fig.savefig(path, bbox_inches="tight")
 
 def histogram(columnName, fileName):
     unsortedDict = df[columnName].value_counts().to_dict()
@@ -67,8 +73,7 @@ def histogram(columnName, fileName):
     plt.xlabel(columnName)
     plt.ylabel("# of Employees")
     plt.title("# of Employees per " + columnName)
-    path = os.path.join(dir, 'static', 'graphs', fileName)
-    fig.savefig(path, bbox_inches="tight")
+    saveImage(fileName, fig)
 
 
 def stackedBarChart(mainColumnName, secondaryColumnName, fileName):

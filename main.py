@@ -2,7 +2,7 @@ from appConfig import *
 from preprocess import *
 from createGraphs import *
 
-# GLOBAL VARIABLES - START
+# ____GLOBAL_VARIABLES_START____
 
 app = Flask(__name__, static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usersDB.db'
@@ -14,15 +14,20 @@ db = SQLAlchemy(app)
 cipher = SimpleCrypt()
 cipher.init_app(app)
 
-# GLOBAL VARIABLES - END
+# ____GLOBAL_VARIABLES_END____
 
+# ____CLASSES_START____
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)
     admin = db.Column(db.Boolean, default=False, nullable=False)
+    
+# ____CLASSES_END____
 
+
+# ____HELPER_FUNCTIONS_START____
 
 #RETURNS all csv files from datasets dir AND all files from the annualDatasets dir
 def getDatasets():
@@ -36,8 +41,6 @@ def getImgs():
     selected = [f for f in os.listdir('./static/currentlyDisplayed') if os.path.isfile(os.path.join('./static/currentlyDisplayed', f))] #sends currently displayed imaged to uploadGraphs.html
     return images, selected
 
-
-
 #Validates if entered email is in correct format
 def check(email):
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -48,6 +51,7 @@ def check(email):
         print("Invalid")
         return False
 
+# Returns all selected categories for pie, treemap, and bar charts.
 def getSingleCategories(request):
     categories = []
     categories.append('Time Type') if (request.form.get('timeType')) else None
@@ -57,6 +61,7 @@ def getSingleCategories(request):
     categories.append('Gender') if (request.form.get('gender')) else None
     return categories
 
+# Returns all selected categories for histogram charts.
 def getHistogramCategories(request):
     categories = []
     categories.append('Years At Western') if (request.form.get('yearsAtWestern')) else None
@@ -64,9 +69,14 @@ def getHistogramCategories(request):
     print(request.form)
     return categories
 
+# Sets the name that will be used for chart image files.
 def makeImageName(category, type, isUnique):
     return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
     
+# ____HELPER_FUNCTIONS_END____
+
+
+# ____ROUTES_START____
 
 @app.route('/')
 def home():
@@ -176,6 +186,24 @@ def uploadDataset():
             os.remove(newFileName)
             os.remove(file.filename)
             dataset_files, annual_files = getDatasets()
+            
+    return render_template('uploadDataset.html', dataset_files=dataset_files, annual_files=annual_files)
+
+
+@login_required
+@app.route('/deleteDataset', methods=['POST'])
+def delete_file():
+    filename = request.json['filename']
+    if len(filename) > 4:
+        file_path = os.path.join('./static/datasets', filename)
+    else:
+        file_path = os.path.join('./static/datasets/annualDatasets', filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'File not found'})
 
 @login_required
 @app.route('/createGraph', methods = ['GET', 'POST'])
@@ -201,13 +229,6 @@ def createGraph():
 @login_required
 @app.route("/uploadGraphs", methods = ['GET', 'POST'])
 def selectGraphsForDashboard():
-    def getImgs():
-        images_dir = './static/graphs'
-        selected_dir = './static/currentlyDisplayed'
-        images = [f for f in os.listdir(images_dir) if os.path.isfile(os.path.join(images_dir, f))] #Sends all images in graphs to uploadGraphs.html
-        selected = [f for f in os.listdir(selected_dir) if os.path.isfile(os.path.join(selected_dir, f))] #sends currently displayed imaged to uploadGraphs.html
-        return images, selected
-
     images, selected = getImgs()
 
     if request.method == "POST":
@@ -225,6 +246,9 @@ def selectGraphsForDashboard():
                 os.remove(img_to_rm)
 
         updated_Images, updated_Selected = getImgs()
+        flash('Graphs selected successfully', 'success')
+        return flask.redirect('/uploadGraphs')
+        #return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
         return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
 
 
@@ -244,6 +268,8 @@ def delete(imgName):
         return flask.redirect('/uploadGraphs')
 
     return flask.redirect('/uploadGraphs')
+
+# ____ROUTES_END____
 
 if __name__ == "__main__":
     app.run(debug=True)
