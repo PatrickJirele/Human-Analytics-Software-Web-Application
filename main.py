@@ -24,6 +24,20 @@ class User(UserMixin, db.Model):
     admin = db.Column(db.Boolean, default=False, nullable=False)
 
 
+#RETURNS all csv files from datasets dir AND all files from the annualDatasets dir
+def getDatasets():
+    dataset_files = [f for f in os.listdir('./static/datasets') if f.endswith('.csv')]
+    annual_files = [f for f in os.listdir('./static/datasets/annualDatasets')]
+    return dataset_files, annual_files
+
+#RETURNS all graphs AND all currently displayed graphs
+def getImgs():
+    images = [f for f in os.listdir('./static/graphs') if os.path.isfile(os.path.join('./static/graphs', f))] #Sends all images in graphs to uploadGraphs.html
+    selected = [f for f in os.listdir('./static/currentlyDisplayed') if os.path.isfile(os.path.join('./static/currentlyDisplayed', f))] #sends currently displayed imaged to uploadGraphs.html
+    return images, selected
+
+
+
 #Validates if entered email is in correct format
 def check(email):
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
@@ -125,6 +139,7 @@ def create():
 @login_required
 @app.route('/uploadDataset', methods = ['GET', 'POST'])
 def uploadDataset():
+    dataset_files, annual_files = getDatasets()
     if request.method == 'POST':
         if request.files['file']:
             # Get the excel file from website upload
@@ -138,29 +153,29 @@ def uploadDataset():
             # Preprocess the excel file and convert to csv
             dir = os.path.dirname(__file__)
             df = pd.DataFrame(pd.read_excel(file.filename))
+            df = dropNameColumn(df)
             df = combineRaceAndEthnicity(df)
             df = reformatYearsColumn(df)
-            df = modifyName(df, "Race/Ethnicity")
+            df = formatData(df)
             destinationPath = os.path.join(dir, newFileName)
             if os.path.exists(destinationPath):
                 os.unlink(destinationPath)
             df.to_csv(destinationPath, index=False)
 
-            # save the csv file to datasets directory
+            # Save the csv file to datasets directory
             shutil.copy2(newFileName, destination)
-            # make a current copy to use as the current dataset
+            # Make a current copy to use as the current dataset
             shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
             if 'annual_dataset' in request.form:
-                annualPath = './static/datasets/annualDatasets'
-                shutil.copy2(destinationPath, os.path.join(annualPath, str(date.today().year)))
+                isAnnual = request.form['annual_dataset']
+                if isAnnual == 'on':
+                    annualPath = './static/datasets/annualDatasets'
+                    shutil.copy2(destinationPath, os.path.join(annualPath, str(date.today().year)))
             
             # Remove files from main directory
             os.remove(newFileName)
             os.remove(file.filename)
-
-
-
-    return render_template('uploadDataset.html')
+            dataset_files, annual_files = getDatasets()
 
 @login_required
 @app.route('/createGraph', methods = ['GET', 'POST'])
