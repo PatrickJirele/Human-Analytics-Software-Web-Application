@@ -80,7 +80,8 @@ def makeImageName(category, type, isUnique):
 
 @app.route('/')
 def home():
-    return render_template('home.html')
+    _, graphsToDisplay = getImgs()
+    return render_template('home.html', graphs=graphsToDisplay)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
@@ -120,7 +121,6 @@ def updatePass():
             return render_template('updatePassword.html')
         updatedUser = User.query.filter_by(id=current_user.id).first()
         updatedUser.password = cipher.encrypt(request.form['newP'])
-        #updatedUser.password = request.form['newP']
         db.session.commit()
         return flask.redirect('/')
     return render_template('updatePassword.html')
@@ -130,7 +130,6 @@ def updatePass():
 def create():
     if request.method == 'POST':
         email = request.form['email']
-        #password = request.form['pWord']
         password = cipher.encrypt(request.form['pWord'])
         if check(email) == False:
             return render_template('createAdmin.html'), 'Invalid Email Address'

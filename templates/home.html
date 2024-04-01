@@ -1,6 +1,28 @@
 {% extends 'base.html' %}
 {% block content %}
+<style>
+    .graph-container-table{
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .graph-container-row{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+</style>
     <body>
-        <img src="static/workday.png" width="1525" height="725">
+    {% if graphs %}
+    <table class="graph-container-table">
+        {% for graph in graphs %}
+        <tr class="graph-container-row">
+            <td class="graph-container-cell">
+                <img src="./static/currentlyDisplayed/{{graph}}"> <!-- width="1525" height="725" -->
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
     </body>
 {% endblock %}

@@ -25,6 +25,17 @@
   .delete-form {
     margin-top: 10px;
   }
+  .submit-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    <!-- border: 3px solid green; -->
+  }
+  .submit-btn {
+    height:100px;
+    width:200px;
+  }
 </style>
 </head>
 <body>
@@ -82,7 +93,9 @@
   }
 </script>
 
-<button type="button" onclick="submitSelectedGraphs();">Submit</button>
+<div class="submit-container">
+  <button type="button" onclick="submitSelectedGraphs();" class="submit-btn">Submit</button>
+</div>
 
 </body>
 {% endblock %}
