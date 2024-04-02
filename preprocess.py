@@ -23,10 +23,17 @@ def combineRaceAndEthnicity(df):
     for i in range(len(df)):
         race = df.loc[i, 'Race/Ethnicity']
         isHispanicLatino = (df.loc[i, 'Hispanic or Latino'] == 'Yes')
-        if (race == 'White (United States of America)' and isHispanicLatino):
+        if ((race == 'White (United States of America)' or race == 'N/A') and isHispanicLatino):
             df.loc[i,'Race/Ethnicity'] = 'Histpanic or Latino'
         elif (isHispanicLatino):
             df.loc[i,'Race/Ethnicity'] = 'Two or More Races (United States of America)'
+        try:
+            value = df.loc[i, 'Race/Ethnicity']
+            value = value.replace('(United States of America)', '')
+            df.loc[i, 'Race/Ethnicity'] = value
+        except:
+            pass
+    df = df.drop(columns=['Hispanic or Latino'])
     return df
 
 # PRECONDITION:
@@ -34,7 +41,11 @@ def combineRaceAndEthnicity(df):
 def modifyName(df, columnName):
     newName = columnName
     if "/" in newName:
-        newName = newName.replace("/", "_")
+        newName = newName.replace("/", " ")
     df.rename(columns={columnName:newName}, inplace=True)
+    return df
+
+def removeNaN(df):
+    df = df.fillna('Not Specified')
     return df
 

@@ -57,7 +57,7 @@ def getSingleCategories(request):
     categories.append('Time Type') if (request.form.get('timeType')) else None
     categories.append('Job Family') if (request.form.get('jobFamily')) else None
     categories.append('Department') if (request.form.get('department')) else None
-    categories.append('Race_Ethnicity') if (request.form.get('raceEthnicity')) else None
+    categories.append('Race Ethnicity') if (request.form.get('raceEthnicity')) else None
     categories.append('Gender') if (request.form.get('gender')) else None
     return categories
 
@@ -161,6 +161,7 @@ def uploadDataset():
             # Preprocess the excel file and convert to csv
             dir = os.path.dirname(__file__)
             df = pd.DataFrame(pd.read_excel(file.filename))
+            df = removeNaN(df)
             df = combineRaceAndEthnicity(df)
             df = reformatYearsColumn(df)
             df = modifyName(df, "Race/Ethnicity")
@@ -217,6 +218,11 @@ def createGraph():
                 for category in categories:
                     imageName = makeImageName(category, chartType, ("overwrite" in request.form))
                     histogram(category, imageName)
+            if (chartType == 'stackedBar'):
+                primaryCategory = request.form.get('primary')
+                secondaryCategory = request.form.get('secondary')
+                imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" in request.form))
+                stackedBarChart(primaryCategory, secondaryCategory, imageName)
             return redirect("/uploadGraphs")
         except Exception as e:
             print(traceback.format_exc())
