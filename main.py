@@ -24,16 +24,18 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(50), nullable=False)
     admin = db.Column(db.Boolean, default=False, nullable=False)
 
-class Graph(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String(100), nullable=False)
-    title = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.String(250), nullable=True)
-    group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
 
 class GraphGroup(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     group_name = db.Column(db.String(100))
+    graphs = db.relationship('Graphs', backref='GraphGroup')
+
+class Graphs(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(250), nullable=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('graph_group.id'), nullable=True)
 
 
 
@@ -87,9 +89,25 @@ def getHistogramCategories(request):
 def makeImageName(category, type, isUnique):
     return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
 
-def addGraphToDb(path, title, description="", groupID=None):
-    
-    
+def addGraphToDb(path, title, description="", group_id=None):
+    if group_id == None:
+        temp = Graphs(path=path, title=title, description=description)
+    else:
+        temp = Graphs(path=path, title=title, description=description, group_id=None)
+
+    print(title + "\n")
+    checker = Graphs.query.filter_by(title=title).first()
+    if checker != None:
+        print("graph with same name is in db already\n\n")
+    else:
+        db.session.add(temp)
+        db.session.commit()
+        print("graph uploaded to database")
+
+    return(exit(1))
+
+
+
 # ____HELPER_FUNCTIONS_END____
 
 
@@ -234,6 +252,7 @@ def createGraph():
                 for category in categories:
                     imageName = makeImageName(category, chartType, ("overwrite" in request.form))
                     histogram(category, imageName)
+            addGraphToDb(path="./static/graphs", title=imageName, description="TEST")
             return redirect("/uploadGraphs")
         except Exception as e:
             print(traceback.format_exc())
