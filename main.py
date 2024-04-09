@@ -23,7 +23,21 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)
     admin = db.Column(db.Boolean, default=False, nullable=False)
-    
+
+class Graph(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(250), nullable=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
+
+class GraphGroup(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    group_name = db.Column(db.String(100))
+
+
+
+
 # ____CLASSES_END____
 
 
@@ -72,6 +86,9 @@ def getHistogramCategories(request):
 # Sets the name that will be used for chart image files.
 def makeImageName(category, type, isUnique):
     return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
+
+def addGraphToDb(path, title, description="", groupID=None):
+    
     
 # ____HELPER_FUNCTIONS_END____
 
