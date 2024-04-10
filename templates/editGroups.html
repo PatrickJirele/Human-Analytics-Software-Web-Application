@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% block content %}
+<!--<head>-->
+<!--    <title>Edit Groups</title>-->
+<!--    <style>-->
+<!--        .group-container {-->
+<!--            border: 1px solid #ccc;-->
+<!--            padding: 20px;-->
+<!--            margin-bottom: 30px;-->
+<!--        }-->
+<!--        .graph-container {-->
+<!--            display: inline-block;-->
+<!--            margin-right: 20px;-->
+<!--            text-align: center;-->
+<!--        }-->
+<!--        .thumbnail-img {-->
+<!--            width: 200px;-->
+<!--            height: 150px;-->
+<!--            object-fit: cover;-->
+<!--        }-->
+<!--        .title-container,-->
+<!--        .description-container {-->
+<!--            margin-top: 10px;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <h1>Edit Groups</h1>-->
+<!--    {% for group in graphGroups %}-->
+<!--    <div class="group-container">-->
+<!--        <h2>Group Name: {{ group.group_name }}</h2>-->
+<!--        {% for graph in group.graphs %}-->
+<!--        <div class="graph-container">-->
+<!--            <img src="{{ graph.path }}" class="thumbnail-img">-->
+<!--            <div class="title-container">Title: {{ graph.title }}</div>-->
+<!--            <div class="description-container">Description: {{ graph.description }}</div>-->
+<!--        </div>-->
+<!--        {% endfor %}-->
+<!--    </div>-->
+<!--    {% endfor %}-->
+<!--</body>-->
+
+<head>
+    <title>Edit Groups</title>
+    <style>
+        .group-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .graph-container {
+            display: inline-block;
+            margin-right: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .thumbnail-img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+        }
+        .title-container,
+        .description-container {
+            margin-top: 10px;
+        }
+        .remove-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .edit-button {
+            margin-left: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .add-graph-section {
+            margin-top: 20px;
+        }
+        .edit-name-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+        .edit-name-modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit Groups</h1>
+    {% for group in graphGroups %}
+    <div class="group-container" data-group-id="{{ group.id }}">
+        <h2>Group Name: {{ group.group_name }}
+            <button class="edit-button">Edit Name</button>
+        </h2>
+        <div id="editNameModal-{{ group.id }}" class="edit-name-modal">
+            <div class="edit-name-modal-content">
+                <span class="close-button">&times;</span>
+                <h3>Edit Group Name</h3>
+                <form action="{{ url_for('update_group_name', group_id=group.id) }}" method="post">
+                    <label for="new_name">New Name:</label>
+                    <input type="text" id="new_name" name="new_name" value="{{ group.group_name }}" required>
+                    <button type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+
+        {% for graph in group.graphs %}
+        <div class="graph-container" data-graph-id="{{ graph.id }}">
+            <img src="{{ graph.path }}" class="thumbnail-img">
+            <div class="title-container">Title: {{ graph.title }}</div>
+            <div class="description-container">Description: {{ graph.description }}</div>
+            <button class="remove-button">Remove</button>
+        </div>
+        {% endfor %}
+        <div class="add-graph-section">
+            <h3>Add Existing Graph To Group</h3>
+            <form action="{{ url_for('add_graph_to_group', group_id=group.id) }}" method="post">
+                <label for="available_graphs">Select Graph:</label>
+                <select id="available_graphs" name="available_graphs" required>
+                    <option value="">Select a graph</option>
+                    {% for graph in available_graphs %}
+                    {% if graph not in group.graphs %}
+                    <option value="{{ graph.id }}">{{ graph.title }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                <button type="submit">Add Graph</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+    <script>
+        // JavaScript code to handle the "Edit Name" button
+        var editNameModals = document.querySelectorAll(".edit-name-modal");
+        var editButtons = document.querySelectorAll(".edit-button");
+        var closeButtons = document.querySelectorAll(".close-button");
+
+        editButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                editNameModals[index].style.display = "block";
+            });
+        });
+
+        closeButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                editNameModals[index].style.display = "none";
+            });
+        });
+
+        window.addEventListener("click", function(event) {
+            editNameModals.forEach(function(modal) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        });
+
+
+        // JavaScript code to handle the "Remove" button
+        var removeButtons = document.querySelectorAll(".remove-button");
+
+        removeButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                var graphContainer = this.parentNode;
+                var graphId = graphContainer.dataset.graphId;
+                var groupId = graphContainer.parentNode.dataset.groupId;
+
+                fetch(`{{ url_for('remove_graph') }}?graph_id=${graphId}&group_id=${groupId}`, {
+                    method: 'DELETE'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        graphContainer.remove();
+                    } else {
+                        alert('Error removing graph');
+                    }
+                })
+                .catch(function(error) {
+                    alert('Error removing graph: ' + error);
+                });
+            });
+        });
+    </script>
+</body>
+{% endblock %}

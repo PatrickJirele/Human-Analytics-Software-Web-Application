@@ -25,17 +25,31 @@ class User(UserMixin, db.Model):
     admin = db.Column(db.Boolean, default=False, nullable=False)
 
 
+# class GraphGroup(db.Model):
+#     __tablename__ = 'graphgroup'
+#     id = db.Column(db.Integer, primary_key=True)
+#     group_name = db.Column(db.String(100))
+#     graphs = db.relationship('Graphs', backref='GraphGroup')
+#
+# class Graphs(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     path = db.Column(db.String(100), nullable=False)
+#     title = db.Column(db.String(50), nullable=False)
+#     description = db.Column(db.String(250), nullable=True)
+#     group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
+
 class GraphGroup(db.Model):
+    __tablename__ = 'graphgroup'
     id = db.Column(db.Integer, primary_key=True)
     group_name = db.Column(db.String(100))
-    graphs = db.relationship('Graphs', backref='GraphGroup')
+    graphs = db.relationship('Graphs', backref='GraphGroup', lazy='dynamic')
 
 class Graphs(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(100), nullable=False)
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(250), nullable=True)
-    group_id = db.Column(db.Integer, db.ForeignKey('graph_group.id'), nullable=True)
+    group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
 
 
 
@@ -103,8 +117,6 @@ def addGraphToDb(path, title, description="", group_id=None):
         db.session.add(temp)
         db.session.commit()
         print("graph uploaded to database")
-
-    return(exit(1))
 
 
 
@@ -258,7 +270,8 @@ def createGraph():
                 secondaryCategory = request.form.get('secondary')
                 imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" in request.form))
                 stackedBarChart(primaryCategory, secondaryCategory, imageName)
-            addGraphToDb(path="./static/graphs", title=imageName, description="TEST")
+
+            addGraphToDb(path="./static/graphs/"+imageName, title=imageName.replace('.png', ''), description="TEST")
             return redirect("/uploadGraphs")
         except Exception as e:
             print(traceback.format_exc())
@@ -286,7 +299,6 @@ def selectGraphsForDashboard():
         updated_Images, updated_Selected = getImgs()
         flash('Graphs selected successfully', 'success')
         return flask.redirect('/uploadGraphs')
-        #return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
         return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
 
 
@@ -294,7 +306,7 @@ def selectGraphsForDashboard():
 
 @login_required
 @app.route('/deleteGraph/<imgName>', methods = ['GET', 'POST'])
-def delete(imgName):
+def deleteGraph(imgName):
     if request.method == 'POST':
         graphDir = './static/graphs'
         currDir = './static/currentlyDisplayed'
@@ -303,9 +315,83 @@ def delete(imgName):
         if os.path.isfile(os.path.join(currDir, imgName)):
             img_to_rm = os.path.join(currDir, imgName)
             os.remove(img_to_rm)
+
+        graphToDelete = Graphs.query.filter_by(path=graphDir+'/'+imgName).first()
+
+        if graphToDelete:
+            db.session.delete(graphToDelete)
+            db.session.commit()
+            return redirect('/uploadGraphs')
+        else:
+            return "Graph not found", 404
         return flask.redirect('/uploadGraphs')
 
     return flask.redirect('/uploadGraphs')
+
+@login_required
+@app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
+def editGraph(imgName):
+    graphDir = './static/graphs/' + imgName
+    currDir = './static/currentlyDisplayed'
+    graphToEdit = Graphs.query.filter_by(path=graphDir).first()
+
+    if request.method == 'POST':
+        graphToEdit.title = request.form['title']
+        graphToEdit.description = request.form['description']
+        db.session.commit()
+        return redirect('/uploadGraphs')
+
+    return render_template('editGraph.html', graphToEdit=graphToEdit)
+
+
+@login_required
+@app.route("/editGroups", methods = ['GET', 'POST'])
+def editGroups():
+    graphs_by_group = GraphGroup.query.all()
+    # for graph_group in graphs_by_group:
+    #     print(f"GraphGroup: {graph_group.group_name}")
+    #     for graph in graph_group.graphs:
+    #         print(f"  Graph Path: {graph.path}")
+
+    available_graphs = Graphs.query.filter(~Graphs.id.in_(
+        db.session.query(Graphs.id)
+        .join(Graphs.GraphGroup)
+        .filter(GraphGroup.id == GraphGroup.id)
+    )).all()
+
+    return render_template('editGroups.html', graphGroups=graphs_by_group, available_graphs=available_graphs)
+
+
+@login_required
+@app.route('/add-graph-to-group/<group_id>', methods=['POST'])
+def add_graph_to_group(group_id):
+    graph_id = request.form['available_graphs']
+    graph = Graphs.query.get(graph_id)
+    group = GraphGroup.query.get(group_id)
+    group.graphs.append(graph)
+    db.session.commit()
+    return redirect('/editGroups')
+
+@login_required
+@app.route('/update-group-name/<int:group_id>', methods=['POST'])
+def update_group_name(group_id):
+    group = GraphGroup.query.get(group_id)
+    new_name = request.form['new_name']
+
+    group.group_name = new_name
+    db.session.commit()
+    return redirect('/editGroups')
+
+
+@app.route('/remove-graph', methods=['DELETE'])
+def remove_graph():
+    graph_id = request.args.get('graph_id')
+    group_id = request.args.get('group_id')
+
+    graph = Graphs.query.get(graph_id)
+    graph.group_id = None
+    db.session.commit()
+    return '', 204
 
 # ____ROUTES_END____
 
