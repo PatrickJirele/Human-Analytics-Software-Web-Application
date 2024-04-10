@@ -3,7 +3,7 @@ from appConfig import *
 dir = os.path.dirname(__file__)
 path = os.path.join(dir,'static', 'datasets', 'current.csv')
 displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
-df = pd.read_csv(path)
+dfMain = pd.read_csv(path)
 
 def saveImage(fileName, fig):
     normalPath = os.path.join(dir, 'static', 'graphs', fileName)
@@ -12,28 +12,30 @@ def saveImage(fileName, fig):
     if (os.path.exists(displayPath)):
         fig.savefig(displayPath, bbox_inches="tight")
     
-
-def singleCategoryGraph(type, columnName, fileName):
+def createOther(df, columnName):
     dict = df[columnName].value_counts().to_dict()
     keys = list(dict.keys())
     vals = list(dict.values())
     otherCount = 0
-    otheredRows = []
+    otheredKeys = []
     for i, val in enumerate(vals):
         num = int(val)
         if num < OTHER_MIN_COUNT or ((len(df) - num) / len(df)) > (100 - OTHER_MIN_PERCENT) / 100:
             otherCount += num
-            otheredRows.append(i)
-
-    otheredRows.reverse()
-    for i in otheredRows:
-        del vals[i]
-        del keys[i]
- 
-    if (otherCount > 0):
-        keys.append("Other")
-        vals.append(otherCount)
+            otheredKeys.append(keys[i])
+            
+    for i in range(len(df)):
+        value = df.loc[i,columnName]
+        if value in otheredKeys:
+            df.loc[i,columnName]= "Other"
+    return df
     
+    
+def singleCategoryGraph(type, columnName, fileName):
+    df = createOther(dfMain.copy(),columnName)
+    dict = df[columnName].value_counts().to_dict()
+    keys = list(dict.keys())
+    vals = list(dict.values())
     fig, ax = plt.subplots() 
     match (type):
         case "pie":
@@ -51,14 +53,19 @@ def singleCategoryGraph(type, columnName, fileName):
             plt.axis("off")
             plt.title("% of Employees per " + columnName)
         case "bar":
-            plt.bar(keys, vals)
+            specialCase = (columnName == 'Race Ethnicity' or columnName == 'Department')
+            width = 0.8 if not specialCase else 0.6
+            plt.bar(keys, vals, width = width)
             plt.xlabel(columnName)
             plt.ylabel("# of Employees")
             plt.title("# of Employees per " + columnName)
+            if specialCase:
+                plt.xticks(rotation=45, ha='right')
     saveImage(fileName,fig)
 
 
 def histogram(columnName, fileName):
+    df = dfMain.copy()
     unsortedDict = df[columnName].value_counts().to_dict()
     keysMax = max(list(unsortedDict.keys()))
     keysMin = min(list(unsortedDict.keys()))
@@ -77,10 +84,48 @@ def histogram(columnName, fileName):
 
 
 def stackedBarChart(mainColumnName, secondaryColumnName, fileName):
-    # get keys in main column
-    # for each key:
-        # go through each row in df looking for rows with key value in column
-        # add to list
-        # list should be of format ['key', val1, val2, ... , valn]
-    #
-    None
+    df = createOther(dfMain.copy(),mainColumnName)
+    df = createOther(df,secondaryColumnName)
+    dict = {}
+    subDict = {}
+    xLabels = df[mainColumnName].unique()
+    xLabels = ['N/A' if pd.isna(i) else i for i in xLabels]
+    yLabels = df[secondaryColumnName].unique()
+    yLabels = ['N/A' if pd.isna(i) else i for i in yLabels]
+    
+    for value in yLabels:
+        subDict[value] = 0
+    
+    for value in xLabels:
+        valuesDict = {}
+        valuesDict['values'] = subDict.copy()
+        dict[value] = valuesDict
+    
+    for index in df.index:
+        mainValue = df[mainColumnName][index]
+        secondaryValue = df[secondaryColumnName][index]
+        dict[mainValue]['values'][secondaryValue] += 1
+        
+    values = []
+    for yLabel in yLabels:
+        values.append([dict[xLabel]['values'][yLabel] for xLabel in xLabels])
+    print(values)
+    
+    fig, ax = plt.subplots()
+    bottomTotal = [0 for _ in range(len(xLabels))]
+    specialCase = (mainColumnName == 'Race Ethnicity' or mainColumnName == 'Department')
+    width = 0.8 if not specialCase else 0.6
+    for i in range(len(yLabels)):
+        ax.bar(xLabels, values[i], bottom=bottomTotal, label=str(yLabels[i]), width=width)
+        for x in range(len(bottomTotal)):
+            bottomTotal[x] += values[i][x]
+    plt.xlabel(mainColumnName)
+    ax.set_ylabel('# of Employees')
+    ax.set_title('Breakdown of # of Employees per '+ mainColumnName + ' by ' + secondaryColumnName)
+    if (specialCase):
+        plt.xticks(rotation=45, ha='right')
+    xLoc = 1
+    yLoc = 0.5 if secondaryColumnName != 'Department' else 0
+    plt.legend(loc=(xLoc, yLoc), bbox_transform=plt.gcf().transFigure)
+    saveImage(fileName, fig)
+    
