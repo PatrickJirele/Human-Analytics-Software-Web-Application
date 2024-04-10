@@ -35,6 +35,7 @@
     height:100px;
     width:200px;
   }
+
 </style>
 </head>
 <body>
@@ -55,7 +56,7 @@
     <div class="delete-form">
       <form action="/deleteGraph/{{ image }}" method="POST">
         <input type="hidden" name="image_name" value="{{ image }}">
-        <input type="submit" value="Delete">
+        <input type="submit" value="Delete" class="delete-button">
       </form>
     </div>
     <div class="edit-form">

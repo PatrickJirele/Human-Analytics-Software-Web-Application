@@ -25,19 +25,6 @@ class User(UserMixin, db.Model):
     admin = db.Column(db.Boolean, default=False, nullable=False)
 
 
-# class GraphGroup(db.Model):
-#     __tablename__ = 'graphgroup'
-#     id = db.Column(db.Integer, primary_key=True)
-#     group_name = db.Column(db.String(100))
-#     graphs = db.relationship('Graphs', backref='GraphGroup')
-#
-# class Graphs(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     path = db.Column(db.String(100), nullable=False)
-#     title = db.Column(db.String(50), nullable=False)
-#     description = db.Column(db.String(250), nullable=True)
-#     group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
-
 class GraphGroup(db.Model):
     __tablename__ = 'graphgroup'
     id = db.Column(db.Integer, primary_key=True)
@@ -348,10 +335,6 @@ def editGraph(imgName):
 @app.route("/editGroups", methods = ['GET', 'POST'])
 def editGroups():
     graphs_by_group = GraphGroup.query.all()
-    # for graph_group in graphs_by_group:
-    #     print(f"GraphGroup: {graph_group.group_name}")
-    #     for graph in graph_group.graphs:
-    #         print(f"  Graph Path: {graph.path}")
 
     available_graphs = Graphs.query.filter(~Graphs.id.in_(
         db.session.query(Graphs.id)
