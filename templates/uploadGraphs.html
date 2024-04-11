@@ -56,7 +56,7 @@
     <div class="delete-form">
       <form action="/deleteGraph/{{ image }}" method="POST">
         <input type="hidden" name="image_name" value="{{ image }}">
-        <input type="submit" value="Delete" class="delete-button">
+        <input type="submit" value="Delete">
       </form>
     </div>
     <div class="edit-form">
@@ -96,7 +96,8 @@
         }).fail(function(jqXHR, textStatus, errorThrown) {
             alert('Error selecting graphs: ' + textStatus);
         });
-  }
+  };
+
 </script>
 
 <div class="submit-container">

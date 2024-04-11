@@ -315,6 +315,7 @@ def deleteGraph(imgName):
 
     return flask.redirect('/uploadGraphs')
 
+
 @login_required
 @app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
 def editGraph(imgName):
