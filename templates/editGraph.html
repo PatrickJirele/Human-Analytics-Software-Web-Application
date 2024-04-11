@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<head>
+    <title>Edit Graph</title>
+</head>
+<body>
+    <h1>Edit Graph</h1>
+    <form method="POST">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title" value="{{ graphToEdit.title }}"><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description">{{ graphToEdit.description }}</textarea><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+{% endblock %}
