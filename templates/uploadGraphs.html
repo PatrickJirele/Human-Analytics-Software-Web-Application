@@ -35,7 +35,17 @@
     height:100px;
     width:200px;
   }
-
+  .delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -52,12 +62,16 @@
 {% endwith %}
 <div id="checkboxes">
   {% for image in images %}
+<!--  <div class="image-container">-->
+<!--    <div class="delete-form">-->
+<!--      <form action="/deleteGraph/{{ image }}" method="POST">-->
+<!--        <input type="hidden" name="image_name" value="{{ image }}">-->
+<!--        <input type="submit" value="Delete">-->
+<!--      </form>-->
+<!--    </div>-->
   <div class="image-container">
     <div class="delete-form">
-      <form action="/deleteGraph/{{ image }}" method="POST">
-        <input type="hidden" name="image_name" value="{{ image }}">
-        <input type="submit" value="Delete">
-      </form>
+        <button type="submit" class="delete-button">Delete</button>
     </div>
     <div class="edit-form">
       <form action="/editGraph/{{ image }}" method="GET">
@@ -97,6 +111,36 @@
             alert('Error selecting graphs: ' + textStatus);
         });
   };
+
+
+
+  // JavaScript code to handle the "Delete" button
+var deleteButtons = document.querySelectorAll(".delete-button");
+
+deleteButtons.forEach(function(button) {
+    button.addEventListener("click", function() {
+        var imageContainer = this.parentNode.parentNode;
+        var imageName = imageContainer.querySelector("input[name='images[]']").value;
+
+        fetch(`/deleteGraph/${imageName}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image_name: imageName })
+        })
+        .then(function(response) {
+            if (response.ok) {
+                imageContainer.remove();
+            } else {
+                alert('Error deleting graph');
+            }
+        })
+        .catch(function(error) {
+            alert('Error deleting graph: ' + error);
+        });
+    });
+});
 
 </script>
 
