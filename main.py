@@ -38,9 +38,6 @@ class Graphs(db.Model):
     description = db.Column(db.String(250), nullable=True)
     group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
 
-
-
-
 # ____CLASSES_END____
 
 
@@ -288,7 +285,6 @@ def selectGraphsForDashboard():
         return flask.redirect('/uploadGraphs')
         return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
 
-
     return render_template('uploadGraphs.html', images=images, selected = selected)
 
 @login_required
@@ -315,12 +311,10 @@ def deleteGraph(imgName):
 
     return flask.redirect('/uploadGraphs')
 
-
 @login_required
 @app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
 def editGraph(imgName):
     graphDir = './static/graphs/' + imgName
-    currDir = './static/currentlyDisplayed'
     graphToEdit = Graphs.query.filter_by(path=graphDir).first()
 
     if request.method == 'POST':
@@ -330,7 +324,6 @@ def editGraph(imgName):
         return redirect('/uploadGraphs')
 
     return render_template('editGraph.html', graphToEdit=graphToEdit)
-
 
 @login_required
 @app.route("/editGroups", methods = ['GET', 'POST'])
@@ -345,7 +338,6 @@ def editGroups():
 
     return render_template('editGroups.html', graphGroups=graphs_by_group, available_graphs=available_graphs)
 
-
 @login_required
 @app.route('/add-graph-to-group/<group_id>', methods=['POST'])
 def add_graph_to_group(group_id):
@@ -357,7 +349,7 @@ def add_graph_to_group(group_id):
     return redirect('/editGroups')
 
 @login_required
-@app.route('/update-group-name/<int:group_id>', methods=['POST'])
+@app.route('/update-group-name/<group_id>', methods=['POST'])
 def update_group_name(group_id):
     group = GraphGroup.query.get(group_id)
     new_name = request.form['new_name']

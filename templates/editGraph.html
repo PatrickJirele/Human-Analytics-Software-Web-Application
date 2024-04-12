@@ -2,15 +2,21 @@
 {% block content %}
 <head>
     <title>Edit Graph</title>
+    <style>
+        textarea {
+            width: 100%;
+            height: 200px; /* Adjust the height as needed */
+        }
+    </style>
 </head>
 <body>
-    <h1>Edit Graph</h1>
-    <form method="POST">
-        <label for="title">Title:</label><br>
+    <h2>Edit Graph</h2>
+    <form method="POST" action="{{ url_for('editGraph', imgName=graphToEdit.path.split('/')[-1]) }}">
+        <label for="title">Title:</label>
         <input type="text" id="title" name="title" value="{{ graphToEdit.title }}"><br>
         <label for="description">Description:</label><br>
-        <textarea id="description" name="description">{{ graphToEdit.description }}</textarea><br>
-        <input type="submit" value="Submit">
+        <textarea id="description" name="description" rows="10" maxlength="250">{{ graphToEdit.description }}</textarea><br>
+        <button type="submit">Save</button>
     </form>
 </body>
 {% endblock %}
