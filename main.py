@@ -239,23 +239,25 @@ def createGraph():
     if request.method == "POST":
         try:
             chartType = request.form.get('chartType')
+            dbTitle = request.form.get('title')
+            dbDescription = ""
             if (chartType == 'pie' or chartType =='treemap' or chartType == 'bar'):
                 categories = getSingleCategories(request)
                 for category in categories:
                     imageName = makeImageName(category, chartType, ("overwrite" in request.form))
-                    singleCategoryGraph(chartType, category, imageName)
+                    dbDescription = singleCategoryGraph(chartType, category, imageName, dbTitle)
             if (chartType == 'histogram'):
                 categories = getHistogramCategories(request)
                 for category in categories:
                     imageName = makeImageName(category, chartType, ("overwrite" in request.form))
-                    histogram(category, imageName)
+                    dbDescription = histogram(category, imageName, dbTitle)
             if (chartType == 'stackedBar'):
                 primaryCategory = request.form.get('primary')
                 secondaryCategory = request.form.get('secondary')
                 imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" in request.form))
-                stackedBarChart(primaryCategory, secondaryCategory, imageName)
-
-            addGraphToDb(path="./static/graphs/"+imageName, title=imageName.replace('.png', ''), description="TEST")
+                dbDescription = stackedBarChart(primaryCategory, secondaryCategory, imageName, dbTitle)
+            dbTitle = dbTitle if dbTitle is not None else imageName.replace('.png', '')
+            addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription)
             return redirect("/uploadGraphs")
         except Exception as e:
             print(traceback.format_exc())
