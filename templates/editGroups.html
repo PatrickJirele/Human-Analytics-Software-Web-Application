@@ -14,6 +14,7 @@
             margin-right: 20px;
             text-align: center;
             position: relative;
+            width: fit-content;
         }
         .thumbnail-img {
             width: 200px;
@@ -65,9 +66,24 @@
             border: 1px solid #888;
             width: 30%;
         }
+        .description-container{
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
     </style>
 </head>
 <body>
+    <div class="group-container">
+        <h2>Create New Group</h2>
+        <form action="{{ url_for('createGroup') }}" method="post">
+            <label for="new_group_name">Group Name:</label>
+            <input type="text" id="new_group_name" name="new_group_name" required>
+            <button type="submit">Create Group</button>
+        </form>
+    </div>
     <h1>Edit Groups</h1>
     {% for group in graphGroups %}
     <div class="group-container" data-group-id="{{ group.id }}">

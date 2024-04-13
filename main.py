@@ -371,6 +371,14 @@ def remove_graph():
     db.session.commit()
     return '', 204
 
+@app.route('/createGroup', methods=['POST'])
+def createGroup():
+    new_group_name = request.form['new_group_name']
+    new_group = GraphGroup(group_name=new_group_name)
+    db.session.add(new_group)
+    db.session.commit()
+    return redirect('/editGroups')
+
 # ____ROUTES_END____
 
 if __name__ == "__main__":
