@@ -1,5 +1,6 @@
 <html>
 <head>
+    <!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/style.css" rel="stylesheet">
@@ -40,11 +41,6 @@
             </div>
         </ul>
     </nav>
-    {% block content %}
-    {% endblock %}
-    <div class="footer">
-        Created by: Nathan Todd, Blake Brown, and Patrick Jirele
-    </div>
 </body>
 {% else %}
 <nav>
@@ -56,4 +52,12 @@
     </ul>
 </nav>
 {% endif %}
+
+{% block content %}
+{% endblock %}
+
+<div class="footer">
+    Created by: Nathan Todd, Blake Brown, and Patrick Jirele
+</div>
+
 </html>

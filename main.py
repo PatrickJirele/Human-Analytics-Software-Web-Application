@@ -38,9 +38,6 @@ class Graphs(db.Model):
     description = db.Column(db.String(250), nullable=True)
     group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
 
-
-
-
 # ____CLASSES_END____
 
 
@@ -242,23 +239,25 @@ def createGraph():
     if request.method == "POST":
         try:
             chartType = request.form.get('chartType')
+            dbTitle = request.form.get('title')
+            dbDescription = ""
             if (chartType == 'pie' or chartType =='treemap' or chartType == 'bar'):
                 categories = getSingleCategories(request)
                 for category in categories:
                     imageName = makeImageName(category, chartType, ("overwrite" in request.form))
-                    singleCategoryGraph(chartType, category, imageName)
+                    dbDescription = singleCategoryGraph(chartType, category, imageName, dbTitle)
             if (chartType == 'histogram'):
                 categories = getHistogramCategories(request)
                 for category in categories:
                     imageName = makeImageName(category, chartType, ("overwrite" in request.form))
-                    histogram(category, imageName)
+                    dbDescription = histogram(category, imageName, dbTitle)
             if (chartType == 'stackedBar'):
                 primaryCategory = request.form.get('primary')
                 secondaryCategory = request.form.get('secondary')
                 imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" in request.form))
-                stackedBarChart(primaryCategory, secondaryCategory, imageName)
-
-            addGraphToDb(path="./static/graphs/"+imageName, title=imageName.replace('.png', ''), description="TEST")
+                dbDescription = stackedBarChart(primaryCategory, secondaryCategory, imageName, dbTitle)
+            dbTitle = dbTitle if dbTitle is not None else imageName.replace('.png', '')
+            addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription)
             return redirect("/uploadGraphs")
         except Exception as e:
             print(traceback.format_exc())
@@ -288,7 +287,6 @@ def selectGraphsForDashboard():
         return flask.redirect('/uploadGraphs')
         return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
 
-
     return render_template('uploadGraphs.html', images=images, selected = selected)
 
 @login_required
@@ -315,12 +313,10 @@ def deleteGraph(imgName):
 
     return flask.redirect('/uploadGraphs')
 
-
 @login_required
 @app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
 def editGraph(imgName):
     graphDir = './static/graphs/' + imgName
-    currDir = './static/currentlyDisplayed'
     graphToEdit = Graphs.query.filter_by(path=graphDir).first()
 
     if request.method == 'POST':
@@ -330,7 +326,6 @@ def editGraph(imgName):
         return redirect('/uploadGraphs')
 
     return render_template('editGraph.html', graphToEdit=graphToEdit)
-
 
 @login_required
 @app.route("/editGroups", methods = ['GET', 'POST'])
@@ -345,7 +340,6 @@ def editGroups():
 
     return render_template('editGroups.html', graphGroups=graphs_by_group, available_graphs=available_graphs)
 
-
 @login_required
 @app.route('/add-graph-to-group/<group_id>', methods=['POST'])
 def add_graph_to_group(group_id):
@@ -357,7 +351,7 @@ def add_graph_to_group(group_id):
     return redirect('/editGroups')
 
 @login_required
-@app.route('/update-group-name/<int:group_id>', methods=['POST'])
+@app.route('/update-group-name/<group_id>', methods=['POST'])
 def update_group_name(group_id):
     group = GraphGroup.query.get(group_id)
     new_name = request.form['new_name']

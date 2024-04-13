@@ -5,14 +5,17 @@ path = os.path.join(dir,'static', 'datasets', 'current.csv')
 displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
 dfMain = pd.read_csv(path)
 
-def saveImage(fileName, fig):
+def saveImage(fileName, fig, genericTitle, customTitle):
+    finalTitle = genericTitle if customTitle is None else customTitle
+    plt.title(finalTitle)
+    
     normalPath = os.path.join(dir, 'static', 'graphs', fileName)
     displayPath = os.path.join(displayedDirPath, fileName)
     fig.savefig(normalPath, bbox_inches="tight")
     if (os.path.exists(displayPath)):
         fig.savefig(displayPath, bbox_inches="tight")
     
-def createOther(df, columnName):
+def createOther(df, columnName, description = ""):
     dict = df[columnName].value_counts().to_dict()
     keys = list(dict.keys())
     vals = list(dict.values())
@@ -28,15 +31,24 @@ def createOther(df, columnName):
         value = df.loc[i,columnName]
         if value in otheredKeys:
             df.loc[i,columnName]= "Other"
-    return df
+            
+    if (len(otheredKeys) > 1):
+        description += "The 'Other' category consists of the following categories:\n" if description == "" else ""
+        for key in otheredKeys:
+            description += "-" + str(key) + "\n"
+    elif (len(otheredKeys) == 1):
+        description = "The 'Other' category consists of one category."
+    
+    return df, description
     
     
-def singleCategoryGraph(type, columnName, fileName):
-    df = createOther(dfMain.copy(),columnName)
+def singleCategoryGraph(type, columnName, fileName, customTitle):
+    df, description = createOther(dfMain.copy(),columnName)
     dict = df[columnName].value_counts().to_dict()
     keys = list(dict.keys())
     vals = list(dict.values())
-    fig, ax = plt.subplots() 
+    fig, ax = plt.subplots()
+    genericTitle = ""
     match (type):
         case "pie":
             xLoc = 1
@@ -45,26 +57,27 @@ def singleCategoryGraph(type, columnName, fileName):
             ax.pie(vals, autopct='%1.1f%%', explode=explode)
             plt.legend(keys, loc=(xLoc, yLoc), bbox_transform=plt.gcf().transFigure)
             plt.subplots_adjust(left=0.0, bottom=0.0, right=1.0)
-            plt.title("% of Employees per " + columnName)
+            genericTitle = "% of Employees per " + columnName
         case "treemap":
             for i, key in enumerate(keys):
                 keys[i] = key + "\n" + "{:1.1f}".format((1-(len(df) - vals[i]) / len(df))*100) + "%"
             squarify.plot(vals, label=keys)    
             plt.axis("off")
-            plt.title("% of Employees per " + columnName)
+            genericTitle = "% of Employees per " + columnName
         case "bar":
             specialCase = (columnName == 'Race Ethnicity' or columnName == 'Department')
             width = 0.8 if not specialCase else 0.6
             plt.bar(keys, vals, width = width)
             plt.xlabel(columnName)
             plt.ylabel("# of Employees")
-            plt.title("# of Employees per " + columnName)
+            genericTitle = "# of Employees per " + columnName
             if specialCase:
                 plt.xticks(rotation=45, ha='right')
-    saveImage(fileName,fig)
+    saveImage(fileName,fig, genericTitle, customTitle)
+    return description
 
 
-def histogram(columnName, fileName):
+def histogram(columnName, fileName, customTitle):
     df = dfMain.copy()
     unsortedDict = df[columnName].value_counts().to_dict()
     keysMax = max(list(unsortedDict.keys()))
@@ -79,13 +92,14 @@ def histogram(columnName, fileName):
     axs.bar(keys, vals, width=1.0)
     plt.xlabel(columnName)
     plt.ylabel("# of Employees")
-    plt.title("# of Employees per " + columnName)
-    saveImage(fileName, fig)
+    genericTitle = "# of Employees per " + columnName
+    saveImage(fileName, fig, genericTitle, customTitle)
+    return ""
 
 
-def stackedBarChart(mainColumnName, secondaryColumnName, fileName):
-    df = createOther(dfMain.copy(),mainColumnName)
-    df = createOther(df,secondaryColumnName)
+def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle):
+    df, description = createOther(dfMain.copy(),mainColumnName)
+    df, description = createOther(df,secondaryColumnName, description)
     dict = {}
     subDict = {}
     xLabels = df[mainColumnName].unique()
@@ -109,7 +123,6 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName):
     values = []
     for yLabel in yLabels:
         values.append([dict[xLabel]['values'][yLabel] for xLabel in xLabels])
-    print(values)
     
     fig, ax = plt.subplots()
     bottomTotal = [0 for _ in range(len(xLabels))]
@@ -121,11 +134,12 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName):
             bottomTotal[x] += values[i][x]
     plt.xlabel(mainColumnName)
     ax.set_ylabel('# of Employees')
-    ax.set_title('Breakdown of # of Employees per '+ mainColumnName + ' by ' + secondaryColumnName)
+    genericTitle = 'Breakdown of # of Employees per '+ mainColumnName + ' by ' + secondaryColumnName
     if (specialCase):
         plt.xticks(rotation=45, ha='right')
     xLoc = 1
     yLoc = 0.5 if secondaryColumnName != 'Department' else 0
     plt.legend(loc=(xLoc, yLoc), bbox_transform=plt.gcf().transFigure)
-    saveImage(fileName, fig)
+    saveImage(fileName, fig, genericTitle, customTitle)
+    return description
     

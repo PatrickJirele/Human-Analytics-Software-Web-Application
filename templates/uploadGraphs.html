@@ -9,14 +9,23 @@
     width: 200px;
     height: auto;
   }
-  .image-container {
+<!--  .image-container {-->
+<!--    display: inline-block;-->
+<!--    width: 30%;-->
+<!--    margin: 10px;-->
+<!--    border: 1px solid #ccc;-->
+<!--    padding: 10px;-->
+<!--    text-align: center;-->
+<!--  }-->
+.image-container {
     display: inline-block;
     width: 30%;
     margin: 10px;
     border: 1px solid #ccc;
     padding: 10px;
     text-align: center;
-  }
+    position: relative;
+}
   .checkbox-label {
     display: block;
     margin-bottom: 5px;
@@ -35,7 +44,53 @@
     height:100px;
     width:200px;
   }
+  .edit-button {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .edit-form {
+    margin-top: 10px;
+  }
 
+  .edit-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.edit-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+}
+
+
+  .delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
 </style>
 </head>
 <body>
@@ -52,25 +107,19 @@
 {% endwith %}
 <div id="checkboxes">
   {% for image in images %}
-  <div class="image-container">
-    <div class="delete-form">
-      <form action="/deleteGraph/{{ image }}" method="POST">
-        <input type="hidden" name="image_name" value="{{ image }}">
-        <input type="submit" value="Delete">
-      </form>
-    </div>
+    <div class="image-container" data-image-name="{{ image }}">
+    <form action="{{ url_for('deleteGraph', imgName=image) }}" method="POST" class="delete-form">
+        <button type="submit" class="delete-button">Delete</button>
+    </form>
     <div class="edit-form">
-      <form action="/editGraph/{{ image }}" method="GET">
-        <input type="hidden" name="image_name" value="{{ image }}">
-        <input type="submit" value="Edit">
-      </form>
+      <a href="{{ url_for('editGraph', imgName=image) }}" class="edit-button">Edit</a>
     </div>
     <form action="/uploadGraphs" method="POST">
-      <input type="checkbox" name="images[]" value="{{ image }}" id="{{ image }}" {% if image in selected %} checked {% endif %}>
-      <label for="{{ image }}" class="checkbox-label">{{ image }}</label>
-      <img src="{{ url_for('static', filename='graphs/' + image) }}" class="thumbnail-img">
+        <input type="checkbox" name="images[]" value="{{ image }}" id="{{ image }}" {% if image in selected %} checked {% endif %}>
+        <label for="{{ image }}" class="checkbox-label">{{ image }}</label>
+        <img src="{{ url_for('static', filename='graphs/' + image) }}" class="thumbnail-img">
     </form>
-  </div>
+</div>
   {% endfor %}
 
 </div>
@@ -97,6 +146,37 @@
             alert('Error selecting graphs: ' + textStatus);
         });
   };
+
+
+
+// JavaScript code to handle the "Delete" button
+var deleteButtons = document.querySelectorAll(".delete-button");
+
+deleteButtons.forEach(function(button) {
+    button.addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent the default form submission
+        var imageContainer = this.parentNode.parentNode;
+        var imageName = imageContainer.querySelector("input[name='images[]']").value;
+
+        fetch(`/deleteGraph/${imageName}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image_name: imageName })
+        })
+        .then(function(response) {
+            if (response.ok) {
+                imageContainer.remove();
+            } else {
+                alert('Error deleting graph');
+            }
+        })
+        .catch(function(error) {
+            alert('Error deleting graph: ' + error);
+        });
+    });
+});
 
 </script>
 
