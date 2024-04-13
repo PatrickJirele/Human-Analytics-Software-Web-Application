@@ -386,7 +386,7 @@ def update_group_name(group_id):
     return redirect('/editGroups')
 
 
-@app.route('/remove-graph', methods=['DELETE'])
+@app.route('/remove-graph', methods=['REMOVE'])
 def remove_graph():
     graph_id = request.args.get('graph_id')
     group_id = request.args.get('group_id')
@@ -395,6 +395,24 @@ def remove_graph():
     graph.group_id = None
     db.session.commit()
     return '', 204
+
+@app.route('/createGroup', methods=['POST'])
+def createGroup():
+    new_group_name = request.form['new_group_name']
+    new_group = GraphGroup(group_name=new_group_name)
+    db.session.add(new_group)
+    db.session.commit()
+    return redirect('/editGroups')
+
+@app.route('/deleteGroup/<group_id>', methods=['DELETE'])
+def deleteGroup(group_id):
+    print(group_id)
+    try:
+        db.session.delete(GraphGroup.query.get(group_id))
+        db.session.commit()
+        return jsonify({'message': 'Group deleted successfully'}), 200
+    except:
+        return jsonify({'message': 'Error deleting group'}), 500
 
 
 # ____ROUTES_END____
