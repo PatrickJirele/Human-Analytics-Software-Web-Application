@@ -49,8 +49,7 @@ class Graphs(db.Model):
 #RETURNS all csv files from datasets dir AND all files from the annualDatasets dir
 def getDatasets():
     dataset_files = [f for f in os.listdir('./static/datasets') if f.endswith('.csv')]
-    annual_files = [f for f in os.listdir('./static/datasets/annualDatasets')]
-    return dataset_files, annual_files
+    return dataset_files
 
 
 #RETURNS all graphs AND all currently displayed graphs
@@ -194,7 +193,7 @@ def create():
 @login_required
 @app.route('/uploadDataset', methods=['GET', 'POST'])
 def uploadDataset():
-    dataset_files, annual_files = getDatasets()
+    dataset_files = getDatasets()
     if request.method == 'POST':
         if request.files['file']:
             # Get the excel file from website upload
@@ -220,18 +219,13 @@ def uploadDataset():
             shutil.copy2(newFileName, destination)
             # Make a current copy to use as the current dataset
             shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
-            if 'annual_dataset' in request.form:
-                isAnnual = request.form['annual_dataset']
-                if isAnnual == 'on':
-                    annualPath = './static/datasets/annualDatasets'
-                    shutil.copy2(destinationPath, os.path.join(annualPath, str(date.today().year) + '.csv'))
 
             # Remove files from main directory
             os.remove(newFileName)
             os.remove(file.filename)
-            dataset_files, annual_files = getDatasets()
+            dataset_files = getDatasets()
 
-    return render_template('uploadDataset.html', dataset_files=dataset_files, annual_files=annual_files)
+    return render_template('uploadDataset.html', dataset_files=dataset_files)
 
 
 @login_required
