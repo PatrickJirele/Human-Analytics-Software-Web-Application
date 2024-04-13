@@ -63,10 +63,13 @@
             <h1>All Datasets</h1>
             <blockquote class="dataset-list-quote">
             {% for file in dataset_files %}
+                {% if file != "current.csv" %}
                 <div class="dataset-file">
                     <span class="file-name">{{ file }}</span>
+                    <button class="select-btn" onclick="selectDataset('{{ file }}')">Select Dataset</button>
                     <button class="delete-btn" onclick="deleteFile('{{ file }}')">Delete</button>
                 </div>
+                {% endif %}
             {% endfor %}
             </blockquote>
         </div>
@@ -74,7 +77,6 @@
 
     <script>
 <!--Function for deleting datasets-->
-
         function deleteFile(filename) {
             $.ajax({
                 url: '/deleteDataset',
@@ -91,6 +93,26 @@
                 }
             });
         }
+
+
+<!-- Function for selecting which dataset to use --!>
+function selectDataset(filename) {
+    $.ajax({
+        url: '/selectDataset/' + filename,
+        type: 'GET',
+        success: function(response) {
+            if (response.success) {
+                alert('Dataset selected successfully');
+                // Update the displayed dataset
+                $('#current-dataset').text(response.filename);
+                        location.reload();
+            } else {
+                alert('Error selecting dataset: ' + response.error);
+            }
+        }
+    });
+}
+
     </script>
 
 </body>

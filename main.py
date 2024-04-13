@@ -46,7 +46,7 @@ class Graphs(db.Model):
 
 # ____HELPER_FUNCTIONS_START____
 
-#RETURNS all csv files from datasets dir AND all files from the annualDatasets dir
+#RETURNS all csv files from datasets dir
 def getDatasets():
     dataset_files = [f for f in os.listdir('./static/datasets') if f.endswith('.csv')]
     return dataset_files
@@ -194,6 +194,7 @@ def create():
 @app.route('/uploadDataset', methods=['GET', 'POST'])
 def uploadDataset():
     dataset_files = getDatasets()
+    selected_dataset = request.args.get('filename', 'None')
     if request.method == 'POST':
         if request.files['file']:
             # Get the excel file from website upload
@@ -225,22 +226,22 @@ def uploadDataset():
             os.remove(file.filename)
             dataset_files = getDatasets()
 
-    return render_template('uploadDataset.html', dataset_files=dataset_files)
-
+    return render_template('uploadDataset.html', dataset_files=dataset_files, selected_dataset=selected_dataset)
 
 @login_required
 @app.route('/deleteDataset', methods=['POST'])
 def delete_file():
     filename = request.json['filename']
     normal_file_path = os.path.join('./static/datasets', filename)
-    annual_file_path = os.path.join('./static/datasets/annualDatasets', filename)
-    file_path = normal_file_path if os.path.exists(normal_file_path) else annual_file_path
+    file_path = normal_file_path if os.path.exists(normal_file_path) else ""
 
     if os.path.exists(file_path):
         os.remove(file_path)
         return jsonify({'success': True})
     else:
         return jsonify({'success': False, 'error': 'File not found'})
+
+
 
 
 @login_required
@@ -323,6 +324,31 @@ def deleteGraph(imgName):
         return flask.redirect('/uploadGraphs')
 
     return flask.redirect('/uploadGraphs')
+
+def regenerateGraphs():
+    dataset_path = './static/datasets/current.csv'
+    
+
+@login_required
+@app.route("/selectDataset/<filename>", methods=["GET"])
+def selectDataset(filename):
+    normal_file_path = os.path.join('./static/datasets', filename)
+    file_path = normal_file_path if os.path.exists(normal_file_path) else ""
+
+    if os.path.exists(file_path):
+        # right here is where we change the graphs and everything
+        # Make a current copy to use as the current dataset
+        dir = os.path.dirname(__file__)
+        destination = './static/datasets'
+        destinationPath = os.path.join(dir, destination, filename)
+        shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
+
+        regenerateGraphs()
+
+        # Redirect to the home page or the page where the graphs are displayed
+        return redirect('/')
+    else:
+        return jsonify({'success': False, 'error': 'File not found'})
 
 
 @login_required

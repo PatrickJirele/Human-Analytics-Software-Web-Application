@@ -30,7 +30,6 @@ def createOther(df, columnName):
             df.loc[i,columnName]= "Other"
     return df
     
-    
 def singleCategoryGraph(type, columnName, fileName):
     df = createOther(dfMain.copy(),columnName)
     dict = df[columnName].value_counts().to_dict()
