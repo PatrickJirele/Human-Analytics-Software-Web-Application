@@ -112,6 +112,13 @@ def addGraphToDb(path, title, description="", group_id=None):
         db.session.commit()
         print("graph uploaded to database")
 
+def getGraphsFromDb(listOfGraphs):
+    retList = []
+    for graph in listOfGraphs:
+        graphPath = './static/graphs/'+graph
+        retList.append(Graphs.query.filter_by(path=graphPath).first())
+    return retList
+
 
 # ____HELPER_FUNCTIONS_END____
 
@@ -121,7 +128,10 @@ def addGraphToDb(path, title, description="", group_id=None):
 @app.route('/')
 def home():
     _, graphsToDisplay = getImgs()
-    return render_template('home.html', graphs=graphsToDisplay)
+    graphsFromDb = getGraphsFromDb(graphsToDisplay)
+    graphs_by_group = GraphGroup.query.all()
+
+    return render_template('home.html', graphs=graphsFromDb, graphGroups = graphs_by_group)
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -1,28 +1,92 @@
 {% extends 'base.html' %}
 {% block content %}
 <style>
-    .graph-container-table{
-        margin-left: auto;
-        margin-right: auto;
+    .group-container {
+      border: 3px solid #ccc;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
     }
-    .graph-container-row{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
+
+    .group-container h2 {
+      font-size: 24px;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .graph-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-gap: 20px;
+    }
+
+    .group-graph-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+      align-items: start;
+    }
+
+    .thumbnail-img {
+      max-width: 100%;
+    }
+
+    .content-wrapper {
+      flex-grow: 1;
+      margin-left: 20px;
+      text-align: left;
+    }
+
+    .title-container {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .description-container {
+      max-width: 500px;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
+    .group-seperator h2{
+      font-size: 24px;
+      text-align: center;
     }
 </style>
-    <body>
+<body>
     {% if graphs %}
-    <table class="graph-container-table">
         {% for graph in graphs %}
-        <tr class="graph-container-row">
-            <td class="graph-container-cell">
-                <img src="./static/currentlyDisplayed/{{graph}}"> <!-- width="1525" height="725" -->
-            </td>
-        </tr>
+        <div class="group-container">
+            <div class="graph-grid">
+                <div class="group-graph-container" data-graph-id="{{ graph.id }}">
+                    <img src="{{ graph.path }}" class="thumbnail-img">
+                    <div class="content-wrapper">
+                        <div class="title-container">Graph Title: {{ graph.title }}</div>
+                        <div class="description-container">Description:<br> {{ graph.description }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </table>
     {% endif %}
-    </body>
+
+    {% if graphGroups %}
+        {% for group in graphGroups %}
+        <div class="group-container" data-group-id="{{ group.id }}">
+            <h2>Group Name: {{ group.group_name }}</h2>
+            {% for graph in group.graphs %}
+            <div class="graph-grid">
+                <div class="group-graph-container" data-graph-id="{{ graph.id }}">
+                    <img src="{{ graph.path }}" class="thumbnail-img">
+                    <div class="content-wrapper">
+                        <div class="title-container">Graph Title: {{ graph.title }}</div>
+                        <div class="description-container">Description:<br> {{ graph.description }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    {% endif %}
+
 {% endblock %}
