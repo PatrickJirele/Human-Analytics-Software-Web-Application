@@ -36,7 +36,9 @@
                 <div class="dropdown-content">
                     <a href="/updatePassword">Change Password</a>
                     <a href="/logout">Logout</a>
-                    <a href="/createAdmin">Create Admin</a>
+                    {% if current_user.email == 'testing@test.com' %}
+                        <a href="/createAdmin">Create Admin</a>
+                    {% endif %}
                 </div>
             </div>
         </ul>

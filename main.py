@@ -14,6 +14,7 @@ db = SQLAlchemy(app)
 cipher = SimpleCrypt()
 cipher.init_app(app)
 
+
 # ____GLOBAL_VARIABLES_END____
 
 # ____CLASSES_START____
@@ -31,12 +32,14 @@ class GraphGroup(db.Model):
     group_name = db.Column(db.String(100))
     graphs = db.relationship('Graphs', backref='GraphGroup', lazy='dynamic')
 
+
 class Graphs(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(100), nullable=False)
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(250), nullable=True)
     group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
+
 
 # ____CLASSES_END____
 
@@ -46,24 +49,28 @@ class Graphs(db.Model):
 #RETURNS all csv files from datasets dir AND all files from the annualDatasets dir
 def getDatasets():
     dataset_files = [f for f in os.listdir('./static/datasets') if f.endswith('.csv')]
-    annual_files = [f for f in os.listdir('./static/datasets/annualDatasets')]
-    return dataset_files, annual_files
+    return dataset_files
+
 
 #RETURNS all graphs AND all currently displayed graphs
 def getImgs():
-    images = [f for f in os.listdir('./static/graphs') if os.path.isfile(os.path.join('./static/graphs', f))] #Sends all images in graphs to uploadGraphs.html
-    selected = [f for f in os.listdir('./static/currentlyDisplayed') if os.path.isfile(os.path.join('./static/currentlyDisplayed', f))] #sends currently displayed imaged to uploadGraphs.html
+    images = [f for f in os.listdir('./static/graphs') if
+              os.path.isfile(os.path.join('./static/graphs', f))]  #Sends all images in graphs to uploadGraphs.html
+    selected = [f for f in os.listdir('./static/currentlyDisplayed') if os.path.isfile(
+        os.path.join('./static/currentlyDisplayed', f))]  #sends currently displayed imaged to uploadGraphs.html
     return images, selected
+
 
 #Validates if entered email is in correct format
 def check(email):
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    if(re.fullmatch(regex, email)):
+    if (re.fullmatch(regex, email)):
         print("Valid")
         return True
     else:
         print("Invalid")
         return False
+
 
 # Returns all selected categories for pie, treemap, and bar charts.
 def getSingleCategories(request):
@@ -75,6 +82,7 @@ def getSingleCategories(request):
     categories.append('Gender') if (request.form.get('gender')) else None
     return categories
 
+
 # Returns all selected categories for histogram charts.
 def getHistogramCategories(request):
     categories = []
@@ -83,9 +91,11 @@ def getHistogramCategories(request):
     print(request.form)
     return categories
 
+
 # Sets the name that will be used for chart image files.
 def makeImageName(category, type, isUnique):
     return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
+
 
 def addGraphToDb(path, title, description="", group_id=None):
     if group_id == None:
@@ -103,7 +113,6 @@ def addGraphToDb(path, title, description="", group_id=None):
         print("graph uploaded to database")
 
 
-
 # ____HELPER_FUNCTIONS_END____
 
 
@@ -115,7 +124,7 @@ def home():
     return render_template('home.html', graphs=graphsToDisplay)
 
 
-@app.route('/login', methods = ['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form['email']
@@ -133,9 +142,11 @@ def login():
             return render_template('login.html')
     return render_template('login.html')
 
+
 @login_manager.user_loader
 def load_user(uid):
     return User.query.get(uid)
+
 
 @app.route('/logout')
 @login_required
@@ -143,7 +154,8 @@ def logout():
     logout_user()
     return flask.redirect('/')
 
-@app.route('/updatePassword', methods = ['GET', 'POST'])
+
+@app.route('/updatePassword', methods=['GET', 'POST'])
 @login_required
 def updatePass():
     if request.method == 'POST':
@@ -156,15 +168,16 @@ def updatePass():
         return flask.redirect('/')
     return render_template('updatePassword.html')
 
+
 @login_required
-@app.route('/createAdmin', methods = ['GET', 'POST'])
+@app.route('/createAdmin', methods=['GET', 'POST'])
 def create():
     if request.method == 'POST':
         email = request.form['email']
         password = cipher.encrypt(request.form['pWord'])
         if check(email) == False:
             return render_template('createAdmin.html'), 'Invalid Email Address'
-        temp = User(email = email, password = password)
+        temp = User(email=email, password=password)
         user = User.query.filter_by(email=request.form['email']).first()
         if user != None:
             return render_template('createAdmin.html'), 'user already exists'
@@ -176,10 +189,11 @@ def create():
             return flask.redirect('/')
     return render_template('createAdmin.html')
 
+
 @login_required
-@app.route('/uploadDataset', methods = ['GET', 'POST'])
+@app.route('/uploadDataset', methods=['GET', 'POST'])
 def uploadDataset():
-    dataset_files, annual_files = getDatasets()
+    dataset_files = getDatasets()
     if request.method == 'POST':
         if request.files['file']:
             # Get the excel file from website upload
@@ -205,18 +219,13 @@ def uploadDataset():
             shutil.copy2(newFileName, destination)
             # Make a current copy to use as the current dataset
             shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
-            if 'annual_dataset' in request.form:
-                isAnnual = request.form['annual_dataset']
-                if isAnnual == 'on':
-                    annualPath = './static/datasets/annualDatasets'
-                    shutil.copy2(destinationPath, os.path.join(annualPath, str(date.today().year)+'.csv'))
-            
+
             # Remove files from main directory
             os.remove(newFileName)
             os.remove(file.filename)
-            dataset_files, annual_files = getDatasets()
-            
-    return render_template('uploadDataset.html', dataset_files=dataset_files, annual_files=annual_files)
+            dataset_files = getDatasets()
+
+    return render_template('uploadDataset.html', dataset_files=dataset_files)
 
 
 @login_required
@@ -233,13 +242,14 @@ def delete_file():
     else:
         return jsonify({'success': False, 'error': 'File not found'})
 
+
 @login_required
-@app.route('/createGraph', methods = ['GET', 'POST'])
+@app.route('/createGraph', methods=['GET', 'POST'])
 def createGraph():
     if request.method == "POST":
         try:
             chartType = request.form.get('chartType')
-            if (chartType == 'pie' or chartType =='treemap' or chartType == 'bar'):
+            if (chartType == 'pie' or chartType == 'treemap' or chartType == 'bar'):
                 categories = getSingleCategories(request)
                 for category in categories:
                     imageName = makeImageName(category, chartType, ("overwrite" in request.form))
@@ -252,17 +262,19 @@ def createGraph():
             if (chartType == 'stackedBar'):
                 primaryCategory = request.form.get('primary')
                 secondaryCategory = request.form.get('secondary')
-                imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" in request.form))
+                imageName = makeImageName(primaryCategory + "_" + secondaryCategory, chartType,
+                                          ("overwrite" in request.form))
                 stackedBarChart(primaryCategory, secondaryCategory, imageName)
 
-            addGraphToDb(path="./static/graphs/"+imageName, title=imageName.replace('.png', ''), description="TEST")
+            addGraphToDb(path="./static/graphs/" + imageName, title=imageName.replace('.png', ''), description="TEST")
             return redirect("/uploadGraphs")
         except Exception as e:
             print(traceback.format_exc())
     return render_template('createGraph.html')
 
+
 @login_required
-@app.route("/uploadGraphs", methods = ['GET', 'POST'])
+@app.route("/uploadGraphs", methods=['GET', 'POST'])
 def selectGraphsForDashboard():
     images, selected = getImgs()
 
@@ -283,12 +295,13 @@ def selectGraphsForDashboard():
         updated_Images, updated_Selected = getImgs()
         flash('Graphs selected successfully', 'success')
         return flask.redirect('/uploadGraphs')
-        return render_template('uploadGraphs.html', images=updated_Images, selected = updated_Selected)
+        return render_template('uploadGraphs.html', images=updated_Images, selected=updated_Selected)
 
-    return render_template('uploadGraphs.html', images=images, selected = selected)
+    return render_template('uploadGraphs.html', images=images, selected=selected)
+
 
 @login_required
-@app.route('/deleteGraph/<imgName>', methods = ['GET', 'POST'])
+@app.route('/deleteGraph/<imgName>', methods=['GET', 'POST'])
 def deleteGraph(imgName):
     if request.method == 'POST':
         graphDir = './static/graphs'
@@ -299,7 +312,7 @@ def deleteGraph(imgName):
             img_to_rm = os.path.join(currDir, imgName)
             os.remove(img_to_rm)
 
-        graphToDelete = Graphs.query.filter_by(path=graphDir+'/'+imgName).first()
+        graphToDelete = Graphs.query.filter_by(path=graphDir + '/' + imgName).first()
 
         if graphToDelete:
             db.session.delete(graphToDelete)
@@ -310,6 +323,7 @@ def deleteGraph(imgName):
         return flask.redirect('/uploadGraphs')
 
     return flask.redirect('/uploadGraphs')
+
 
 @login_required
 @app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
@@ -325,8 +339,9 @@ def editGraph(imgName):
 
     return render_template('editGraph.html', graphToEdit=graphToEdit)
 
+
 @login_required
-@app.route("/editGroups", methods = ['GET', 'POST'])
+@app.route("/editGroups", methods=['GET', 'POST'])
 def editGroups():
     graphs_by_group = GraphGroup.query.all()
 
@@ -338,6 +353,7 @@ def editGroups():
 
     return render_template('editGroups.html', graphGroups=graphs_by_group, available_graphs=available_graphs)
 
+
 @login_required
 @app.route('/add-graph-to-group/<group_id>', methods=['POST'])
 def add_graph_to_group(group_id):
@@ -347,6 +363,7 @@ def add_graph_to_group(group_id):
     group.graphs.append(graph)
     db.session.commit()
     return redirect('/editGroups')
+
 
 @login_required
 @app.route('/update-group-name/<group_id>', methods=['POST'])
@@ -369,13 +386,6 @@ def remove_graph():
     db.session.commit()
     return '', 204
 
-@app.route('/createGroup', methods=['POST'])
-def createGroup():
-    new_group_name = request.form['new_group_name']
-    new_group = GraphGroup(group_name=new_group_name)
-    db.session.add(new_group)
-    db.session.commit()
-    return redirect('/editGroups')
 
 # ____ROUTES_END____
 
