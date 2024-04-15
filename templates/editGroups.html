@@ -72,7 +72,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -89,6 +96,7 @@
     <div class="group-container" data-group-id="{{ group.id }}">
         <h2>Group Name: {{ group.group_name }}
             <button class="edit-button">Edit Name</button>
+            <button class="delete-button">Delete Group</button>
         </h2>
         <div id="editNameModal-{{ group.id }}" class="edit-name-modal">
             <div class="edit-name-modal-content">
@@ -164,7 +172,7 @@
                 var groupId = graphContainer.parentNode.dataset.groupId;
 
                 fetch(`{{ url_for('remove_graph') }}?graph_id=${graphId}&group_id=${groupId}`, {
-                    method: 'DELETE'
+                    method: 'REMOVE'
                 })
                 .then(function(response) {
                     if (response.ok) {
@@ -175,6 +183,30 @@
                 })
                 .catch(function(error) {
                     alert('Error removing graph: ' + error);
+                });
+            });
+        });
+
+
+        var deleteButtons = document.querySelectorAll(".delete-button");
+
+        deleteButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                var groupContainer = this.closest(".group-container");
+                var groupId = groupContainer.dataset.groupId;
+
+                fetch(`/deleteGroup/${groupId}`, {
+                    method: 'DELETE'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        groupContainer.remove();
+                    } else {
+                        alert('Error deleting group');
+                    }
+                })
+                .catch(function(error) {
+                    alert('Error deleting group: ' + error);
                 });
             });
         });
