@@ -327,7 +327,7 @@ def deleteGraph(imgName):
 
 def regenerateGraphs():
     dataset_path = './static/datasets/current.csv'
-    
+
 
 @login_required
 @app.route("/selectDataset/<filename>", methods=["GET"])
@@ -344,10 +344,10 @@ def selectDataset(filename):
         shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
 
         regenerateGraphs()
-
         # Redirect to the home page or the page where the graphs are displayed
-        return redirect('/')
+        return jsonify({'success': True, 'filename': filename})
     else:
+        print("File path does not exist:", file_path)
         return jsonify({'success': False, 'error': 'File not found'})
 
 

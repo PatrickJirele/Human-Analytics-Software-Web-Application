@@ -103,7 +103,7 @@ function selectDataset(filename) {
         success: function(response) {
             if (response.success) {
                 alert('Dataset selected successfully');
-                // Update the displayed dataset
+                // Update the content of current.csv
                 $('#current-dataset').text(response.filename);
                         location.reload();
             } else {
