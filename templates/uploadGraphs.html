@@ -9,14 +9,6 @@
     width: 200px;
     height: auto;
   }
-<!--  .image-container {-->
-<!--    display: inline-block;-->
-<!--    width: 30%;-->
-<!--    margin: 10px;-->
-<!--    border: 1px solid #ccc;-->
-<!--    padding: 10px;-->
-<!--    text-align: center;-->
-<!--  }-->
 .image-container {
     display: inline-block;
     width: 30%;
@@ -98,7 +90,11 @@
 <h2>Select Graphs To Be Displayed</h2>
 {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
+  <script>console.log(messages)</script>
+
     {% for category, message in messages %}
+  <script>console.log(message)</script>
+
       <div class="alert alert-{{ category }}">
         {{ message }}
       </div>

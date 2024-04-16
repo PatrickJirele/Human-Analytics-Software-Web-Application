@@ -8,22 +8,39 @@ app = Flask(__name__, static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usersDB.db'
 app.config['SECRET_KEY'] = 'secretKey'
 login_manager = LoginManager(app)
+"""
+login view used to redirect unauthorized users from private routes
+"""
+login_manager.login_view = '/'
+login_manager.login_message = ''
 login_manager.init_app(app)
 db = SQLAlchemy(app)
 
 cipher = SimpleCrypt()
 cipher.init_app(app)
 
-
 # ____GLOBAL_VARIABLES_END____
 
-# ____CLASSES_START____
 
+# ____CLASSES_START____
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(50), nullable=False)
     admin = db.Column(db.Boolean, default=False, nullable=False)
+    authenticated = db.Column(db.Boolean, default=False)
+
+    def is_authenticated(self):
+        return self.authenticated
+
+    def is_active(self):
+        return  True
+
+    def get_id(self):
+        return  self.id
+
+    def is_anonymous(self):
+        return False
 
 
 class GraphGroup(db.Model):
@@ -125,6 +142,27 @@ def getGraphsFromDb(listOfGraphs):
     return retList
 
 
+def regenerateGraphs():
+    dataset_path = './static/datasets/current.csv'
+    images, selected = getImgs()
+    split_images = [item[:-4].split('_') for item in images]
+    for img in split_images:
+        type= img[-1]
+        print({'IMG: ' : img, 'TYPE: ' : img[-1]})
+        if type == 'stackedBar':
+            columnName1 = img[0]
+            columnName2 = img[1]
+            imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
+            stackedBarChart(columnName1, columnName2, imageName)
+        else:
+            columnName1 = img[0]
+            if type == 'pie' or type == 'treemap' or type == 'bar':
+                imageName = makeImageName(columnName1, type, False)
+                singleCategoryGraph(type, columnName1, imageName)
+            if type == 'histogram':
+                imageName = makeImageName(columnName1, type, False)
+                histogram(columnName1, imageName)
+
 # ____HELPER_FUNCTIONS_END____
 
 
@@ -150,7 +188,11 @@ def login():
                 if request.form['pWord'] != userPass:
                     return render_template('login.html')
                 else:
-                    login_user(user)
+                    #add authentication to user and commit
+                    user.authenticated = True
+                    db.session.add(user)
+                    db.session.commit()
+                    login_user(user, remember=True)
                     return flask.redirect('/')
             return render_template('login.html')
         else:
@@ -166,6 +208,10 @@ def load_user(uid):
 @app.route('/logout')
 @login_required
 def logout():
+    user = current_user
+    user.authenticated = False
+    db.session.add(user)
+    db.session.commit()
     logout_user()
     return flask.redirect('/')
 
@@ -184,8 +230,8 @@ def updatePass():
     return render_template('updatePassword.html')
 
 
-@login_required
 @app.route('/createAdmin', methods=['GET', 'POST'])
+@login_required
 def create():
     if request.method == 'POST':
         email = request.form['email']
@@ -205,8 +251,9 @@ def create():
     return render_template('createAdmin.html')
 
 
-@login_required
 @app.route('/uploadDataset', methods=['GET', 'POST'])
+@login_required
+
 def uploadDataset():
     dataset_files = getDatasets()
     selected_dataset = request.args.get('filename', 'None')
@@ -243,8 +290,9 @@ def uploadDataset():
 
     return render_template('uploadDataset.html', dataset_files=dataset_files, selected_dataset=selected_dataset)
 
-@login_required
 @app.route('/deleteDataset', methods=['POST'])
+@login_required
+
 def delete_file():
     filename = request.json['filename']
     normal_file_path = os.path.join('./static/datasets', filename)
@@ -257,8 +305,9 @@ def delete_file():
         return jsonify({'success': False, 'error': 'File not found'})
 
 
-@login_required
 @app.route('/createGraph', methods=['GET', 'POST'])
+@login_required
+
 def createGraph():
     if request.method == "POST":
         try:
@@ -286,8 +335,9 @@ def createGraph():
             print(traceback.format_exc())
     return render_template('createGraph.html')
 
-@login_required
 @app.route("/uploadGraphs", methods=['GET', 'POST'])
+@login_required
+
 def selectGraphsForDashboard():
     images, selected = getImgs()
     if request.method == "POST":
@@ -311,8 +361,9 @@ def selectGraphsForDashboard():
 
     return render_template('uploadGraphs.html', images=images, selected=selected)
 
-@login_required
 @app.route('/deleteGraph/<imgName>', methods=['GET', 'POST'])
+@login_required
+
 def deleteGraph(imgName):
     if request.method == 'POST':
         graphDir = './static/graphs'
@@ -335,30 +386,9 @@ def deleteGraph(imgName):
 
     return flask.redirect('/uploadGraphs')
 
-def regenerateGraphs():
-    dataset_path = './static/datasets/current.csv'
-    images, selected = getImgs()
-    split_images = [item[:-4].split('_') for item in images]
-    for img in split_images:
-        type= img[-1]
-        print({'IMG: ' : img, 'TYPE: ' : img[-1]})
-        if type == 'stackedBar':
-            columnName1 = img[0]
-            columnName2 = img[1]
-            imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
-            stackedBarChart(columnName1, columnName2, imageName)
-        else:
-            columnName1 = img[0]
-            if type == 'pie' or type == 'treemap' or type == 'bar':
-                imageName = makeImageName(columnName1, type, False)
-                singleCategoryGraph(type, columnName1, imageName)
-            if type == 'histogram':
-                imageName = makeImageName(columnName1, type, False)
-                histogram(columnName1, imageName)
-
-#11:02:35
-@login_required
 @app.route("/selectDataset/<filename>", methods=["GET"])
+@login_required
+
 def selectDataset(filename):
     normal_file_path = os.path.join('./static/datasets', filename)
     file_path = normal_file_path if os.path.exists(normal_file_path) else ""
@@ -379,8 +409,9 @@ def selectDataset(filename):
         return jsonify({'success': False, 'error': 'File not found'})
 
 
-@login_required
 @app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
+@login_required
+
 def editGraph(imgName):
     graphDir = './static/graphs/' + imgName
     graphToEdit = Graphs.query.filter_by(path=graphDir).first()
@@ -394,8 +425,9 @@ def editGraph(imgName):
     return render_template('editGraph.html', graphToEdit=graphToEdit)
 
 
-@login_required
 @app.route("/editGroups", methods=['GET', 'POST'])
+@login_required
+
 def editGroups():
     graphs_by_group = GraphGroup.query.all()
 
@@ -408,8 +440,9 @@ def editGroups():
     return render_template('editGroups.html', graphGroups=graphs_by_group, available_graphs=available_graphs)
 
 
-@login_required
 @app.route('/add-graph-to-group/<group_id>', methods=['POST'])
+@login_required
+
 def add_graph_to_group(group_id):
     graph_id = request.form['available_graphs']
     graph = Graphs.query.get(graph_id)
@@ -419,8 +452,9 @@ def add_graph_to_group(group_id):
     return redirect('/editGroups')
 
 
-@login_required
 @app.route('/update-group-name/<group_id>', methods=['POST'])
+@login_required
+
 def update_group_name(group_id):
     group = GraphGroup.query.get(group_id)
     new_name = request.form['new_name']
@@ -429,8 +463,9 @@ def update_group_name(group_id):
     db.session.commit()
     return redirect('/editGroups')
 
-
 @app.route('/remove-graph', methods=['REMOVE'])
+@login_required
+
 def remove_graph():
     graph_id = request.args.get('graph_id')
     group_id = request.args.get('group_id')
@@ -441,6 +476,8 @@ def remove_graph():
     return '', 204
 
 @app.route('/createGroup', methods=['POST'])
+@login_required
+
 def createGroup():
     new_group_name = request.form['new_group_name']
     new_group = GraphGroup(group_name=new_group_name)
@@ -448,7 +485,9 @@ def createGroup():
     db.session.commit()
     return redirect('/editGroups')
 
+
 @app.route('/deleteGroup/<group_id>', methods=['DELETE'])
+@login_required
 def deleteGroup(group_id):
     print(group_id)
     try:

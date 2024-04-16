@@ -66,12 +66,16 @@
                     <img src="{{ graph.path }}" class="thumbnail-img">
                     <div class="content-wrapper">
                         <div class="title-container">Graph Title: {{ graph.title }}</div>
+                        {% if graph.description %}
                         <div class="description-container"><b>Description:</b>
                             <br>
                             <blockquote class="description-quote">
                                 {{ graph.description }}
                             </blockquote>
                         </div>
+                        {% else %}
+                            No Description provided
+                        {% endif %}
                     </div>
                 </div>
             </div>
