@@ -329,30 +329,27 @@ def regenerateGraphs():
     dataset_path = './static/datasets/current.csv'
     images, selected = getImgs()
     split_images = [item[:-4].split('_') for item in images]
-    print(split_images)
     for img in split_images:
         type= img[-1]
+        print({'IMG: ' : img, 'TYPE: ' : img[-1]})
         if type == 'stackedBar':
             columnName1 = img[0]
             columnName2 = img[1]
-            print(columnName1, columnName2, type)
             imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
             stackedBarChart(columnName1, columnName2, imageName)
         else:
             columnName1 = img[0]
-            print(columnName1, type)
             if type == 'pie' or type == 'treemap' or type == 'bar':
                 imageName = makeImageName(columnName1, type, False)
                 singleCategoryGraph(type, columnName1, imageName)
-                if type == 'histogram':
+            if type == 'histogram':
                 imageName = makeImageName(columnName1, type, False)
                 histogram(columnName1, imageName)
-        addGraphToDb(path="./static/graphs/" + imageName, title=imageName.replace('.png', ''), description="TEST")
 
+#11:02:35
 @login_required
 @app.route("/selectDataset/<filename>", methods=["GET"])
 def selectDataset(filename):
-    print("selecting new dataset")
     normal_file_path = os.path.join('./static/datasets', filename)
     file_path = normal_file_path if os.path.exists(normal_file_path) else ""
 
@@ -432,6 +429,24 @@ def remove_graph():
     graph.group_id = None
     db.session.commit()
     return '', 204
+
+@app.route('/createGroup', methods=['POST'])
+def createGroup():
+    new_group_name = request.form['new_group_name']
+    new_group = GraphGroup(group_name=new_group_name)
+    db.session.add(new_group)
+    db.session.commit()
+    return redirect('/editGroups')
+
+@app.route('/deleteGroup/<group_id>', methods=['DELETE'])
+def deleteGroup(group_id):
+    print(group_id)
+    try:
+        db.session.delete(GraphGroup.query.get(group_id))
+        db.session.commit()
+        return jsonify({'message': 'Group deleted successfully'}), 200
+    except:
+        return jsonify({'message': 'Error deleting group'}), 500
 
 
 # ____ROUTES_END____

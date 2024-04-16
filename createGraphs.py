@@ -8,8 +8,11 @@ path = os.path.join(dir,'static', 'datasets', 'current.csv')
 displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
 dfMain = pd.read_csv(path)
 
+def updateDataset():
+    dfMain = pd.read_csv(path)
+    return dfMain
+
 def saveImage(fileName, fig):
-    print('in save')
     normalPath = os.path.join(dir, 'static', 'graphs', fileName)
     displayPath = os.path.join(displayedDirPath, fileName)
     fig.savefig(normalPath, bbox_inches="tight")
@@ -35,6 +38,7 @@ def createOther(df, columnName):
     return df
     
 def singleCategoryGraph(type, columnName, fileName):
+    dfMain = updateDataset()
     df = createOther(dfMain.copy(),columnName)
     dict = df[columnName].value_counts().to_dict()
     keys = list(dict.keys())
@@ -66,15 +70,8 @@ def singleCategoryGraph(type, columnName, fileName):
                 plt.xticks(rotation=45, ha='right')
     saveImage(fileName,fig)
 
-    import matplotlib.image as mpimg
-    image_path = './static/graphs/'+fileName
-    image = mpimg.imread(image_path)
-    plt.imshow(image)
-    plt.show()
-
-
 def histogram(columnName, fileName):
-    df = dfMain.copy()
+    df = updateDataset()
     unsortedDict = df[columnName].value_counts().to_dict()
     keysMax = max(list(unsortedDict.keys()))
     keysMin = min(list(unsortedDict.keys()))
@@ -93,7 +90,8 @@ def histogram(columnName, fileName):
 
 
 def stackedBarChart(mainColumnName, secondaryColumnName, fileName):
-    df = createOther(dfMain.copy(),mainColumnName)
+    df = updateDataset()
+    df = createOther(df,mainColumnName)
     df = createOther(df,secondaryColumnName)
     dict = {}
     subDict = {}
@@ -118,8 +116,7 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName):
     values = []
     for yLabel in yLabels:
         values.append([dict[xLabel]['values'][yLabel] for xLabel in xLabels])
-    print(values)
-    
+
     fig, ax = plt.subplots()
     bottomTotal = [0 for _ in range(len(xLabels))]
     specialCase = (mainColumnName == 'Race Ethnicity' or mainColumnName == 'Department')
