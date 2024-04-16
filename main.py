@@ -345,8 +345,8 @@ def regenerateGraphs():
                 imageName = makeImageName(columnName1, type, False)
                 singleCategoryGraph(type, columnName1, imageName)
                 if type == 'histogram':
-                imageName = makeImageName(columnName1, type, False)
-                histogram(columnName1, imageName)
+                    imageName = makeImageName(columnName1, type, False)
+                    histogram(columnName1, imageName)
         addGraphToDb(path="./static/graphs/" + imageName, title=imageName.replace('.png', ''), description="TEST")
 
 @login_required
@@ -391,7 +391,6 @@ def editGraph(imgName):
 @app.route("/editGroups", methods=['GET', 'POST'])
 def editGroups():
     graphs_by_group = GraphGroup.query.all()
-
     available_graphs = Graphs.query.filter(~Graphs.id.in_(
         db.session.query(Graphs.id)
         .join(Graphs.GraphGroup)

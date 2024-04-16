@@ -64,8 +64,7 @@ def singleCategoryGraph(type, columnName, fileName):
             plt.title("# of Employees per " + columnName)
             if specialCase:
                 plt.xticks(rotation=45, ha='right')
-    saveImage(fileName,fig)
-
+    saveImage(fileName, fig)
     import matplotlib.image as mpimg
     image_path = './static/graphs/'+fileName
     image = mpimg.imread(image_path)
