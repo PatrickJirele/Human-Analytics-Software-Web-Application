@@ -65,24 +65,6 @@ def check(email):
         print("Invalid")
         return False
 
-# Returns all selected categories for pie, treemap, and bar charts.
-def getSingleCategories(request):
-    categories = []
-    categories.append('Time Type') if (request.form.get('timeType')) else None
-    categories.append('Job Family') if (request.form.get('jobFamily')) else None
-    categories.append('Department') if (request.form.get('department')) else None
-    categories.append('Race Ethnicity') if (request.form.get('raceEthnicity')) else None
-    categories.append('Gender') if (request.form.get('gender')) else None
-    return categories
-
-# Returns all selected categories for histogram charts.
-def getHistogramCategories(request):
-    categories = []
-    categories.append('Years At Western') if (request.form.get('yearsAtWestern')) else None
-    categories.append('Age') if (request.form.get('age')) else None
-    print(request.form)
-    return categories
-
 # Sets the name that will be used for chart image files.
 def makeImageName(category, type, isUnique):
     return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
@@ -240,23 +222,22 @@ def createGraph():
         try:
             chartType = request.form.get('chartType')
             dbTitle = request.form.get('title')
+            useQuantity = ("quantity" in request.form)
             dbDescription = ""
             if (chartType == 'pie' or chartType =='treemap' or chartType == 'bar'):
-                categories = getSingleCategories(request)
-                for category in categories:
-                    imageName = makeImageName(category, chartType, ("overwrite" in request.form))
-                    dbDescription = singleCategoryGraph(chartType, category, imageName, dbTitle)
+                category = request.form.get('singleCategory')
+                imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
+                dbDescription = singleCategoryGraph(chartType, category, imageName, dbTitle, useQuantity)
             if (chartType == 'histogram'):
-                categories = getHistogramCategories(request)
-                for category in categories:
-                    imageName = makeImageName(category, chartType, ("overwrite" in request.form))
-                    dbDescription = histogram(category, imageName, dbTitle)
+                category = request.form.get('histCategory')
+                imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
+                dbDescription = histogram(category, imageName, dbTitle)
             if (chartType == 'stackedBar'):
                 primaryCategory = request.form.get('primary')
                 secondaryCategory = request.form.get('secondary')
-                imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" in request.form))
-                dbDescription = stackedBarChart(primaryCategory, secondaryCategory, imageName, dbTitle)
-            dbTitle = dbTitle if dbTitle is not None else imageName.replace('.png', '')
+                imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" not in request.form))
+                dbDescription = stackedBarChart(primaryCategory, secondaryCategory, imageName, dbTitle, useQuantity)
+            dbTitle = dbTitle if not dbTitle == "" else imageName.replace('.png', '')
             addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription)
             return redirect("/uploadGraphs")
         except Exception as e:

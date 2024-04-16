@@ -23,23 +23,23 @@
             <br>
             <div id='singleCategory'>              
                 <p>Select Graphs:</p>
-                <label><input type='checkbox' name='timeType' value='timeType'>Time Type</label><br>
-                <label><input type='checkbox' name='jobFamily' value='jobFamily'>Job Family</label><br>
-                <label><input type='checkbox' name='department' value='department'>Department</label><br>
-                <label><input type='checkbox' name='raceEthnicity' value='raceEthnicity'>Race/Ethnicity</label><br>
-                <label><input type='checkbox' name='gender' value='gender'>Gender</label><br>
+                <label><input type='radio' name='singleCategory' value='Time Type' checked>Time Type</label><br>
+                <label><input type='radio' name='singleCategory' value='Job Family'>Job Family</label><br>
+                <label><input type='radio' name='singleCategory' value='Department'>Department</label><br>
+                <label><input type='radio' name='singleCategory' value='Race Ethnicity'>Race/Ethnicity</label><br>
+                <label><input type='radio' name='singleCategory' value='Gender'>Gender</label><br>
             </div>
 
             <div id='doubleCategory' style='display:none;'>             
                 <p>Select Primary Category:</p>
-                <label><input type='radio' name='primary' value='Time Type'>Time Type</label><br>
+                <label><input type='radio' name='primary' value='Time Type' checked>Time Type</label><br>
                 <label><input type='radio' name='primary' value='Job Family'>Job Family</label><br>
                 <label><input type='radio' name='primary' value='Department'>Department</label><br>
                 <label><input type='radio' name='primary' value='Race Ethnicity'>Race/Ethnicity</label><br>
                 <label><input type='radio' name='primary' value='Gender'>Gender</label><br>
 
                 <p>Select Secondary Category:</p>
-                <label><input type='radio' name='secondary' value='Time Type'>Time Type</label><br>
+                <label><input type='radio' name='secondary' value='Time Type' checked>Time Type</label><br>
                 <label><input type='radio' name='secondary' value='Job Family'>Job Family</label><br>
                 <label><input type='radio' name='secondary' value='Department'>Department</label><br>
                 <label><input type='radio' name='secondary' value='Race Ethnicity'>Race/Ethnicity</label><br>
@@ -47,15 +47,17 @@
             </div>
 
             <div id='histogramCategory' style='display:none;'>
-                <label><input type='checkbox' name='yearsAtWestern' value='yearsAtWestern'>Years At Western</label><br>
-                <label><input type='checkbox' name='age' value='age'>Age</label><br>
+                <label><input type='radio' name='histCategory' value='Years At Western' checked>Years At Western</label><br>
+                <label><input type='radio' name='histCategory' value='Age'>Age</label><br>
             </div>
             <br>
-            <br>
-            <label><input type='checkbox' name='overwrite' id='overwrite' value='overwrite' checked>Remake graph whenever new data is uploaded?</label><br>
-            <br>
-            <label><input type='text' name='title' id='title' placeholder='Custom Graph Title' checked> (Optional)</label><br>
-            <br>
+
+            <div id='histogramCategory'>
+                <p>Miscellaneous Options:</p>
+                <label><input type='checkbox' name='overwrite' id='overwrite' value='overwrite' checked>Remake graph whenever new data is uploaded?</label><br>
+                <label><input type='checkbox' name='quantity' id='quantity' value='overwrite'>Bar graphs use quantity instead of percentage.</label><br>
+                <label><input type='text' name='title' id='title' placeholder='Custom Graph Title'> (Optional)</label><br>
+            </div>
             <input type="submit" value="Generate">
         </form>
     </body>

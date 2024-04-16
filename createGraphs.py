@@ -6,7 +6,7 @@ displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
 dfMain = pd.read_csv(path)
 
 def saveImage(fileName, fig, genericTitle, customTitle):
-    finalTitle = genericTitle if customTitle is None else customTitle
+    finalTitle = genericTitle if customTitle == "" or customTitle == None else customTitle
     plt.title(finalTitle)
     
     normalPath = os.path.join(dir, 'static', 'graphs', fileName)
@@ -42,7 +42,7 @@ def createOther(df, columnName, description = ""):
     return df, description
     
     
-def singleCategoryGraph(type, columnName, fileName, customTitle):
+def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
     df, description = createOther(dfMain.copy(),columnName)
     dict = df[columnName].value_counts().to_dict()
     keys = list(dict.keys())
@@ -67,10 +67,14 @@ def singleCategoryGraph(type, columnName, fileName, customTitle):
         case "bar":
             specialCase = (columnName == 'Race Ethnicity' or columnName == 'Department')
             width = 0.8 if not specialCase else 0.6
+            if not useQuantity:
+                for i in range(len(vals)):
+                    vals[i] = (1-(len(df) - vals[i]) / len(df))*100
             plt.bar(keys, vals, width = width)
             plt.xlabel(columnName)
-            plt.ylabel("# of Employees")
-            genericTitle = "# of Employees per " + columnName
+            symbol = "#" if useQuantity else "%"
+            plt.ylabel(symbol + " of Employees")
+            genericTitle = symbol + " of Employees per " + columnName
             if specialCase:
                 plt.xticks(rotation=45, ha='right')
     saveImage(fileName,fig, genericTitle, customTitle)
@@ -97,7 +101,7 @@ def histogram(columnName, fileName, customTitle):
     return ""
 
 
-def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle):
+def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle, useQuantity):
     df, description = createOther(dfMain.copy(),mainColumnName)
     df, description = createOther(df,secondaryColumnName, description)
     dict = {}
@@ -120,6 +124,12 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle):
         secondaryValue = df[secondaryColumnName][index]
         dict[mainValue]['values'][secondaryValue] += 1
         
+    if not useQuantity:
+        for key in dict[mainValue]['values']:
+            val = dict[mainValue]['values'][key]
+            val = (1-(len(df) - int(val)) / len(df))*100
+            dict[mainValue]['values'][key] = val
+        
     values = []
     for yLabel in yLabels:
         values.append([dict[xLabel]['values'][yLabel] for xLabel in xLabels])
@@ -133,8 +143,9 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle):
         for x in range(len(bottomTotal)):
             bottomTotal[x] += values[i][x]
     plt.xlabel(mainColumnName)
-    ax.set_ylabel('# of Employees')
-    genericTitle = 'Breakdown of # of Employees per '+ mainColumnName + ' by ' + secondaryColumnName
+    symbol = "#" if useQuantity else "%"
+    ax.set_ylabel(symbol + ' of Employees')
+    genericTitle = 'Breakdown of ' + symbol + ' of Employees per '+ mainColumnName + ' by ' + secondaryColumnName
     if (specialCase):
         plt.xticks(rotation=45, ha='right')
     xLoc = 1
