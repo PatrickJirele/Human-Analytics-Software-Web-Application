@@ -1,11 +1,15 @@
+import os
+
 from appConfig import *
 
+matplotlib.use('Agg')
 dir = os.path.dirname(__file__)
 path = os.path.join(dir,'static', 'datasets', 'current.csv')
 displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
 dfMain = pd.read_csv(path)
 
 def saveImage(fileName, fig):
+    print('in save')
     normalPath = os.path.join(dir, 'static', 'graphs', fileName)
     displayPath = os.path.join(displayedDirPath, fileName)
     fig.savefig(normalPath, bbox_inches="tight")
@@ -61,6 +65,12 @@ def singleCategoryGraph(type, columnName, fileName):
             if specialCase:
                 plt.xticks(rotation=45, ha='right')
     saveImage(fileName,fig)
+
+    import matplotlib.image as mpimg
+    image_path = './static/graphs/'+fileName
+    image = mpimg.imread(image_path)
+    plt.imshow(image)
+    plt.show()
 
 
 def histogram(columnName, fileName):
@@ -127,4 +137,3 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName):
     yLoc = 0.5 if secondaryColumnName != 'Department' else 0
     plt.legend(loc=(xLoc, yLoc), bbox_transform=plt.gcf().transFigure)
     saveImage(fileName, fig)
-    

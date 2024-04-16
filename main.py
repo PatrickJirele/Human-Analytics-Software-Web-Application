@@ -32,7 +32,6 @@ class GraphGroup(db.Model):
     group_name = db.Column(db.String(100))
     graphs = db.relationship('Graphs', backref='GraphGroup', lazy='dynamic')
 
-
 class Graphs(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(100), nullable=False)
@@ -107,6 +106,12 @@ def addGraphToDb(path, title, description="", group_id=None):
     checker = Graphs.query.filter_by(title=title).first()
     if checker != None:
         print("graph with same name is in db already\n\n")
+        print("deleting old graph")
+        db.session.delete(checker)
+        db.session.add(temp)
+        print("adding new graph")
+        db.session.commit()
+        print("graph uploaded to database")
     else:
         db.session.add(temp)
         db.session.commit()
@@ -242,8 +247,6 @@ def delete_file():
         return jsonify({'success': False, 'error': 'File not found'})
 
 
-
-
 @login_required
 @app.route('/createGraph', methods=['GET', 'POST'])
 def createGraph():
@@ -273,12 +276,10 @@ def createGraph():
             print(traceback.format_exc())
     return render_template('createGraph.html')
 
-
 @login_required
 @app.route("/uploadGraphs", methods=['GET', 'POST'])
 def selectGraphsForDashboard():
     images, selected = getImgs()
-
     if request.method == "POST":
         destination = './static/currentlyDisplayed'
         list_of_graphs = request.form.getlist('image_list[]')
@@ -299,7 +300,6 @@ def selectGraphsForDashboard():
         return render_template('uploadGraphs.html', images=updated_Images, selected=updated_Selected)
 
     return render_template('uploadGraphs.html', images=images, selected=selected)
-
 
 @login_required
 @app.route('/deleteGraph/<imgName>', methods=['GET', 'POST'])
@@ -327,11 +327,32 @@ def deleteGraph(imgName):
 
 def regenerateGraphs():
     dataset_path = './static/datasets/current.csv'
-
+    images, selected = getImgs()
+    split_images = [item[:-4].split('_') for item in images]
+    print(split_images)
+    for img in split_images:
+        type= img[-1]
+        if type == 'stackedBar':
+            columnName1 = img[0]
+            columnName2 = img[1]
+            print(columnName1, columnName2, type)
+            imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
+            stackedBarChart(columnName1, columnName2, imageName)
+        else:
+            columnName1 = img[0]
+            print(columnName1, type)
+            if type == 'pie' or type == 'treemap' or type == 'bar':
+                imageName = makeImageName(columnName1, type, False)
+                singleCategoryGraph(type, columnName1, imageName)
+                if type == 'histogram':
+                imageName = makeImageName(columnName1, type, False)
+                histogram(columnName1, imageName)
+        addGraphToDb(path="./static/graphs/" + imageName, title=imageName.replace('.png', ''), description="TEST")
 
 @login_required
 @app.route("/selectDataset/<filename>", methods=["GET"])
 def selectDataset(filename):
+    print("selecting new dataset")
     normal_file_path = os.path.join('./static/datasets', filename)
     file_path = normal_file_path if os.path.exists(normal_file_path) else ""
 

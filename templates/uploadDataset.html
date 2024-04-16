@@ -102,7 +102,7 @@ function selectDataset(filename) {
         type: 'GET',
         success: function(response) {
             if (response.success) {
-                alert('Dataset selected successfully');
+                alert('Dataset selected successfully: ' + response.filename);
                 // Update the content of current.csv
                 $('#current-dataset').text(response.filename);
                         location.reload();
