@@ -5,4 +5,14 @@
             Password: <input type="input" name="pWord"> <br>
             <input type="submit" value="submit">
         </form>
-    {% endblock %}
+    {% for x in admins %}
+        <tr>
+            <td>{{ x.email }}</td>
+            <td>
+                <form action="/deleteAdmin/{{x.id}}" method='POST'>
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}

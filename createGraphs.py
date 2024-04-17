@@ -1,5 +1,4 @@
 import os
-
 from appConfig import *
 
 matplotlib.use('Agg')

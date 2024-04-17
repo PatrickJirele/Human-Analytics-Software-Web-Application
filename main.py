@@ -233,6 +233,8 @@ def updatePass():
 @app.route('/createAdmin', methods=['GET', 'POST'])
 @login_required
 def create():
+    admins = User.query.filter(User.email != 'testing@test.com').all()
+    print(admins)
     if request.method == 'POST':
         email = request.form['email']
         password = cipher.encrypt(request.form['pWord'])
@@ -248,7 +250,8 @@ def create():
             user = User.query.filter_by(email=request.form['email']).first()
             login_user(user)
             return flask.redirect('/')
-    return render_template('createAdmin.html')
+
+    return render_template('createAdmin.html', admins=admins)
 
 
 @app.route('/uploadDataset', methods=['GET', 'POST'])
@@ -411,7 +414,6 @@ def selectDataset(filename):
 
 @app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
 @login_required
-
 def editGraph(imgName):
     graphDir = './static/graphs/' + imgName
     graphToEdit = Graphs.query.filter_by(path=graphDir).first()
@@ -427,7 +429,6 @@ def editGraph(imgName):
 
 @app.route("/editGroups", methods=['GET', 'POST'])
 @login_required
-
 def editGroups():
     graphs_by_group = GraphGroup.query.all()
 
@@ -497,6 +498,14 @@ def deleteGroup(group_id):
     except:
         return jsonify({'message': 'Error deleting group'}), 500
 
+@app.route('/deleteAdmin/<user_id>', methods=['POST'])
+@login_required
+def deleteAdmin(user_id):
+    if request.method == 'POST':
+        results = User.query.filter_by(id=user_id).first()
+        db.session.delete(results)
+        db.session.commit()
+        return redirect("/")
 
 # ____ROUTES_END____
 
