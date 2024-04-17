@@ -54,6 +54,7 @@ class Graphs(db.Model):
     path = db.Column(db.String(100), nullable=False)
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(250), nullable=True)
+    type = db.Column(db.String(20))
     group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
 
 
@@ -113,26 +114,21 @@ def makeImageName(category, type, isUnique):
     return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
 
 
-def addGraphToDb(path, title, description="", group_id=None):
+def addGraphToDb(path, title, type, description="", group_id=None):
     if group_id == None:
-        temp = Graphs(path=path, title=title, description=description)
+        temp = Graphs(path=path, title=title, type=type, description=description)
     else:
-        temp = Graphs(path=path, title=title, description=description, group_id=None)
+        temp = Graphs(path=path, title=title, type=type, description=description, group_id=None)
 
     print(title + "\n")
-    checker = Graphs.query.filter_by(title=title).first()
+    checker = Graphs.query.filter_by(path=path).first()
     if checker != None:
-        print("graph with same name is in db already\n\n")
-        print("deleting old graph")
         db.session.delete(checker)
         db.session.add(temp)
-        print("adding new graph")
         db.session.commit()
-        print("graph uploaded to database")
     else:
         db.session.add(temp)
         db.session.commit()
-        print("graph uploaded to database")
 
 def getGraphsFromDb(listOfGraphs):
     retList = []
@@ -176,6 +172,52 @@ def home():
 
     return render_template('home.html', graphs=graphsFromDb, graphGroups = graphs_by_group)
 
+@app.route('/filterGraphs', methods=['GET', 'POST'])
+def filterGraphs():
+    graphsOfType = None
+    graphsOfField = None
+    retGraphs = []
+    typeSelected = ""
+    fieldSelected = ""
+    messageToSend = ""
+    if request.method == "POST":
+        if request.form["graphType"]:
+            typeSelected = request.form["graphType"]
+            #graphType = r"%\_{}%, ESCAPE "'\\'"".format(typeSelected)
+            #graphType = r'_(.*?)\.png'
+            #graphType = "{}%".format(typeSelected)
+            #print(graphType)
+            #print(str(Graphs.query.filter(Graphs.path.like(graphType))))
+            graphsOfType = Graphs.query.filter(Graphs.type.like(typeSelected)).all()
+            print(graphsOfType)
+
+        if request.form["graphField"]:
+            fieldSelected = request.form["graphField"]
+            graphField = "%{}%".format(fieldSelected)
+            graphsOfField = Graphs.query.filter(Graphs.path.like(graphField)).all()
+
+        if graphsOfType != None and graphsOfField != None:
+            for graphOfType in graphsOfType:
+                for graphOfField in graphsOfField:
+                    if graphOfField == graphOfType:
+                        retGraphs.append(graphOfField)
+            if len(retGraphs) == 0:
+                retGraphs = None
+                messageToSend='No matches found of graph type('+typeSelected+') and graph field('+fieldSelected+')'
+            else:
+                messageToSend='Graphs Found from selected field('+fieldSelected+') and selected graph type('+typeSelected+'): '
+
+        if graphsOfType != None and graphsOfField == None:
+            messageToSend='Graphs Available from selected type('+typeSelected+'):'
+            retGraphs = graphsOfType
+
+        if graphsOfType == None and graphsOfField != None:
+            messageToSend='Graphs Available from selected field('+fieldSelected+'): '
+            retGraphs = graphsOfField
+
+        return render_template('filterGraphs.html', graphs=retGraphs, message=messageToSend)
+
+    return render_template('filterGraphs.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -248,7 +290,7 @@ def create():
             db.session.add(temp)
             db.session.commit()
             user = User.query.filter_by(email=request.form['email']).first()
-            login_user(user)
+            #login_user(user)
             return flask.redirect('/')
 
     return render_template('createAdmin.html', admins=admins)
@@ -256,7 +298,6 @@ def create():
 
 @app.route('/uploadDataset', methods=['GET', 'POST'])
 @login_required
-
 def uploadDataset():
     dataset_files = getDatasets()
     selected_dataset = request.args.get('filename', 'None')
@@ -295,7 +336,6 @@ def uploadDataset():
 
 @app.route('/deleteDataset', methods=['POST'])
 @login_required
-
 def delete_file():
     filename = request.json['filename']
     normal_file_path = os.path.join('./static/datasets', filename)
@@ -307,91 +347,8 @@ def delete_file():
     else:
         return jsonify({'success': False, 'error': 'File not found'})
 
-
-@app.route('/createGraph', methods=['GET', 'POST'])
-@login_required
-
-def createGraph():
-    if request.method == "POST":
-        try:
-            chartType = request.form.get('chartType')
-            if (chartType == 'pie' or chartType == 'treemap' or chartType == 'bar'):
-                categories = getSingleCategories(request)
-                for category in categories:
-                    imageName = makeImageName(category, chartType, ("overwrite" in request.form))
-                    singleCategoryGraph(chartType, category, imageName)
-            if (chartType == 'histogram'):
-                categories = getHistogramCategories(request)
-                for category in categories:
-                    imageName = makeImageName(category, chartType, ("overwrite" in request.form))
-                    histogram(category, imageName)
-            if (chartType == 'stackedBar'):
-                primaryCategory = request.form.get('primary')
-                secondaryCategory = request.form.get('secondary')
-                imageName = makeImageName(primaryCategory + "_" + secondaryCategory, chartType,
-                                          ("overwrite" in request.form))
-                stackedBarChart(primaryCategory, secondaryCategory, imageName)
-
-            addGraphToDb(path="./static/graphs/" + imageName, title=imageName.replace('.png', ''), description="TEST")
-            return redirect("/uploadGraphs")
-        except Exception as e:
-            print(traceback.format_exc())
-    return render_template('createGraph.html')
-
-@app.route("/uploadGraphs", methods=['GET', 'POST'])
-@login_required
-
-def selectGraphsForDashboard():
-    images, selected = getImgs()
-    if request.method == "POST":
-        destination = './static/currentlyDisplayed'
-        list_of_graphs = request.form.getlist('image_list[]')
-
-        for graph in list_of_graphs:
-            srcPath = os.path.join('./static/graphs', graph)
-            shutil.copy2(srcPath, destination)
-
-        _, selected_imgs = getImgs()
-        for img in selected_imgs:
-            if img not in list_of_graphs:
-                img_to_rm = os.path.join(destination, img)
-                os.remove(img_to_rm)
-
-        updated_Images, updated_Selected = getImgs()
-        flash('Graphs selected successfully', 'success')
-        return flask.redirect('/uploadGraphs')
-        return render_template('uploadGraphs.html', images=updated_Images, selected=updated_Selected)
-
-    return render_template('uploadGraphs.html', images=images, selected=selected)
-
-@app.route('/deleteGraph/<imgName>', methods=['GET', 'POST'])
-@login_required
-
-def deleteGraph(imgName):
-    if request.method == 'POST':
-        graphDir = './static/graphs'
-        currDir = './static/currentlyDisplayed'
-        img_to_rm = os.path.join(graphDir, imgName)
-        os.remove(img_to_rm)
-        if os.path.isfile(os.path.join(currDir, imgName)):
-            img_to_rm = os.path.join(currDir, imgName)
-            os.remove(img_to_rm)
-
-        graphToDelete = Graphs.query.filter_by(path=graphDir + '/' + imgName).first()
-
-        if graphToDelete:
-            db.session.delete(graphToDelete)
-            db.session.commit()
-            return redirect('/uploadGraphs')
-        else:
-            return "Graph not found", 404
-        return flask.redirect('/uploadGraphs')
-
-    return flask.redirect('/uploadGraphs')
-
 @app.route("/selectDataset/<filename>", methods=["GET"])
 @login_required
-
 def selectDataset(filename):
     normal_file_path = os.path.join('./static/datasets', filename)
     file_path = normal_file_path if os.path.exists(normal_file_path) else ""
@@ -410,6 +367,99 @@ def selectDataset(filename):
     else:
         print("File path does not exist:", file_path)
         return jsonify({'success': False, 'error': 'File not found'})
+
+
+
+@app.route('/createGraph', methods=['GET', 'POST'])
+@login_required
+def createGraph():
+    if request.method == "POST":
+        try:
+            chartType = request.form.get('chartType')
+            if (chartType == 'pie' or chartType == 'treemap' or chartType == 'bar'):
+                categories = getSingleCategories(request)
+                for category in categories:
+                    imageName = makeImageName(category, chartType, ("overwrite" in request.form))
+                    singleCategoryGraph(chartType, category, imageName)
+                    addGraphToDb(path="./static/graphs/" + imageName, title=imageName.replace('.png', ''),
+                                 type=chartType, description="TEST")
+
+            if (chartType == 'histogram'):
+                categories = getHistogramCategories(request)
+                for category in categories:
+                    imageName = makeImageName(category, chartType, ("overwrite" in request.form))
+                    histogram(category, imageName)
+                    addGraphToDb(path="./static/graphs/" + imageName, title=imageName.replace('.png', ''),
+                                 type=chartType, description="TEST")
+
+            if (chartType == 'stackedBar'):
+                primaryCategory = request.form.get('primary')
+                secondaryCategory = request.form.get('secondary')
+                imageName = makeImageName(primaryCategory + "_" + secondaryCategory, chartType,
+                                          ("overwrite" in request.form))
+                stackedBarChart(primaryCategory, secondaryCategory, imageName)
+                addGraphToDb(path="./static/graphs/" + imageName, title=imageName.replace('.png', ''),
+                             type=chartType, description="TEST")
+
+            return redirect("/uploadGraphs")
+        except Exception as e:
+            print(traceback.format_exc())
+    return render_template('createGraph.html')
+
+@app.route("/uploadGraphs", methods=['GET', 'POST'])
+@login_required
+def selectGraphsForDashboard():
+    images, selected = getImgs()
+    if request.method == "POST":
+        destination = './static/currentlyDisplayed'
+        list_of_graphs = request.form.getlist('image_list[]')
+
+        for graph in list_of_graphs:
+            srcPath = os.path.join('./static/graphs', graph)
+            shutil.copy2(srcPath, destination)
+
+        _, selected_imgs = getImgs()
+        for img in selected_imgs:
+            if img not in list_of_graphs:
+                img_to_rm = os.path.join(destination, img)
+                os.remove(img_to_rm)
+
+        updated_Images, updated_Selected = getImgs()
+        flash('Graphs selected successfully', 'success')
+        #return flask.redirect('/uploadGraphs')
+        return render_template('uploadGraphs.html', images=updated_Images, selected=updated_Selected)
+
+    return render_template('uploadGraphs.html', images=images, selected=selected)
+
+@app.route('/deleteGraph/<imgName>', methods=['GET', 'POST'])
+@login_required
+def deleteGraph(imgName):
+    if request.method == 'POST':
+        graphDir = './static/graphs'
+        currDir = './static/currentlyDisplayed'
+        img_to_rm = os.path.join(graphDir, imgName)
+        os.remove(img_to_rm)
+        if os.path.isfile(os.path.join(currDir, imgName)):
+            img_to_rm = os.path.join(currDir, imgName)
+            os.remove(img_to_rm)
+
+        graphToDelete = Graphs.query.filter_by(path=graphDir + '/' + imgName).first()
+
+        if graphToDelete:
+            db.session.delete(graphToDelete)
+            db.session.commit()
+        else:
+            return "Graph not found", 404
+
+        images, selected = getImgs()
+        print('in post:')
+        print(images)
+        return render_template('uploadGraphs.html', images=images, selected=selected)
+
+    images, selected = getImgs()
+    print('out of post')
+    print(images)
+    return render_template('uploadGraphs.html', images=images, selected=selected)
 
 
 @app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
@@ -443,7 +493,6 @@ def editGroups():
 
 @app.route('/add-graph-to-group/<group_id>', methods=['POST'])
 @login_required
-
 def add_graph_to_group(group_id):
     graph_id = request.form['available_graphs']
     graph = Graphs.query.get(graph_id)
@@ -455,7 +504,6 @@ def add_graph_to_group(group_id):
 
 @app.route('/update-group-name/<group_id>', methods=['POST'])
 @login_required
-
 def update_group_name(group_id):
     group = GraphGroup.query.get(group_id)
     new_name = request.form['new_name']
@@ -466,7 +514,6 @@ def update_group_name(group_id):
 
 @app.route('/remove-graph', methods=['REMOVE'])
 @login_required
-
 def remove_graph():
     graph_id = request.args.get('graph_id')
     group_id = request.args.get('group_id')
@@ -478,7 +525,6 @@ def remove_graph():
 
 @app.route('/createGroup', methods=['POST'])
 @login_required
-
 def createGroup():
     new_group_name = request.form['new_group_name']
     new_group = GraphGroup(group_name=new_group_name)

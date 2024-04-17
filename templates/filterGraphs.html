@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .group-container {
+      border: 3px solid #ccc;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .group-container h2 {
+      font-size: 24px;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .graph-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-gap: 20px;
+    }
+
+    .group-graph-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+      align-items: start;
+    }
+
+    .thumbnail-img {
+      max-width: 100%;
+    }
+
+    .content-wrapper {
+      flex-grow: 1;
+      margin-left: 20px;
+      text-align: left;
+    }
+
+    .title-container {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .description-container {
+      max-width: 500px;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
+    .description-quote {
+        width: 550px;
+        height: 350px;
+        border: 1px solid;
+        overflow: scroll;
+        scrollbar-color: gray white;
+        scrollbar-width: thin;
+    }
+</style>
+
+<body>
+<form action="{{ url_for('filterGraphs') }}" method="POST" >
+    <select id="graphType" name="graphType">
+        <option value="">Select a graph type</option>
+        <option value="pie">Pie Charts</option>
+        <option value="histogram">Histograms</option>
+        <option value="treemap">Treemaps</option>
+        <option value="bar">Bar Charts</option>
+        <option value="stackedBar">Stacked Bars</option>
+    </select>
+    <select id="graphField" name="graphField">
+        <option value="">Select a graph field</option>
+        <option value="Department">Department</option>
+        <option value="Gender">Gender</option>
+        <option value="Race Ethnicity">Race and Ethnicity</option>
+        <option value="Job Family">Job Family</option>
+        <option value="Age">Age</option>
+        <option value="Years at Western">Years At Western</option>
+    </select>
+    <button type="submit">Filter Graphs</button>
+</form>
+
+{% if message %}
+<h1>{{ message }}</h1>
+{% endif %}
+
+{% if graphs %}
+        {% for graph in graphs %}
+        <div class="group-container">
+            <div class="graph-grid">
+                <div class="group-graph-container" data-graph-id="{{ graph.id }}">
+                    <img src="{{ graph.path }}" class="thumbnail-img">
+                    <div class="content-wrapper">
+                        <div class="title-container">Graph Title: {{ graph.title }}</div>
+                        {% if graph.description %}
+                        <div class="description-container"><b>Description:</b>
+                            <br>
+                            <blockquote class="description-quote">
+                                {{ graph.description }}
+                            </blockquote>
+                        </div>
+                        {% else %}
+                            No Description provided
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+{% endif %}
+</body>
+
+{% endblock %}

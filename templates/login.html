@@ -1,8 +1,25 @@
 {% extends "base.html" %}
-    {% block content %}
-        <form action="/login" method="POST">
-            Email: <input type="input" name="email"> <br>
-            Password: <input type="input" name="pWord"> <br>
-            <input type="submit" value="submit">
-        </form>
-    {% endblock %}
+{% block content %}
+
+<style>
+    .login-form-container {
+      border: 3px solid #ccc;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+    }
+    form{
+        width: 50%;
+    }
+</style>
+<div class="login-form-container">
+    <form action="/login" method="POST">
+        Email: <input type="input" name="email"> <br>
+        Password: <input type="input" name="pWord"> <br>
+        <input type="submit" value="submit">
+    </form>
+</div>
+{% endblock %}

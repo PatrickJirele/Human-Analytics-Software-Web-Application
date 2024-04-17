@@ -125,13 +125,13 @@
   function submitSelectedGraphs() {
     const data = [];
     {% for image in images %}
-    var tempImg = document.getElementById('{{ image }}');
-      if (tempImg.checked){
-        data.push(tempImg.value);
+      var tempImg = document.getElementById('{{ image }}');
+      if (tempImg !== null){ //this null check allows for sucessful submission after a graph is deleted
+        if (tempImg.checked){
+            data.push(tempImg.value);
+        }
       }
     {% endfor %}
-
-    console.log(data);
 
     $.post( "/uploadGraphs", {
             image_list: data
@@ -147,10 +147,10 @@
 
 // JavaScript code to handle the "Delete" button
 var deleteButtons = document.querySelectorAll(".delete-button");
-
+console.log(deleteButtons);
 deleteButtons.forEach(function(button) {
     button.addEventListener("click", function(event) {
-        event.preventDefault(); // Prevent the default form submission
+        event.preventDefault();
         var imageContainer = this.parentNode.parentNode;
         var imageName = imageContainer.querySelector("input[name='images[]']").value;
 
