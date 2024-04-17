@@ -47,6 +47,7 @@ class GraphGroup(db.Model):
     __tablename__ = 'graphgroup'
     id = db.Column(db.Integer, primary_key=True)
     group_name = db.Column(db.String(100))
+    currently_displayed = db.Column(db.Boolean, default=False, nullable=False)
     graphs = db.relationship('Graphs', backref='GraphGroup', lazy='dynamic')
 
 class Graphs(db.Model):
@@ -168,7 +169,7 @@ def regenerateGraphs():
 def home():
     _, graphsToDisplay = getImgs()
     graphsFromDb = getGraphsFromDb(graphsToDisplay)
-    graphs_by_group = GraphGroup.query.all()
+    graphs_by_group = GraphGroup.query.filter_by(currently_displayed = 1).all()
 
     return render_template('home.html', graphs=graphsFromDb, graphGroups = graphs_by_group)
 
@@ -543,6 +544,33 @@ def deleteGroup(group_id):
         return jsonify({'message': 'Group deleted successfully'}), 200
     except:
         return jsonify({'message': 'Error deleting group'}), 500
+
+@app.route('/displayGroup/<group_id>', methods=['DISPLAY'])
+@login_required
+def displayGroup(group_id):
+    print(group_id)
+    try:
+        group = GraphGroup.query.filter_by(id=group_id).first()
+        group.currently_displayed = 1
+        db.session.add(group)
+        db.session.commit()
+        return jsonify({'message': 'Group displayed successfully'}), 200
+    except:
+        return jsonify({'message': 'Error displaying group'}), 500
+
+@app.route('/removeDisplayGroup/<group_id>', methods=['REMOVE'])
+@login_required
+def removeDisplayGroup(group_id):
+    print(group_id)
+    try:
+        group = GraphGroup.query.filter_by(id=group_id).first()
+        group.currently_displayed = 0
+        db.session.add(group)
+        db.session.commit()
+        return jsonify({'message': 'Group displayed successfully'}), 200
+    except:
+        return jsonify({'message': 'Error displaying group'}), 500
+
 
 @app.route('/deleteAdmin/<user_id>', methods=['POST'])
 @login_required
