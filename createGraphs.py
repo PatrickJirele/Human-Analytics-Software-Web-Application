@@ -123,16 +123,16 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle, 
         mainValue = df[mainColumnName][index]
         secondaryValue = df[secondaryColumnName][index]
         dict[mainValue]['values'][secondaryValue] += 1
-        
-    if not useQuantity:
-        for key in dict[mainValue]['values']:
-            val = dict[mainValue]['values'][key]
-            val = (1-(len(df) - int(val)) / len(df))*100
-            dict[mainValue]['values'][key] = val
+    
         
     values = []
     for yLabel in yLabels:
         values.append([dict[xLabel]['values'][yLabel] for xLabel in xLabels])
+    
+    if not useQuantity:
+        for i in range(len(values)):
+            for x in range(len(values[i])):
+                values[i][x] = (1-(len(df) - values[i][x]) / len(df))*100
     
     fig, ax = plt.subplots()
     bottomTotal = [0 for _ in range(len(xLabels))]
