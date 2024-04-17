@@ -11,15 +11,6 @@
             background-color: #333;
             z-index: 1;
         }
-        .footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #f1f1f1;
-            text-align: center;
-            padding: 10px 0;
-            font-size: 12px;
-        }
     </style>
 </head>
 {% if current_user.is_authenticated %}
@@ -60,9 +51,5 @@
 
 {% block content %}
 {% endblock %}
-
-<div class="footer">
-    Created by: Nathan Todd, Blake Brown, and Patrick Jirele
-</div>
 
 </html>

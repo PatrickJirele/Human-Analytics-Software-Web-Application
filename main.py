@@ -184,13 +184,7 @@ def filterGraphs():
     if request.method == "POST":
         if request.form["graphType"]:
             typeSelected = request.form["graphType"]
-            #graphType = r"%\_{}%, ESCAPE "'\\'"".format(typeSelected)
-            #graphType = r'_(.*?)\.png'
-            #graphType = "{}%".format(typeSelected)
-            #print(graphType)
-            #print(str(Graphs.query.filter(Graphs.path.like(graphType))))
             graphsOfType = Graphs.query.filter(Graphs.type.like(typeSelected)).all()
-            print(graphsOfType)
 
         if request.form["graphField"]:
             fieldSelected = request.form["graphField"]
@@ -231,7 +225,6 @@ def login():
                 if request.form['pWord'] != userPass:
                     return render_template('login.html')
                 else:
-                    #add authentication to user and commit
                     user.authenticated = True
                     db.session.add(user)
                     db.session.commit()
@@ -276,7 +269,7 @@ def updatePass():
 @app.route('/createAdmin', methods=['GET', 'POST'])
 @login_required
 def create():
-    admins = User.query.filter(User.email != 'testing@test.com').all()
+    admins = User.query.filter(User.admin != 1).all()
     print(admins)
     if request.method == 'POST':
         email = request.form['email']
@@ -290,9 +283,9 @@ def create():
         else:
             db.session.add(temp)
             db.session.commit()
-            user = User.query.filter_by(email=request.form['email']).first()
-            #login_user(user)
-            return flask.redirect('/')
+            # user = User.query.filter_by(email=request.form['email']).first()
+            # login_user(user)
+            return flask.redirect('/createAdmin')
 
     return render_template('createAdmin.html', admins=admins)
 
@@ -508,7 +501,6 @@ def add_graph_to_group(group_id):
 def update_group_name(group_id):
     group = GraphGroup.query.get(group_id)
     new_name = request.form['new_name']
-
     group.group_name = new_name
     db.session.commit()
     return redirect('/editGroups')
@@ -572,15 +564,16 @@ def removeDisplayGroup(group_id):
         return jsonify({'message': 'Error displaying group'}), 500
 
 
-@app.route('/deleteAdmin/<user_id>', methods=['POST'])
+@app.route('/deleteAdmin/<user_id>', methods=['DELETE'])
 @login_required
 def deleteAdmin(user_id):
-    if request.method == 'POST':
+    try:
         results = User.query.filter_by(id=user_id).first()
         db.session.delete(results)
         db.session.commit()
-        return redirect("/")
-
+        return jsonify({'message': 'Admin deleted successfully'}), 200
+    except:
+        return jsonify({'message': 'Error deleting admin'}), 500
 # ____ROUTES_END____
 
 if __name__ == "__main__":
