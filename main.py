@@ -146,19 +146,21 @@ def regenerateGraphs():
     dataset_path = './static/datasets/current.csv'
     images, selected = getImgs()
     split_images = [item[:-4].split('_') for item in images]
-    for img in split_images:
+    for i, img in enumerate(split_images):
+        graph = Graphs.query.filter_by(path = ("./static/graphs/" + images[i])).first()
+        title = graph.title
         type= img[-1]
         print({'IMG: ' : img, 'TYPE: ' : img[-1]})
         if type == 'stackedBar':
             columnName1 = img[0]
             columnName2 = img[1]
             imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
-            stackedBarChart(columnName1, columnName2, imageName)
+            stackedBarChart(columnName1, columnName2, imageName, title, False)
         else:
             columnName1 = img[0]
             if type == 'pie' or type == 'treemap' or type == 'bar':
                 imageName = makeImageName(columnName1, type, False)
-                singleCategoryGraph(type, columnName1, imageName)
+                singleCategoryGraph(type, columnName1, imageName, title, False)
             if type == 'histogram':
                 imageName = makeImageName(columnName1, type, False)
                 histogram(columnName1, imageName)
