@@ -172,7 +172,6 @@ def regenerateGraphs():
 def home():
     graphsFromDb = Graphs.query.filter_by(currently_displayed = 1).all()
     graphs_by_group = GraphGroup.query.filter_by(currently_displayed = 1).all()
-
     return render_template('home.html', graphs=graphsFromDb, graphGroups = graphs_by_group)
 
 @app.route('/filterGraphs', methods=['GET', 'POST'])
@@ -460,9 +459,9 @@ def removeDisplayGraph(graph_id):
         group.currently_displayed = 0
         db.session.add(group)
         db.session.commit()
-        return jsonify({'message': 'Group displayed successfully'}), 200
+        return jsonify({'message': 'Graph displayed successfully'}), 200
     except:
-        return jsonify({'message': 'Error displaying group'}), 500
+        return jsonify({'message': 'Error displaying graph'}), 500
 
 @app.route('/updateGraphInfo/<graph_id>', methods=['POST'])
 @login_required

@@ -80,6 +80,26 @@
             font-size: 12px;
             cursor: pointer;
         }
+        .remove-display-group-button {
+           position: center;
+           top: 5px;
+           background-color: #FFA500;
+           color: white;
+           border: none;
+           padding: 5px 10px;
+           font-size: 12px;
+           cursor: pointer;
+         }
+         .display-group-button {
+           position: center;
+           top: 5px;
+           background-color: #00A36C;
+           color: white;
+           border: none;
+           padding: 5px 10px;
+           font-size: 12px;
+           cursor: pointer;
+         }
     </style>
 </head>
 <body>
@@ -179,6 +199,7 @@
                 .then(function(response) {
                     if (response.ok) {
                         graphContainer.remove();
+                        location.reload();
                     } else {
                         alert('Error removing graph');
                     }
