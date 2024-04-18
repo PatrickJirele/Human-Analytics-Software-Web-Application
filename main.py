@@ -75,10 +75,8 @@ def getDatasets():
 def getImgs():
     images = [f for f in os.listdir('./static/graphs') if
               os.path.isfile(os.path.join('./static/graphs', f))]  #Sends all images in graphs to uploadGraphs.html
-    selected = [f for f in os.listdir('./static/currentlyDisplayed') if os.path.isfile(
-        os.path.join('./static/currentlyDisplayed', f))]  #sends currently displayed imaged to uploadGraphs.html
 
-    return images, selected
+    return images
 
 
 
@@ -144,7 +142,7 @@ def getGraphsFromDb(listOfGraphs):
 
 def regenerateGraphs():
     dataset_path = './static/datasets/current.csv'
-    images, selected = getImgs()
+    images = getImgs()
     split_images = [item[:-4].split('_') for item in images]
     for img in split_images:
         type= img[-1]
