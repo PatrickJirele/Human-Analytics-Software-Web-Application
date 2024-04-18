@@ -56,17 +56,8 @@
         scrollbar-color: gray white;
         scrollbar-width: thin;
     }
-
-    .footer {
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        background-color: #f1f1f1;
-        text-align: center;
-        padding: 10px 0;
-        font-size: 12px;
-    }
 </style>
+
 <body>
     {% if graphs %}
         {% for graph in graphs %}
@@ -120,5 +111,5 @@
     <div class="footer">
         Created by: Nathan Todd, Blake Brown, and Patrick Jirele
     </div>
-
+</body>
 {% endblock %}

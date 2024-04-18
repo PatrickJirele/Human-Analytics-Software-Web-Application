@@ -56,6 +56,7 @@ class Graphs(db.Model):
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(250), nullable=True)
     type = db.Column(db.String(20))
+    currently_displayed = db.Column(db.Boolean, default=False, nullable=False)
     group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
 
 
@@ -76,7 +77,9 @@ def getImgs():
               os.path.isfile(os.path.join('./static/graphs', f))]  #Sends all images in graphs to uploadGraphs.html
     selected = [f for f in os.listdir('./static/currentlyDisplayed') if os.path.isfile(
         os.path.join('./static/currentlyDisplayed', f))]  #sends currently displayed imaged to uploadGraphs.html
+
     return images, selected
+
 
 
 #Validates if entered email is in correct format
@@ -167,8 +170,7 @@ def regenerateGraphs():
 
 @app.route('/')
 def home():
-    _, graphsToDisplay = getImgs()
-    graphsFromDb = getGraphsFromDb(graphsToDisplay)
+    graphsFromDb = Graphs.query.filter_by(currently_displayed = 1).all()
     graphs_by_group = GraphGroup.query.filter_by(currently_displayed = 1).all()
 
     return render_template('home.html', graphs=graphsFromDb, graphGroups = graphs_by_group)
@@ -403,57 +405,23 @@ def createGraph():
 @app.route("/uploadGraphs", methods=['GET', 'POST'])
 @login_required
 def selectGraphsForDashboard():
-    images, selected = getImgs()
-    if request.method == "POST":
-        destination = './static/currentlyDisplayed'
-        list_of_graphs = request.form.getlist('image_list[]')
+    graphs = Graphs.query.all()
+    return render_template('uploadGraphs.html', graphs=graphs)
 
-        for graph in list_of_graphs:
-            srcPath = os.path.join('./static/graphs', graph)
-            shutil.copy2(srcPath, destination)
-
-        _, selected_imgs = getImgs()
-        for img in selected_imgs:
-            if img not in list_of_graphs:
-                img_to_rm = os.path.join(destination, img)
-                os.remove(img_to_rm)
-
-        updated_Images, updated_Selected = getImgs()
-        flash('Graphs selected successfully', 'success')
-        #return flask.redirect('/uploadGraphs')
-        return render_template('uploadGraphs.html', images=updated_Images, selected=updated_Selected)
-
-    return render_template('uploadGraphs.html', images=images, selected=selected)
-
-@app.route('/deleteGraph/<imgName>', methods=['GET', 'POST'])
+@app.route('/deleteGraph/<graph_id>', methods=['DELETE'])
 @login_required
-def deleteGraph(imgName):
-    if request.method == 'POST':
-        graphDir = './static/graphs'
-        currDir = './static/currentlyDisplayed'
-        img_to_rm = os.path.join(graphDir, imgName)
-        os.remove(img_to_rm)
-        if os.path.isfile(os.path.join(currDir, imgName)):
-            img_to_rm = os.path.join(currDir, imgName)
-            os.remove(img_to_rm)
-
-        graphToDelete = Graphs.query.filter_by(path=graphDir + '/' + imgName).first()
-
-        if graphToDelete:
-            db.session.delete(graphToDelete)
-            db.session.commit()
-        else:
-            return "Graph not found", 404
-
-        images, selected = getImgs()
-        print('in post:')
-        print(images)
-        return render_template('uploadGraphs.html', images=images, selected=selected)
-
-    images, selected = getImgs()
-    print('out of post')
-    print(images)
-    return render_template('uploadGraphs.html', images=images, selected=selected)
+def deleteGraph(graph_id):
+    print(graph_id)
+    try:
+        graphToDelete = Graphs.query.filter_by(id=graph_id).first()
+        print(graphToDelete)
+        print(graphToDelete.path)
+        os.remove(graphToDelete.path)
+        db.session.delete(graphToDelete)
+        db.session.commit()
+        return jsonify({'message': 'Graph deleted successfully'}), 200
+    except:
+        return jsonify({'message': 'Error deleting graph'}), 500
 
 
 @app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
@@ -469,6 +437,44 @@ def editGraph(imgName):
         return redirect('/uploadGraphs')
 
     return render_template('editGraph.html', graphToEdit=graphToEdit)
+
+
+@app.route('/displayGraph/<graph_id>', methods=['DISPLAY'])
+@login_required
+def displayGraph(graph_id):
+    try:
+        group = Graphs.query.filter_by(id=graph_id).first()
+        group.currently_displayed = 1
+        db.session.add(group)
+        db.session.commit()
+        return jsonify({'message': 'Group displayed successfully'}), 200
+    except:
+        return jsonify({'message': 'Error displaying group'}), 500
+
+
+@app.route('/removeDisplayGraph/<graph_id>', methods=['REMOVE'])
+@login_required
+def removeDisplayGraph(graph_id):
+    try:
+        group = Graphs.query.filter_by(id=graph_id).first()
+        group.currently_displayed = 0
+        db.session.add(group)
+        db.session.commit()
+        return jsonify({'message': 'Group displayed successfully'}), 200
+    except:
+        return jsonify({'message': 'Error displaying group'}), 500
+
+@app.route('/updateGraphInfo/<graph_id>', methods=['POST'])
+@login_required
+def updateGraphInfo(graph_id):
+    graph = Graphs.query.filter_by(id=graph_id).first()
+    new_title = request.form['new_title']
+    new_description = request.form['new_description']
+    graph.title= new_title
+    graph.description = new_description
+    db.session.add(graph)
+    db.session.commit()
+    return redirect('/uploadGraphs')
 
 
 @app.route("/editGroups", methods=['GET', 'POST'])
@@ -537,6 +543,8 @@ def deleteGroup(group_id):
     except:
         return jsonify({'message': 'Error deleting group'}), 500
 
+
+
 @app.route('/displayGroup/<group_id>', methods=['DISPLAY'])
 @login_required
 def displayGroup(group_id):
@@ -574,6 +582,10 @@ def deleteAdmin(user_id):
         return jsonify({'message': 'Admin deleted successfully'}), 200
     except:
         return jsonify({'message': 'Error deleting admin'}), 500
+
+
+
+
 # ____ROUTES_END____
 
 if __name__ == "__main__":

@@ -78,3 +78,13 @@ ul {
     color: #FFFFFF;
     background-color: #781c0b;
   }
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f1f1f1;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12px;
+  }

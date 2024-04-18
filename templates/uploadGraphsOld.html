@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% block content %}
+<head>
+  <title>Graph Selector</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<style>
+  .thumbnail-img {
+    width: 200px;
+    height: auto;
+  }
+.image-container {
+    display: inline-block;
+    width: 30%;
+    margin: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
+  .checkbox-label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .delete-form {
+    margin-top: 10px;
+  }
+  .submit-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    <!-- border: 3px solid green; -->
+  }
+  .submit-btn {
+    height:100px;
+    width:200px;
+  }
+  .edit-button {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .edit-form {
+    margin-top: 10px;
+  }
+
+  .edit-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.edit-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+}
+
+
+  .delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<h2>Select Graphs To Be Displayed</h2>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+<div id="checkboxes">
+  {% for image in images %}
+    <div class="image-container" data-image-name="{{ image }}">
+        <form action="{{ url_for('deleteGraph', imgName=image) }}" method="POST" class="delete-form">
+            <button type="submit" class="delete-button">Delete</button>
+        </form>
+        <div class="edit-form">
+            <a href="{{ url_for('editGraph', imgName=image) }}" class="edit-button">Edit</a>
+        </div>
+        <form action="/uploadGraphs" method="POST">
+            <input type="checkbox" name="images[]" value="{{ image }}" id="{{ image }}" {% if image in selected %} checked {% endif %}>
+            <label for="{{ image }}" class="checkbox-label">{{ image }}</label>
+            <img src="{{ url_for('static', filename='graphs/' + image) }}" class="thumbnail-img">
+        </form>
+    </div>
+  {% endfor %}
+</div>
+
+
+{% for graph in graphs %}
+    <div class="graph-container" data-graph-id="{{ graph.id }}">
+        <h2>Graph Title: {{ graph.title }}
+            <button class="edit-button">Edit Graph</button>
+            <button class="delete-button">Delete Graph</button>
+            {% if graph.currently_displayed %} <button class="remove-display-graph-button">Remove Graph From Display</button>
+            {% else %} <button class="display-graph-button">Display Graph</button> {% endif %}
+        </h2>
+        <div id="editGraphModal-{{ graph.id }}" class="edit-graph-modal">
+            <div class="edit-graph-modal-content">
+                <span class="close-button">&times;</span>
+                <h3>Edit Graph</h3>
+                <form action="{{ url_for('updateGraphInfor', graph_id=graph.id) }}" method="POST">
+                    <label for="new_title">New Title:</label>
+                    <input type="text" id="new_title" name="new_title" value="{{ graph.title }}" required>
+                    <label for="new_description">New Description:</label>
+                    <input type="text" id="new_description" name="new_description" value="{{ graph.description }}">
+                    <button type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+<script>
+<!--Function for submitting all selected graphs-->
+
+  function submitSelectedGraphs() {
+    const data = [];
+    {% for image in images %}
+      var tempImg = document.getElementById('{{ image }}');
+      if (tempImg !== null){ //this null check allows for sucessful submission after a graph is deleted
+        if (tempImg.checked){
+            data.push(tempImg.value);
+        }
+      }
+    {% endfor %}
+
+    $.post( "/uploadGraphs", {
+            image_list: data
+        }).done(function(response) {
+            alert('Graphs selected successfully');
+            location.reload();
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            alert('Error selecting graphs: ' + textStatus);
+        });
+  };
+
+
+
+// JavaScript code to handle the "Delete" button
+var deleteButtons = document.querySelectorAll(".delete-button");
+deleteButtons.forEach(function(button) {
+    button.addEventListener("click", function(event) {
+        event.preventDefault();
+        var imageContainer = this.parentNode.parentNode;
+        var imageName = imageContainer.querySelector("input[name='images[]']").value;
+
+        fetch(`/deleteGraph/${imageName}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ image_name: imageName })
+        })
+        .then(function(response) {
+            if (response.ok) {
+                imageContainer.remove();
+            } else {
+                alert('Error deleting graph');
+            }
+        })
+        .catch(function(error) {
+            alert('Error deleting graph: ' + error);
+        });
+    });
+});
+</script>
+
+<div class="submit-container">
+  <button type="button" onclick="submitSelectedGraphs();" class="submit-btn">Submit</button>
+</div>
+
+</body>
+{% endblock %}
