@@ -55,7 +55,15 @@
         overflow: scroll;
         scrollbar-color: gray white;
         scrollbar-width: thin;
+        word-wrap: break-word;
     }
+
+    .other {
+        background-color: #f1f1f1;
+        font-color: white;
+        padding: 10px
+    }
+
 </style>
 
 <body>
@@ -70,9 +78,9 @@
                         {% if graph.description %}
                         <div class="description-container"><b>Description:</b>
                             <br>
-                            <blockquote class="description-quote">
-                                {{ graph.description }}
-                            </blockquote>
+                            <p class="description-quote">
+                                {{ graph.description|safe }}
+                            </p>
                         </div>
                         {% else %}
                             No Description provided
@@ -107,6 +115,11 @@
         </div>
         {% endfor %}
     {% endif %}
+
+    <div class="other">
+        <h3>About The "Other" Category</h3>
+        <p>The above graphs may contain a special category that is labeled as "Other." This category is a combination of one or many small categories. In order to be combined into the Other category, a category must either consists of fewer than 5 people or it must make up less than 2% of the graph's data. This action is done with the intent of preserving data anonymity for those whose information is displayed within these graphs.</p>
+    </div>
 
     <div class="footer">
         Created by: Nathan Todd, Blake Brown, and Patrick Jirele
