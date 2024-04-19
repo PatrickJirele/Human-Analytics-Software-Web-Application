@@ -160,7 +160,7 @@ def regenerateGraphs():
                 singleCategoryGraph(type, columnName1, imageName, title, useQuantity)
             if type == 'histogram':
                 imageName = makeImageName(columnName1, type, False)
-                histogram(columnName1, imageName, title)
+                histogram(columnName1, imageName, title, useQuantity)
 
 # ____HELPER_FUNCTIONS_END____
 
@@ -375,7 +375,7 @@ def createGraph():
             if (chartType == 'histogram'):
                 category = request.form.get('histCategory')
                 imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
-                dbDescription = histogram(category, imageName, dbTitle)
+                dbDescription = histogram(category, imageName, dbTitle, useQuantity)
             if (chartType == 'stackedBar'):
                 primaryCategory = request.form.get('primary')
                 secondaryCategory = request.form.get('secondary')

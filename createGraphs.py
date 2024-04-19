@@ -85,7 +85,7 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
     return description
 
 
-def histogram(columnName, fileName, customTitle):
+def histogram(columnName, fileName, customTitle, useQuantity):
     df = updateDB()
     unsortedDict = df[columnName].value_counts().to_dict()
     keysMax = max(list(unsortedDict.keys()))
@@ -97,10 +97,14 @@ def histogram(columnName, fileName, customTitle):
     keys = list(sortedDict.keys())
     vals = list(sortedDict.values())
     fig, axs = plt.subplots()
+    if not useQuantity:
+                for i in range(len(vals)):
+                    vals[i] = (1-(len(df) - vals[i]) / len(df))*100
     axs.bar(keys, vals, width=1.0)
     plt.xlabel(columnName)
-    plt.ylabel("# of Employees")
-    genericTitle = "# of Employees per " + columnName
+    symbol = "#" if useQuantity else "%"
+    plt.ylabel(symbol + " of Employees")
+    genericTitle = symbol + " of Employees per " + columnName
     saveImage(fileName, fig, genericTitle, customTitle)
     return ""
 
