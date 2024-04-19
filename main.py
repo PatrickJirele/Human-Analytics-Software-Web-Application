@@ -163,7 +163,7 @@ def regenerateGraphs():
                 singleCategoryGraph(type, columnName1, imageName, title, False)
             if type == 'histogram':
                 imageName = makeImageName(columnName1, type, False)
-                histogram(columnName1, imageName)
+                histogram(columnName1, imageName, title, False)
 
 # ____HELPER_FUNCTIONS_END____
 
@@ -377,19 +377,20 @@ def createGraph():
             chartType = request.form.get('chartType')
             dbTitle = request.form.get('title')
             useQuantity = ("quantity" in request.form)
+            unique = (("overwrite" not in request.form) and useQuantity)
             dbDescription = ""
             if (chartType == 'pie' or chartType =='treemap' or chartType == 'bar'):
                 category = request.form.get('singleCategory')
-                imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
+                imageName = makeImageName(category, chartType, unique)
                 dbDescription = singleCategoryGraph(chartType, category, imageName, dbTitle, useQuantity)
             if (chartType == 'histogram'):
                 category = request.form.get('histCategory')
-                imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
+                imageName = makeImageName(category, chartType, unique)
                 dbDescription = histogram(category, imageName, dbTitle, useQuantity)
             if (chartType == 'stackedBar'):
                 primaryCategory = request.form.get('primary')
                 secondaryCategory = request.form.get('secondary')
-                imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" not in request.form))
+                imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, unique)
                 dbDescription = stackedBarChart(primaryCategory, secondaryCategory, imageName, dbTitle, useQuantity)
             dbTitle = dbTitle if not dbTitle == "" else imageName.replace('.png', '')
             addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription, type=chartType)
