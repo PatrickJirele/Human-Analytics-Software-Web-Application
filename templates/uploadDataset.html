@@ -8,48 +8,96 @@
 </head>
 
 <style>
-  .dataset-list-quote {
-    width: 400px;
-    height: 300px;
-    border: 1px solid;
-    overflow: scroll;
-    scrollbar-color: grey white;
-    scrollbar-width: thin;
-  }
+    .container {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px;
+    }
 
-  .dataset-file {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
-  }
+    .form-container {
+        width: 45%;
+        border: 2px solid #ccc;
+        padding: 20px;
+        text-align: center;
+    }
 
-  .file-name {
-    flex: 1;
-  }
+    input[type="file"] {
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 10px;
+    }
 
-  .delete-btn {
-    margin-left: 10px;
-  }
+    input[type="submit"] {
+        height: 50px;
+        width: 100px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-size: 18px;
+        transition: background-color 0.3s;
+    }
 
-  .container {
-    display: flex;
-  }
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
 
-  .form-container {
-    flex: 1;
-  }
+    .dataset-list {
+        width: 45%; /* Adjust width to take up right half */
+    }
 
-  .dataset-list {
-    flex: 1;
-    margin-left: 20px;
-  }
+    .dataset-list h1 {
+        text-align: center;
+    }
+
+    .dataset-list-quote {
+        height: 300px;
+        border: 1px solid;
+        overflow: scroll;
+        scrollbar-color: grey white;
+        scrollbar-width: thin;
+    }
+
+    .dataset-file {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .file-name {
+        flex: 1;
+    }
+
+    .delete-btn {
+        margin-left: 10px;
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .select-btn {
+        margin-left: 10px;
+        background-color: #00A36C;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .dataset-list {
+        margin-left: 20px;
+    }
 </style>
 
 <body>
-    <h1>Upload Excel File (.xlsx)</h1>
     <div class="container">
         <div class="form-container">
+            <h1>Upload Excel File (.xlsx)</h1>
             <form action="/uploadDataset" method="post" enctype="multipart/form-data">
                 <input type="file" name="file"
                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
