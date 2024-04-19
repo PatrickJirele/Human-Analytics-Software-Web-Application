@@ -5,9 +5,6 @@ path = os.path.join(dir,'static', 'datasets', 'current.csv')
 displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
 dfMain = None
 
-def recreateDF():
-    return pd.read_csv(path)
-
 def updateDB():
     return pd.read_csv(path)
 
@@ -51,8 +48,6 @@ def createOther(df, columnName, description = ""):
     
 def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
     df, description = createOther(updateDB(),columnName)
-    dfMain = recreateDF()
-    df, description = createOther(dfMain.copy(),columnName)
     dict = df[columnName].value_counts().to_dict()
     keys = list(dict.keys())
     vals = list(dict.values())
@@ -68,9 +63,19 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
             plt.subplots_adjust(left=0.0, bottom=0.0, right=1.0)
             genericTitle = "% of Employees per " + columnName
         case "treemap":
+            area = []
+            title = []
             for i, key in enumerate(keys):
-                keys[i] = key + "\n" + "{:1.1f}".format((1-(len(df) - vals[i]) / len(df))*100) + "%"
-            squarify.plot(vals, label=keys)    
+                size = (1-(len(df) - vals[i]) / len(df))*100
+                area.append(int(size))
+                title.append(key)
+                keys[i] = key + "\n" + "{:1.1f}".format(size) + "%"
+            tempDF = pd.DataFrame({"area":area,"keys":keys, "title":title})
+            cmap = tr.get_colormap("Dark2", tempDF["title"])
+            trc = tr.treemap(ax, tempDF, area="area", labels="keys", fill='title', cmap=cmap,
+                             rectprops={'ec':'w', 'lw':2},
+                             textprops={'c':'k' ,'reflow':True, 'place':'top left', 'max_fontsize':20})
+            ax.axis('off')
             plt.axis("off")
             genericTitle = "% of Employees per " + columnName
         case "bar":
@@ -90,8 +95,7 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
     return description
 
 
-def histogram(columnName, fileName, customTitle, useQuantity):
-    df = updateDB()
+
 def histogram(columnName, fileName, customTitle, useQuantity):
     dfMain = recreateDF()
     df = dfMain.copy()
@@ -119,8 +123,6 @@ def histogram(columnName, fileName, customTitle, useQuantity):
 
 def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle, useQuantity):
     df, description = createOther(updateDB(),mainColumnName)
-    dfMain = recreateDF()
-    df, description = createOther(dfMain.copy(),mainColumnName)
     df, description = createOther(df,secondaryColumnName, description)
     dict = {}
     subDict = {}

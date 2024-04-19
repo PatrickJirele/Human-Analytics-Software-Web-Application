@@ -17,6 +17,7 @@ from flask_simple_crypt import SimpleCrypt
 import squarify
 import traceback
 import matplotlib
+import mpl_extra.treemap as tr
 from sqlalchemy import not_
 
 
