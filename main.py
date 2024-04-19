@@ -142,7 +142,7 @@ def getGraphsFromDb(listOfGraphs):
 
 def regenerateGraphs():
     dataset_path = './static/datasets/current.csv'
-    images, selected = getImgs()
+    images = getImgs()
     split_images = [item[:-4].split('_') for item in images]
     for i, img in enumerate(split_images):
         graph = Graphs.query.filter_by(path = ("./static/graphs/" + images[i])).first()
