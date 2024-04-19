@@ -56,6 +56,7 @@ class Graphs(db.Model):
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(250), nullable=True)
     type = db.Column(db.String(20))
+    useQuantity = db.Column(db.Boolean, default=False)
     currently_displayed = db.Column(db.Boolean, default=False, nullable=False)
     group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
 
@@ -116,13 +117,12 @@ def makeImageName(category, type, isUnique):
     return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
 
 
-def addGraphToDb(path, title, type, description="", group_id=None):
+def addGraphToDb(path, title, type, description="", group_id=None, useQuantity=False):
     if group_id == None:
-        temp = Graphs(path=path, title=title, type=type, description=description)
+        temp = Graphs(path=path, title=title, type=type, description=description, useQuantity=useQuantity)
     else:
-        temp = Graphs(path=path, title=title, type=type, description=description, group_id=None)
+        temp = Graphs(path=path, title=title, type=type, description=description, group_id=None, useQuantity=useQuantity)
 
-    print(title + "\n")
     checker = Graphs.query.filter_by(path=path).first()
     if checker != None:
         db.session.delete(checker)
@@ -142,24 +142,25 @@ def getGraphsFromDb(listOfGraphs):
 
 def regenerateGraphs():
     dataset_path = './static/datasets/current.csv'
-    images = getImgs()
-    split_images = [item[:-4].split('_') for item in images]
-    for img in split_images:
+    graphs = Graphs.query.all()
+    for graph in graphs:
+        img = graph.path.replace('./static/graphs/', '')[:-4].split('_')
         type= img[-1]
-        print({'IMG: ' : img, 'TYPE: ' : img[-1]})
+        title = graph.title
+        useQuantity = graph.useQuantity
         if type == 'stackedBar':
             columnName1 = img[0]
             columnName2 = img[1]
             imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
-            stackedBarChart(columnName1, columnName2, imageName)
+            stackedBarChart(columnName1, columnName2, imageName, title, useQuantity)
         else:
             columnName1 = img[0]
             if type == 'pie' or type == 'treemap' or type == 'bar':
                 imageName = makeImageName(columnName1, type, False)
-                singleCategoryGraph(type, columnName1, imageName)
+                singleCategoryGraph(type, columnName1, imageName, title, useQuantity)
             if type == 'histogram':
                 imageName = makeImageName(columnName1, type, False)
-                histogram(columnName1, imageName)
+                histogram(columnName1, imageName, title)
 
 # ____HELPER_FUNCTIONS_END____
 
@@ -381,7 +382,7 @@ def createGraph():
                 imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" not in request.form))
                 dbDescription = stackedBarChart(primaryCategory, secondaryCategory, imageName, dbTitle, useQuantity)
             dbTitle = dbTitle if not dbTitle == "" else imageName.replace('.png', '')
-            addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription, type=chartType)
+            addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription, type=chartType, useQuantity=useQuantity)
             return redirect("/uploadGraphs")
         except Exception as e:
             print(traceback.format_exc())

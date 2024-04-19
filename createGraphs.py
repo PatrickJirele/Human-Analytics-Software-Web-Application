@@ -5,6 +5,10 @@ path = os.path.join(dir,'static', 'datasets', 'current.csv')
 displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
 dfMain = pd.read_csv(path)
 
+def updateDB():
+    return pd.read_csv(path)
+
+
 def saveImage(fileName, fig, genericTitle, customTitle):
     finalTitle = genericTitle if customTitle == "" or customTitle == None else customTitle
     plt.title(finalTitle)
@@ -43,7 +47,7 @@ def createOther(df, columnName, description = ""):
     
     
 def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
-    df, description = createOther(dfMain.copy(),columnName)
+    df, description = createOther(updateDB(),columnName)
     dict = df[columnName].value_counts().to_dict()
     keys = list(dict.keys())
     vals = list(dict.values())
@@ -82,7 +86,7 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
 
 
 def histogram(columnName, fileName, customTitle):
-    df = dfMain.copy()
+    df = updateDB()
     unsortedDict = df[columnName].value_counts().to_dict()
     keysMax = max(list(unsortedDict.keys()))
     keysMin = min(list(unsortedDict.keys()))
@@ -102,7 +106,7 @@ def histogram(columnName, fileName, customTitle):
 
 
 def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle, useQuantity):
-    df, description = createOther(dfMain.copy(),mainColumnName)
+    df, description = createOther(updateDB(),mainColumnName)
     df, description = createOther(df,secondaryColumnName, description)
     dict = {}
     subDict = {}
