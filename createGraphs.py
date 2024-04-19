@@ -90,7 +90,7 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
     return description
 
 
-def histogram(columnName, fileName, customTitle):
+def histogram(columnName, fileName, customTitle, useQuantity):
     df = updateDB()
 def histogram(columnName, fileName, customTitle, useQuantity):
     dfMain = recreateDF()

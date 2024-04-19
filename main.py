@@ -142,11 +142,6 @@ def getGraphsFromDb(listOfGraphs):
 
 def regenerateGraphs():
     dataset_path = './static/datasets/current.csv'
-    images = getImgs()
-    split_images = [item[:-4].split('_') for item in images]
-    for i, img in enumerate(split_images):
-        graph = Graphs.query.filter_by(path = ("./static/graphs/" + images[i])).first()
-        title = graph.title
     graphs = Graphs.query.all()
     for graph in graphs:
         img = graph.path.replace('./static/graphs/', '')[:-4].split('_')
@@ -158,17 +153,14 @@ def regenerateGraphs():
             columnName2 = img[1]
             imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
             stackedBarChart(columnName1, columnName2, imageName, title, useQuantity)
-            stackedBarChart(columnName1, columnName2, imageName, title, False)
         else:
             columnName1 = img[0]
             if type == 'pie' or type == 'treemap' or type == 'bar':
                 imageName = makeImageName(columnName1, type, False)
-                singleCategoryGraph(type, columnName1, imageName, title, False)
                 singleCategoryGraph(type, columnName1, imageName, title, useQuantity)
             if type == 'histogram':
                 imageName = makeImageName(columnName1, type, False)
-                histogram(columnName1, imageName, title, False)
-                histogram(columnName1, imageName, title)
+                histogram(columnName1, imageName, title, useQuantity)
 
 # ____HELPER_FUNCTIONS_END____
 
@@ -298,43 +290,40 @@ def create():
 @app.route('/uploadDataset', methods=['GET', 'POST'])
 @login_required
 def uploadDataset():
-    try:
-        failure = None
-        dataset_files = getDatasets()
-        selected_dataset = request.args.get('filename', 'None')
-        if request.method == 'POST':
-            if request.files['file']:
-                # Get the excel file from website upload
-                file = request.files['file']
-                file.save(file.filename)
-                destination = './static/datasets'
-                newFileName = str(date.today()) + '.csv'
-                if os.path.isfile(newFileName):
-                    os.remove(newFileName)
-                # Preprocess the excel file and convert to csv
-                dir = os.path.dirname(__file__)
-                df = pd.DataFrame(pd.read_excel(file.filename))
-                df = removeNaN(df)
-                df = combineRaceAndEthnicity(df)
-                df = reformatYearsColumn(df)
-                df = modifyName(df, "Race/Ethnicity")
-                destinationPath = os.path.join(dir, newFileName)
-                if os.path.exists(destinationPath):
-                    os.unlink(destinationPath)
-                df.to_csv(destinationPath, index=False)
-
-                # Save the csv file to datasets directory
-                shutil.copy2(newFileName, destination)
-                # Make a current copy to use as the current dataset
-                shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
-
-                # Remove files from main directory
+    dataset_files = getDatasets()
+    selected_dataset = request.args.get('filename', 'None')
+    if request.method == 'POST':
+        if request.files['file']:
+            # Get the excel file from website upload
+            file = request.files['file']
+            file.save(file.filename)
+            destination = './static/datasets'
+            newFileName = str(date.today()) + '.csv'
+            if os.path.isfile(newFileName):
                 os.remove(newFileName)
-                os.remove(file.filename)
-                dataset_files = getDatasets()
-    except Exception as e:
-        failure = "Failed to upload new data. Please close Excel if open and ensure new data is valid."
-    return render_template('uploadDataset.html', dataset_files=dataset_files, selected_dataset=selected_dataset, failure=failure)
+            # Preprocess the excel file and convert to csv
+            dir = os.path.dirname(__file__)
+            df = pd.DataFrame(pd.read_excel(file.filename))
+            df = removeNaN(df)
+            df = combineRaceAndEthnicity(df)
+            df = reformatYearsColumn(df)
+            df = modifyName(df, "Race/Ethnicity")
+            destinationPath = os.path.join(dir, newFileName)
+            if os.path.exists(destinationPath):
+                os.unlink(destinationPath)
+            df.to_csv(destinationPath, index=False)
+
+            # Save the csv file to datasets directory
+            shutil.copy2(newFileName, destination)
+            # Make a current copy to use as the current dataset
+            shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
+
+            # Remove files from main directory
+            os.remove(newFileName)
+            os.remove(file.filename)
+            dataset_files = getDatasets()
+
+    return render_template('uploadDataset.html', dataset_files=dataset_files, selected_dataset=selected_dataset)
 
 @app.route('/deleteDataset', methods=['POST'])
 @login_required
@@ -378,20 +367,19 @@ def createGraph():
             chartType = request.form.get('chartType')
             dbTitle = request.form.get('title')
             useQuantity = ("quantity" in request.form)
-            unique = (("overwrite" not in request.form) or useQuantity)
             dbDescription = ""
             if (chartType == 'pie' or chartType =='treemap' or chartType == 'bar'):
                 category = request.form.get('singleCategory')
-                imageName = makeImageName(category, chartType, unique)
+                imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
                 dbDescription = singleCategoryGraph(chartType, category, imageName, dbTitle, useQuantity)
             if (chartType == 'histogram'):
                 category = request.form.get('histCategory')
-                imageName = makeImageName(category, chartType, unique)
+                imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
                 dbDescription = histogram(category, imageName, dbTitle, useQuantity)
             if (chartType == 'stackedBar'):
                 primaryCategory = request.form.get('primary')
                 secondaryCategory = request.form.get('secondary')
-                imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, unique)
+                imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" not in request.form))
                 dbDescription = stackedBarChart(primaryCategory, secondaryCategory, imageName, dbTitle, useQuantity)
             dbTitle = dbTitle if not dbTitle == "" else imageName.replace('.png', '')
             addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription, type=chartType, useQuantity=useQuantity)

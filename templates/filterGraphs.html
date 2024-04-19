@@ -56,9 +56,40 @@
         scrollbar-color: gray white;
         scrollbar-width: thin;
     }
+    .filter-form-container{
+      border: 3px solid #ccc;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    select {
+        display: block; /* Display each select element on its own line */
+        width: 100%; /* Make select element full width of its container */
+        margin-bottom: 10px; /* Add some space between select elements */
+        padding: 10px; /* Increase padding for better touch experience */
+        font-size: 16px; /* Increase font size */
+    }
+
+    button {
+        display: block; /* Display button on its own line */
+        width: 100%; /* Make button full width of its container */
+        padding: 15px; /* Increase padding for better touch experience */
+        font-size: 18px; /* Increase font size */
+        background-color: #007bff; /* Change button color */
+        color: #fff; /* Change text color */
+        border: none; /* Remove border */
+        cursor: pointer; /* Add cursor pointer */
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
 </style>
 
 <body>
+<div class="filter-form-container">
 <form action="{{ url_for('filterGraphs') }}" method="POST" >
     <select id="graphType" name="graphType">
         <option value="">Select a graph type</option>
@@ -79,7 +110,7 @@
     </select>
     <button type="submit">Filter Graphs</button>
 </form>
-
+</div>
 {% if message %}
 <h1>{{ message }}</h1>
 {% endif %}
