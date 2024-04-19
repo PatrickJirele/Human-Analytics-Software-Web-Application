@@ -297,40 +297,43 @@ def create():
 @app.route('/uploadDataset', methods=['GET', 'POST'])
 @login_required
 def uploadDataset():
-    dataset_files = getDatasets()
-    selected_dataset = request.args.get('filename', 'None')
-    if request.method == 'POST':
-        if request.files['file']:
-            # Get the excel file from website upload
-            file = request.files['file']
-            file.save(file.filename)
-            destination = './static/datasets'
-            newFileName = str(date.today()) + '.csv'
-            if os.path.isfile(newFileName):
+    try:
+        failure = None
+        dataset_files = getDatasets()
+        selected_dataset = request.args.get('filename', 'None')
+        if request.method == 'POST':
+            if request.files['file']:
+                # Get the excel file from website upload
+                file = request.files['file']
+                file.save(file.filename)
+                destination = './static/datasets'
+                newFileName = str(date.today()) + '.csv'
+                if os.path.isfile(newFileName):
+                    os.remove(newFileName)
+                # Preprocess the excel file and convert to csv
+                dir = os.path.dirname(__file__)
+                df = pd.DataFrame(pd.read_excel(file.filename))
+                df = removeNaN(df)
+                df = combineRaceAndEthnicity(df)
+                df = reformatYearsColumn(df)
+                df = modifyName(df, "Race/Ethnicity")
+                destinationPath = os.path.join(dir, newFileName)
+                if os.path.exists(destinationPath):
+                    os.unlink(destinationPath)
+                df.to_csv(destinationPath, index=False)
+
+                # Save the csv file to datasets directory
+                shutil.copy2(newFileName, destination)
+                # Make a current copy to use as the current dataset
+                shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
+
+                # Remove files from main directory
                 os.remove(newFileName)
-            # Preprocess the excel file and convert to csv
-            dir = os.path.dirname(__file__)
-            df = pd.DataFrame(pd.read_excel(file.filename))
-            df = removeNaN(df)
-            df = combineRaceAndEthnicity(df)
-            df = reformatYearsColumn(df)
-            df = modifyName(df, "Race/Ethnicity")
-            destinationPath = os.path.join(dir, newFileName)
-            if os.path.exists(destinationPath):
-                os.unlink(destinationPath)
-            df.to_csv(destinationPath, index=False)
-
-            # Save the csv file to datasets directory
-            shutil.copy2(newFileName, destination)
-            # Make a current copy to use as the current dataset
-            shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
-
-            # Remove files from main directory
-            os.remove(newFileName)
-            os.remove(file.filename)
-            dataset_files = getDatasets()
-
-    return render_template('uploadDataset.html', dataset_files=dataset_files, selected_dataset=selected_dataset)
+                os.remove(file.filename)
+                dataset_files = getDatasets()
+    except Exception as e:
+        failure = "Failed to upload new data. Please close Excel if open and ensure new data is valid."
+    return render_template('uploadDataset.html', dataset_files=dataset_files, selected_dataset=selected_dataset, failure=failure)
 
 @app.route('/deleteDataset', methods=['POST'])
 @login_required
@@ -382,7 +385,7 @@ def createGraph():
             if (chartType == 'histogram'):
                 category = request.form.get('histCategory')
                 imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
-                dbDescription = histogram(category, imageName, dbTitle)
+                dbDescription = histogram(category, imageName, dbTitle, useQuantity)
             if (chartType == 'stackedBar'):
                 primaryCategory = request.form.get('primary')
                 secondaryCategory = request.form.get('secondary')

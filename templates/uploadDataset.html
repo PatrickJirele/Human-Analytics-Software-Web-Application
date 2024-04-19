@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% extends "base.html" %}
+
 {% block content %}
 <head>
     <title>Upload/View Excel</title>
@@ -47,6 +48,7 @@
 </style>
 
 <body>
+    <p id='failure' style='display:none;'>{{failure}}</p>
     <h1>Upload Excel File (.xlsx)</h1>
     <div class="container">
         <div class="form-container">
@@ -76,6 +78,12 @@
     </div>
 
     <script>
+
+    errorMessage = document.getElementById("failure").innerHTML;
+    if (errorMessage != 'None'){
+        alert(errorMessage);
+    }
+
 <!--Function for deleting datasets-->
         function deleteFile(filename) {
             $.ajax({

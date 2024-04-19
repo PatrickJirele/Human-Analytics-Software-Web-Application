@@ -9,17 +9,21 @@
       text-align: center;
       display: grid;
       place-items: center;
-      min-height: 100vh;
+      height: 80%;
     }
     form{
         width: 50%;
     }
+
+
 </style>
 <div class="login-form-container">
     <form action="/login" method="POST">
-        Email: <input type="input" name="email"> <br>
-        Password: <input type="input" name="pWord"> <br>
-        <input type="submit" value="submit">
+        <h1>Login</h1>
+        <input type='input' name='email' placeholder="Email"><br>
+        <input type='input' name='pWord' placeholder="Password"><br>
+        <br>
+        <input type="submit" value="Submit">
     </form>
 </div>
 {% endblock %}
