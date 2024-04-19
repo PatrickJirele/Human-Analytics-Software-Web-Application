@@ -105,7 +105,7 @@
                         <div class="description-container"><b>Description:</b>
                             <br>
                             <blockquote class="description-quote">
-                                {{ graph.description }}
+                                {{ graph.description|safe }}
                             </blockquote>
                         </div>
                     </div>
@@ -118,7 +118,7 @@
 
     <div class="other">
         <h3>About The "Other" Category</h3>
-        <p>The above graphs may contain a special category that is labeled as "Other." This category is a combination of one or many small categories. In order to be combined into the Other category, a category must either consists of fewer than 5 people or it must make up less than 2% of the graph's data. This action is done with the intent of preserving data anonymity for those whose information is displayed within these graphs.</p>
+        <p>The above graphs may contain a special category that is labeled as "Other." This category is a combination of one or many small categories. In order to be combined into the Other category, a category must either consist of fewer than 5 people or it must make up less than 2% of the graph's data. This action is done with the intent of preserving data anonymity for those whose information is displayed within these graphs.</p>
     </div>
 
     <div class="footer">

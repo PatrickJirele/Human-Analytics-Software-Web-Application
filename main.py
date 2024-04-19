@@ -170,7 +170,7 @@ def regenerateGraphs():
 def home():
     graphsFromDb = Graphs.query.filter_by(currently_displayed = 1).all()
     graphs_by_group = GraphGroup.query.filter_by(currently_displayed = 1).all()
-    return render_template('home.html', graphs=graphsFromDb, graphGroups = graphs_by_group)
+    return render_template('home.html', graphs=graphsFromDb, graphGroups=graphs_by_group)
 
 @app.route('/filterGraphs', methods=['GET', 'POST'])
 def filterGraphs():
@@ -269,7 +269,6 @@ def updatePass():
 @login_required
 def create():
     admins = User.query.filter(User.admin != 1).all()
-    print(admins)
     if request.method == 'POST':
         email = request.form['email']
         password = cipher.encrypt(request.form['pWord'])
@@ -282,8 +281,6 @@ def create():
         else:
             db.session.add(temp)
             db.session.commit()
-            # user = User.query.filter_by(email=request.form['email']).first()
-            # login_user(user)
             return flask.redirect('/createAdmin')
 
     return render_template('createAdmin.html', admins=admins)

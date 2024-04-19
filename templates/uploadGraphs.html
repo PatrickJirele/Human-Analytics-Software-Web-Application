@@ -125,7 +125,7 @@
                     <label for="new_title">New Title:</label>
                     <input type="text" id="new_title" name="new_title" value="{{ graph.title }}" required><br>
                     <label for="new_description">New Description:</label>
-                    <textarea id="new_description" name="new_description" rows="10" maxlength="2500">{{ graph.description }}</textarea><br>
+                    <textarea id="new_description" name="new_description" rows="10" maxlength="2500">{{ graph.description|safe }}</textarea><br>
                     <button type="submit">Update</button>
                 </form>
             </div>
