@@ -8,10 +8,58 @@
                 document.getElementById('histogramCategory').style.display = (type == 'histogramCategory') ? 'block' : 'none'
             }
         </script>
+
+
+        <style>
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .form-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .form-container {
+            width: 50%;
+            padding: 20px;
+            border: 2px solid #ccc;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="submit"] {
+            height: 50px;
+            width: 150px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        </style>
     </head>
 
     <body>
+        <div class="form-wrapper">
+
         <h1>Graph Creation Form</h1>
+        <div class="form-container">
+
         <form action="/createGraph" method="post">
             <p>Graph Type:</p>
             <label><input type='radio' name='chartType' id='pie' value='pie' onclick='changeGraphType("singleCategory")' checked>Pie</label><br>
@@ -51,7 +99,7 @@
             </div>
             <br>
 
-            <div id='histogramCategory'>
+            <div id='miscCategory'>
                 <p>Miscellaneous Options:</p>
                 <label><input type='checkbox' name='overwrite' id='overwrite' value='overwrite' checked>Remake graph whenever new data is uploaded?</label><br>
                 <label><input type='checkbox' name='quantity' id='quantity' value='overwrite'>Bar graphs use quantity instead of percentage. Graph can not be remade if checked.</label><br>
@@ -59,5 +107,7 @@
             </div>
             <input type="submit" value="Generate">
         </form>
+        </div>
+        </div>
     </body>
 {% endblock %}
