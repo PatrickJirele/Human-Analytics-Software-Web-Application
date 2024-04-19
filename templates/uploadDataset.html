@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% extends "base.html" %}
+
 {% block content %}
 <head>
     <title>Upload/View Excel</title>
@@ -9,11 +10,11 @@
 
 <style>
   .dataset-list-quote {
-    width: 300px;
-    height: 100px;
+    width: 400px;
+    height: 300px;
     border: 1px solid;
     overflow: scroll;
-    scrollbar-color: red orange;
+    scrollbar-color: grey white;
     scrollbar-width: thin;
   }
 
@@ -44,24 +45,16 @@
     flex: 1;
     margin-left: 20px;
   }
-
-  .annual-list {
-    flex: 1;
-    margin-left: 20px;
-  }
 </style>
 
 <body>
+    <p id='failure' style='display:none;'>{{failure}}</p>
     <h1>Upload Excel File (.xlsx)</h1>
     <div class="container">
         <div class="form-container">
             <form action="/uploadDataset" method="post" enctype="multipart/form-data">
                 <input type="file" name="file"
                 accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-            <br>
-            <br>
-            <input type="checkbox" name="annual_dataset" id="annual_dataset">
-            <label for="annual_dataset">Label Dataset as Annual?</label>
             <br>
             <br>
             <input type="submit" value="Upload" style="height:50px; width:100px">
@@ -72,30 +65,26 @@
             <h1>All Datasets</h1>
             <blockquote class="dataset-list-quote">
             {% for file in dataset_files %}
+                {% if file != "current.csv" %}
                 <div class="dataset-file">
                     <span class="file-name">{{ file }}</span>
+                    <button class="select-btn" onclick="selectDataset('{{ file }}')">Select Dataset</button>
                     <button class="delete-btn" onclick="deleteFile('{{ file }}')">Delete</button>
                 </div>
-            {% endfor %}
-            </blockquote>
-        </div>
-
-        <div class="annual-list">
-            <h1>Annual Datasets</h1>
-            <blockquote class="dataset-list-quote">
-            {% for file in annual_files %}
-                <div class="dataset-file">
-                    <span class="file-name">{{ file }}</span>
-                    <button class="delete-btn" onclick="deleteFile('{{ file }}')">Delete</button>
-                </div>
+                {% endif %}
             {% endfor %}
             </blockquote>
         </div>
     </div>
 
     <script>
-<!--Function for deleting datasets-->
 
+    errorMessage = document.getElementById("failure").innerHTML;
+    if (errorMessage != 'None'){
+        alert(errorMessage);
+    }
+
+<!--Function for deleting datasets-->
         function deleteFile(filename) {
             $.ajax({
                 url: '/deleteDataset',
@@ -112,6 +101,26 @@
                 }
             });
         }
+
+
+<!-- Function for selecting which dataset to use --!>
+function selectDataset(filename) {
+    $.ajax({
+        url: '/selectDataset/' + filename,
+        type: 'GET',
+        success: function(response) {
+            if (response.success) {
+                alert('Dataset selected successfully: ' + response.filename);
+                // Update the content of current.csv
+                $('#current-dataset').text(response.filename);
+                        location.reload();
+            } else {
+                alert('Error selecting dataset: ' + response.error);
+            }
+        }
+    });
+}
+
     </script>
 
 </body>

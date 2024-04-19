@@ -3,7 +3,10 @@ from appConfig import *
 dir = os.path.dirname(__file__)
 path = os.path.join(dir,'static', 'datasets', 'current.csv')
 displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
-dfMain = pd.read_csv(path)
+dfMain = None
+
+def recreateDF():
+    return pd.read_csv(path)
 
 def saveImage(fileName, fig, genericTitle, customTitle):
     finalTitle = genericTitle if customTitle == "" or customTitle == None else customTitle
@@ -33,9 +36,9 @@ def createOther(df, columnName, description = ""):
             df.loc[i,columnName]= "Other"
             
     if (len(otheredKeys) > 1):
-        description += "The 'Other' category consists of the following categories:\n" if description == "" else ""
+        description += "The 'Other' category consists of the following categories: <br>" if description == "" else ""
         for key in otheredKeys:
-            description += "-" + str(key) + "\n"
+            description += "-" + str(key) + "<br>"
     elif (len(otheredKeys) == 1):
         description = "The 'Other' category consists of one category."
     
@@ -43,6 +46,7 @@ def createOther(df, columnName, description = ""):
     
     
 def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
+    dfMain = recreateDF()
     df, description = createOther(dfMain.copy(),columnName)
     dict = df[columnName].value_counts().to_dict()
     keys = list(dict.keys())
@@ -54,7 +58,7 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
             xLoc = 1
             yLoc = 0.5 if columnName != 'Department' else 0.15
             explode = [0.01 for _ in range(len(keys))]
-            ax.pie(vals, autopct='%1.1f%%', explode=explode)
+            ax.pie(vals, autopct='%1.1f%%', pctdistance=0.85, explode=explode)
             plt.legend(keys, loc=(xLoc, yLoc), bbox_transform=plt.gcf().transFigure)
             plt.subplots_adjust(left=0.0, bottom=0.0, right=1.0)
             genericTitle = "% of Employees per " + columnName
@@ -81,7 +85,8 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
     return description
 
 
-def histogram(columnName, fileName, customTitle):
+def histogram(columnName, fileName, customTitle, useQuantity):
+    dfMain = recreateDF()
     df = dfMain.copy()
     unsortedDict = df[columnName].value_counts().to_dict()
     keysMax = max(list(unsortedDict.keys()))
@@ -93,15 +98,20 @@ def histogram(columnName, fileName, customTitle):
     keys = list(sortedDict.keys())
     vals = list(sortedDict.values())
     fig, axs = plt.subplots()
+    if not useQuantity:
+                for i in range(len(vals)):
+                    vals[i] = (1-(len(df) - vals[i]) / len(df))*100
     axs.bar(keys, vals, width=1.0)
     plt.xlabel(columnName)
-    plt.ylabel("# of Employees")
-    genericTitle = "# of Employees per " + columnName
+    symbol = "#" if useQuantity else "%"
+    plt.ylabel(symbol + " of Employees")
+    genericTitle = symbol + " of Employees per " + columnName
     saveImage(fileName, fig, genericTitle, customTitle)
     return ""
 
 
 def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle, useQuantity):
+    dfMain = recreateDF()
     df, description = createOther(dfMain.copy(),mainColumnName)
     df, description = createOther(df,secondaryColumnName, description)
     dict = {}
@@ -153,4 +163,3 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle, 
     plt.legend(loc=(xLoc, yLoc), bbox_transform=plt.gcf().transFigure)
     saveImage(fileName, fig, genericTitle, customTitle)
     return description
-    

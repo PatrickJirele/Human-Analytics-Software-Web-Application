@@ -1,28 +1,128 @@
 {% extends 'base.html' %}
 {% block content %}
 <style>
-    .graph-container-table{
-        margin-left: auto;
-        margin-right: auto;
+    .group-container {
+      border: 3px solid #ccc;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
     }
-    .graph-container-row{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
+
+    .group-container h2 {
+      font-size: 24px;
+      margin-top: 0;
+      margin-bottom: 20px;
     }
+
+    .graph-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-gap: 20px;
+    }
+
+    .group-graph-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+      align-items: start;
+    }
+
+    .thumbnail-img {
+      max-width: 100%;
+    }
+
+    .content-wrapper {
+      flex-grow: 1;
+      margin-left: 20px;
+      text-align: left;
+    }
+
+    .title-container {
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .description-container {
+      max-width: 100%;
+      word-wrap: break-word;
+      white-space: normal;
+    }
+
+    .description-quote {
+        max-width: 100%;
+        padding-bottom: 70%;
+        border: 1px solid;
+        overflow: scroll;
+        scrollbar-color: gray white;
+        scrollbar-width: thin;
+        word-wrap: break-word;
+    }
+
+    .other {
+        background-color: #f1f1f1;
+        font-color: white;
+        padding: 10px
+    }
+
 </style>
-    <body>
+
+<body>
     {% if graphs %}
-    <table class="graph-container-table">
         {% for graph in graphs %}
-        <tr class="graph-container-row">
-            <td class="graph-container-cell">
-                <img src="./static/currentlyDisplayed/{{graph}}"> <!-- width="1525" height="725" -->
-            </td>
-        </tr>
+        <div class="group-container">
+            <div class="graph-grid">
+                <div class="group-graph-container" data-graph-id="{{ graph.id }}">
+                    <img src="{{ graph.path }}" class="thumbnail-img">
+                    <div class="content-wrapper">
+                        <div class="title-container">Graph Title: {{ graph.title }}</div>
+                        {% if graph.description %}
+                        <div class="description-container"><b>Description:</b>
+                            <br>
+                            <p class="description-quote">
+                                {{ graph.description|safe }}
+                            </p>
+                        </div>
+                        {% else %}
+                            No Description provided
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </table>
     {% endif %}
-    </body>
+
+    {% if graphGroups %}
+        {% for group in graphGroups %}
+        <div class="group-container" data-group-id="{{ group.id }}">
+            <h2>Group Name: {{ group.group_name }}</h2>
+            {% for graph in group.graphs %}
+            <div class="graph-grid">
+                <div class="group-graph-container" data-graph-id="{{ graph.id }}">
+                    <img src="{{ graph.path }}" class="thumbnail-img">
+                    <div class="content-wrapper">
+                        <div class="title-container">Graph Title: {{ graph.title }}</div>
+                        <div class="description-container"><b>Description:</b>
+                            <br>
+                            <blockquote class="description-quote">
+                                {{ graph.description }}
+                            </blockquote>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="other">
+        <h3>About The "Other" Category</h3>
+        <p>The above graphs may contain a special category that is labeled as "Other." This category is a combination of one or many small categories. In order to be combined into the Other category, a category must either consists of fewer than 5 people or it must make up less than 2% of the graph's data. This action is done with the intent of preserving data anonymity for those whose information is displayed within these graphs.</p>
+    </div>
+
+    <div class="footer">
+        Created by: Nathan Todd, Blake Brown, and Patrick Jirele
+    </div>
+</body>
 {% endblock %}

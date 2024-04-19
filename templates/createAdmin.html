@@ -1,8 +1,61 @@
 {% extends "base.html" %}
-    {% block content %}
-    <form action="/createAdmin" method="POST">
-        Email: <input type="input" name="email"> <br>
-        Password: <input type="input" name="pWord"> <br>
-        <input type="submit" value="submit">
-    </form>
-    {% endblock %}
+{% block content %}
+<style>
+  .admin-list-quote {
+    width: 400px;
+    height: 300px;
+    border: 1px solid;
+    overflow: scroll;
+    scrollbar-color: grey white;
+    scrollbar-width: thin;
+  }
+
+</style>
+<body>
+        <form action="/createAdmin" method="POST">
+            Email: <input type="input" name="email"> <br>
+            Password: <input type="input" name="pWord"> <br>
+            <input type="submit" value="submit">
+        </form>
+
+    <div class="admin-list">
+        <h1>All Admins</h1>
+        <blockquote class="admin-list-quote">
+            {% for admin in admins %}
+                <div class="admin-container" data-admin-id="{{ admin.id }}">
+                    <span class="admin-email">{{ admin.email }}</span>
+                    <button class="delete-admin-button">Delete</button>
+                </div>
+            {% endfor %}
+        </blockquote>
+    </div>
+
+    <script>
+        //Code to handle deleting groups
+        var deleteButtons = document.querySelectorAll(".delete-admin-button");
+
+        deleteButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                var adminContainer = this.closest(".admin-container");
+                var adminId = adminContainer.dataset.adminId;
+
+                fetch(`/deleteAdmin/${adminId}`, {
+                    method: 'DELETE'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        alert('Successfully deleted admin');
+                        location.reload();
+                    } else {
+                        alert('Error deleting admin');
+                    }
+                })
+                .catch(function(error) {
+                    alert('Error deleting admin: ' + error);
+                });
+            });
+        });
+    </script>
+</body>
+{% endblock %}
+

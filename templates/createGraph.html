@@ -3,7 +3,6 @@
     <head>
         <script>
             function changeGraphType(type) {
-                console.log(type)
                 document.getElementById('singleCategory').style.display = (type == 'singleCategory') ? 'block' : 'none'
                 document.getElementById('doubleCategory').style.display = (type == 'doubleCategory') ? 'block' : 'none'
                 document.getElementById('histogramCategory').style.display = (type == 'histogramCategory') ? 'block' : 'none'
@@ -55,7 +54,7 @@
             <div id='histogramCategory'>
                 <p>Miscellaneous Options:</p>
                 <label><input type='checkbox' name='overwrite' id='overwrite' value='overwrite' checked>Remake graph whenever new data is uploaded?</label><br>
-                <label><input type='checkbox' name='quantity' id='quantity' value='overwrite'>Bar graphs use quantity instead of percentage.</label><br>
+                <label><input type='checkbox' name='quantity' id='quantity' value='overwrite'>Bar graphs use quantity instead of percentage. Graph can not be remade if checked.</label><br>
                 <label><input type='text' name='title' id='title' placeholder='Custom Graph Title'> (Optional)</label><br>
             </div>
             <input type="submit" value="Generate">

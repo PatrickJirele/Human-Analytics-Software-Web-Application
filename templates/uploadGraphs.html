@@ -2,48 +2,7 @@
 {% block content %}
 <head>
   <title>Graph Selector</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
 <style>
-  .thumbnail-img {
-    width: 200px;
-    height: auto;
-  }
-<!--  .image-container {-->
-<!--    display: inline-block;-->
-<!--    width: 30%;-->
-<!--    margin: 10px;-->
-<!--    border: 1px solid #ccc;-->
-<!--    padding: 10px;-->
-<!--    text-align: center;-->
-<!--  }-->
-.image-container {
-    display: inline-block;
-    width: 30%;
-    margin: 10px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
-    position: relative;
-}
-  .checkbox-label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  .delete-form {
-    margin-top: 10px;
-  }
-  .submit-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    <!-- border: 3px solid green; -->
-  }
-  .submit-btn {
-    height:100px;
-    width:200px;
-  }
   .edit-button {
     position: absolute;
     top: 5px;
@@ -55,6 +14,7 @@
     font-size: 12px;
     cursor: pointer;
   }
+
   .edit-form {
     margin-top: 10px;
   }
@@ -69,16 +29,15 @@
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.4);
-}
+  }
 
-.edit-modal-content {
+  .edit-modal-content {
     background-color: #fefefe;
     margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 30%;
-}
-
+  }
 
   .delete-button {
     position: absolute;
@@ -91,98 +50,173 @@
     font-size: 12px;
     cursor: pointer;
   }
+  .edit-graph-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  .edit-graph-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+  }
+  .graph-container {
+    display: inline-block;
+    width: 30%;
+    margin: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+  }
+ .thumbnail-img {
+   width: 200px;
+   height: 150px;
+   object-fit: cover;
+ }
 </style>
 </head>
 <body>
 
 <h2>Select Graphs To Be Displayed</h2>
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-<div id="checkboxes">
-  {% for image in images %}
-    <div class="image-container" data-image-name="{{ image }}">
-    <form action="{{ url_for('deleteGraph', imgName=image) }}" method="POST" class="delete-form">
-        <button type="submit" class="delete-button">Delete</button>
-    </form>
-    <div class="edit-form">
-      <a href="{{ url_for('editGraph', imgName=image) }}" class="edit-button">Edit</a>
+
+{% for graph in graphs %}
+    <div class="graph-container" data-graph-id="{{ graph.id }}">
+        <h2>Graph Title: {{ graph.title }}
+            <button class="edit-button">Edit Graph</button>
+            <button class="delete-button">Delete Graph</button>
+            <br>
+            {% if graph.currently_displayed %} <button class="remove-display-graph-button">Remove Graph From Display</button>
+            {% else %} <button class="display-graph-button">Display Graph</button> {% endif %}
+        </h2>
+        <div id="editGraphModal-{{ graph.id }}" class="edit-graph-modal">
+            <div class="edit-graph-modal-content">
+                <span class="close-button">&times;</span>
+                <h3>Edit Graph</h3>
+                <form action="{{ url_for('updateGraphInfo', graph_id=graph.id) }}" method="POST">
+                    <label for="new_title">New Title:</label>
+                    <input type="text" id="new_title" name="new_title" value="{{ graph.title }}" required><br>
+                    <label for="new_description">New Description:</label>
+                    <textarea id="new_description" name="new_description" rows="10" maxlength="2500">{{ graph.description }}</textarea><br>
+                    <button type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+        <div class="image-container">
+            <img src="{{ graph.path }}" class="thumbnail-img">
+        </div>
     </div>
-    <form action="/uploadGraphs" method="POST">
-        <input type="checkbox" name="images[]" value="{{ image }}" id="{{ image }}" {% if image in selected %} checked {% endif %}>
-        <label for="{{ image }}" class="checkbox-label">{{ image }}</label>
-        <img src="{{ url_for('static', filename='graphs/' + image) }}" class="thumbnail-img">
-    </form>
-</div>
-  {% endfor %}
+{% endfor %}
 
-</div>
 <script>
-<!--Function for submitting all selected graphs-->
+        //code to handle editing graph info
+        var editNameModals = document.querySelectorAll(".edit-graph-modal");
+        var editButtons = document.querySelectorAll(".edit-button");
+        var closeButtons = document.querySelectorAll(".close-button");
 
-  function submitSelectedGraphs() {
-    const data = [];
-    {% for image in images %}
-    var tempImg = document.getElementById('{{ image }}');
-      if (tempImg.checked){
-        data.push(tempImg.value);
-      }
-    {% endfor %}
-
-    console.log(data);
-
-    $.post( "/uploadGraphs", {
-            image_list: data
-        }).done(function(response) {
-            alert('Graphs selected successfully');
-            location.reload();
-        }).fail(function(jqXHR, textStatus, errorThrown) {
-            alert('Error selecting graphs: ' + textStatus);
+        editButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                editNameModals[index].style.display = "block";
+            });
         });
-  };
 
-
-
-// JavaScript code to handle the "Delete" button
-var deleteButtons = document.querySelectorAll(".delete-button");
-
-deleteButtons.forEach(function(button) {
-    button.addEventListener("click", function(event) {
-        event.preventDefault(); // Prevent the default form submission
-        var imageContainer = this.parentNode.parentNode;
-        var imageName = imageContainer.querySelector("input[name='images[]']").value;
-
-        fetch(`/deleteGraph/${imageName}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ image_name: imageName })
-        })
-        .then(function(response) {
-            if (response.ok) {
-                imageContainer.remove();
-            } else {
-                alert('Error deleting graph');
-            }
-        })
-        .catch(function(error) {
-            alert('Error deleting graph: ' + error);
+        closeButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                editNameModals[index].style.display = "none";
+            });
         });
-    });
-});
 
+        window.addEventListener("click", function(event) {
+            editNameModals.forEach(function(modal) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            });
+        });
+
+
+        //Code to handle deleting graphs
+        var deleteButtons = document.querySelectorAll(".delete-button");
+
+        deleteButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                var graphContainer = this.closest(".graph-container");
+                var graphId = graphContainer.dataset.graphId;
+
+                fetch(`/deleteGraph/${graphId}`, {
+                    method: 'DELETE'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        alert('Successfully deleted graph');
+                        location.reload();
+                    } else {
+                        alert('Error deleting graph');
+                    }
+                })
+                .catch(function(error) {
+                    alert('Error deleting graph: ' + error);
+                });
+            });
+        });
+
+
+        //code to set group currently_displayed to true
+        var displayGraphButtons = document.querySelectorAll(".display-graph-button");
+        displayGraphButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                var graphContainer = this.closest(".graph-container");
+                var graphId = graphContainer.dataset.graphId;
+
+                fetch(`/displayGraph/${graphId}`, {
+                    method: 'DISPLAY'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        alert('Successfully displayed graph');
+                        location.reload();
+                    } else {
+                        alert('Error displaying graph');
+                    }
+                })
+                .catch(function(error) {
+                    alert('Error displaying graph: ' + error);
+                });
+            });
+        });
+
+
+        //code to set group currently_displayed to false
+        var removeDisplayGraphButtons = document.querySelectorAll(".remove-display-graph-button");
+        removeDisplayGraphButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                var graphContainer = this.closest(".graph-container");
+                var graphId = graphContainer.dataset.graphId;
+
+                fetch(`/removeDisplayGraph/${graphId}`, {
+                    method: 'REMOVE'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        alert('Successfully removed graph from display');
+                        location.reload();
+                    } else {
+                        alert('Error removing graph from display');
+                    }
+                })
+                .catch(function(error) {
+                    alert('Error removing graph from display: ' + error);
+                });
+            });
+        });
 </script>
-
-<div class="submit-container">
-  <button type="button" onclick="submitSelectedGraphs();" class="submit-btn">Submit</button>
-</div>
-
 </body>
 {% endblock %}

@@ -72,7 +72,14 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -89,6 +96,9 @@
     <div class="group-container" data-group-id="{{ group.id }}">
         <h2>Group Name: {{ group.group_name }}
             <button class="edit-button">Edit Name</button>
+            <button class="delete-button">Delete Group</button>
+            {% if group.currently_displayed %} <button class="remove-display-group-button">Remove Group From Display</button>
+            {% else %} <button class="display-group-button">Display Group</button> {% endif %}
         </h2>
         <div id="editNameModal-{{ group.id }}" class="edit-name-modal">
             <div class="edit-name-modal-content">
@@ -128,7 +138,7 @@
     </div>
     {% endfor %}
     <script>
-        //code to handle the "Edit Name" button
+        //code to handle editing name of groups
         var editNameModals = document.querySelectorAll(".edit-name-modal");
         var editButtons = document.querySelectorAll(".edit-button");
         var closeButtons = document.querySelectorAll(".close-button");
@@ -154,7 +164,7 @@
         });
 
 
-        //code to handle the "Remove" button
+        //code to handle removing graphs from groups
         var removeButtons = document.querySelectorAll(".remove-button");
 
         removeButtons.forEach(function(button, index) {
@@ -164,7 +174,7 @@
                 var groupId = graphContainer.parentNode.dataset.groupId;
 
                 fetch(`{{ url_for('remove_graph') }}?graph_id=${graphId}&group_id=${groupId}`, {
-                    method: 'DELETE'
+                    method: 'REMOVE'
                 })
                 .then(function(response) {
                     if (response.ok) {
@@ -175,6 +185,81 @@
                 })
                 .catch(function(error) {
                     alert('Error removing graph: ' + error);
+                });
+            });
+        });
+
+
+        //Code to handle deleting groups
+        var deleteButtons = document.querySelectorAll(".delete-button");
+
+        deleteButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                var groupContainer = this.closest(".group-container");
+                var groupId = groupContainer.dataset.groupId;
+
+                fetch(`/deleteGroup/${groupId}`, {
+                    method: 'DELETE'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        groupContainer.remove();
+                    } else {
+                        alert('Error deleting group');
+                    }
+                })
+                .catch(function(error) {
+                    alert('Error deleting group: ' + error);
+                });
+            });
+        });
+
+
+        //code to set group currently_displayed to true
+        var displayGroupButtons = document.querySelectorAll(".display-group-button");
+        displayGroupButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                var groupContainer = this.closest(".group-container");
+                var groupId = groupContainer.dataset.groupId;
+
+                fetch(`/displayGroup/${groupId}`, {
+                    method: 'DISPLAY'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        alert('Successfully displayed group');
+                        location.reload();
+                    } else {
+                        alert('Error displaying group');
+                    }
+                })
+                .catch(function(error) {
+                    alert('Error displaying group: ' + error);
+                });
+            });
+        });
+
+
+        //code to set group currently_displayed to false
+        var removeDisplayGroupButtons = document.querySelectorAll(".remove-display-group-button");
+        removeDisplayGroupButtons.forEach(function(button, index) {
+            button.addEventListener("click", function() {
+                var groupContainer = this.closest(".group-container");
+                var groupId = groupContainer.dataset.groupId;
+
+                fetch(`/removeDisplayGroup/${groupId}`, {
+                    method: 'REMOVE'
+                })
+                .then(function(response) {
+                    if (response.ok) {
+                        alert('Successfully removed group from display');
+                        location.reload();
+                    } else {
+                        alert('Error removing group from display');
+                    }
+                })
+                .catch(function(error) {
+                    alert('Error removing group from display: ' + error);
                 });
             });
         });

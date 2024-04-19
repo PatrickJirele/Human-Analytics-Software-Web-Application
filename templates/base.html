@@ -11,15 +11,6 @@
             background-color: #333;
             z-index: 1;
         }
-        .footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #f1f1f1;
-            text-align: center;
-            padding: 10px 0;
-            font-size: 12px;
-        }
     </style>
 </head>
 {% if current_user.is_authenticated %}
@@ -27,6 +18,7 @@
     <nav>
         <ul>
             <li><a href='/'>Home</a></li>
+            <li><a href='/filterGraphs'>Filter</a></li>
             <li><a href='/createGraph'>Create Graphs</a></li>
             <li><a href='/uploadGraphs'>Upload Graphs</a></li>
             <li><a href='/editGroups'>Edit Groups</a></li>
@@ -36,16 +28,20 @@
                 <div class="dropdown-content">
                     <a href="/updatePassword">Change Password</a>
                     <a href="/logout">Logout</a>
-                    <a href="/createAdmin">Create Admin</a>
+                    {% if current_user.email == 'testing@test.com' %}
+                        <a href="/createAdmin">Create Admin</a>
+                    {% endif %}
                 </div>
             </div>
         </ul>
     </nav>
 </body>
 {% else %}
+
 <nav>
     <ul>
         <li><a href='/'>Home</a></li>
+        <li><a href='/filterGraphs'>Filter</a></li>
         <div class="topnav-right">
             <li><a href='/login'>Login</a></li>
         </div>
@@ -55,9 +51,5 @@
 
 {% block content %}
 {% endblock %}
-
-<div class="footer">
-    Created by: Nathan Todd, Blake Brown, and Patrick Jirele
-</div>
 
 </html>
