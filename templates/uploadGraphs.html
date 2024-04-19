@@ -82,6 +82,27 @@
    height: 150px;
    object-fit: cover;
  }
+
+ .remove-display-graph-button {
+   position: center;
+   top: 5px;
+   background-color: #FFA500;
+   color: white;
+   border: none;
+   padding: 5px 10px;
+   font-size: 12px;
+   cursor: pointer;
+ }
+ .display-graph-button {
+   position: center;
+   top: 5px;
+   background-color: #00A36C;
+   color: white;
+   border: none;
+   padding: 5px 10px;
+   font-size: 12px;
+   cursor: pointer;
+ }
 </style>
 </head>
 <body>
@@ -105,7 +126,7 @@
                     <label for="new_title">New Title:</label>
                     <input type="text" id="new_title" name="new_title" value="{{ graph.title }}" required><br>
                     <label for="new_description">New Description:</label>
-                    <textarea id="new_description" name="new_description" rows="10" maxlength="2500">{{ graph.description }}</textarea><br>
+                    <textarea id="new_description" name="new_description" rows="10" maxlength="2500">{{ graph.description|safe }}</textarea><br>
                     <button type="submit">Update</button>
                 </form>
             </div>

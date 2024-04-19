@@ -8,6 +8,10 @@ dfMain = None
 def recreateDF():
     return pd.read_csv(path)
 
+def updateDB():
+    return pd.read_csv(path)
+
+
 def saveImage(fileName, fig, genericTitle, customTitle):
     finalTitle = genericTitle if customTitle == "" or customTitle == None else customTitle
     plt.title(finalTitle)
@@ -46,6 +50,7 @@ def createOther(df, columnName, description = ""):
     
     
 def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
+    df, description = createOther(updateDB(),columnName)
     dfMain = recreateDF()
     df, description = createOther(dfMain.copy(),columnName)
     dict = df[columnName].value_counts().to_dict()
@@ -85,6 +90,8 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
     return description
 
 
+def histogram(columnName, fileName, customTitle):
+    df = updateDB()
 def histogram(columnName, fileName, customTitle, useQuantity):
     dfMain = recreateDF()
     df = dfMain.copy()
@@ -111,6 +118,7 @@ def histogram(columnName, fileName, customTitle, useQuantity):
 
 
 def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle, useQuantity):
+    df, description = createOther(updateDB(),mainColumnName)
     dfMain = recreateDF()
     df, description = createOther(dfMain.copy(),mainColumnName)
     df, description = createOther(df,secondaryColumnName, description)

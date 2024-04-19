@@ -27,10 +27,10 @@
                 <button class="dropbtn">Account <i class="fa fa-caret-down"></i> </button>
                 <div class="dropdown-content">
                     <a href="/updatePassword">Change Password</a>
-                    <a href="/logout">Logout</a>
-                    {% if current_user.email == 'testing@test.com' %}
+                    {% if current_user.admin == 1 %}
                         <a href="/createAdmin">Create Admin</a>
                     {% endif %}
+                    <a href="/logout">Logout</a>
                 </div>
             </div>
         </ul>

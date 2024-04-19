@@ -56,6 +56,7 @@ class Graphs(db.Model):
     title = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(250), nullable=True)
     type = db.Column(db.String(20))
+    useQuantity = db.Column(db.Boolean, default=False)
     currently_displayed = db.Column(db.Boolean, default=False, nullable=False)
     group_id = db.Column(db.Integer, db.ForeignKey('graphgroup.id'), nullable=True)
 
@@ -75,10 +76,8 @@ def getDatasets():
 def getImgs():
     images = [f for f in os.listdir('./static/graphs') if
               os.path.isfile(os.path.join('./static/graphs', f))]  #Sends all images in graphs to uploadGraphs.html
-    selected = [f for f in os.listdir('./static/currentlyDisplayed') if os.path.isfile(
-        os.path.join('./static/currentlyDisplayed', f))]  #sends currently displayed imaged to uploadGraphs.html
 
-    return images, selected
+    return images
 
 
 
@@ -118,13 +117,12 @@ def makeImageName(category, type, isUnique):
     return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
 
 
-def addGraphToDb(path, title, type, description="", group_id=None):
+def addGraphToDb(path, title, type, description="", group_id=None, useQuantity=False):
     if group_id == None:
-        temp = Graphs(path=path, title=title, type=type, description=description)
+        temp = Graphs(path=path, title=title, type=type, description=description, useQuantity=useQuantity)
     else:
-        temp = Graphs(path=path, title=title, type=type, description=description, group_id=None)
+        temp = Graphs(path=path, title=title, type=type, description=description, group_id=None, useQuantity=useQuantity)
 
-    print(title + "\n")
     checker = Graphs.query.filter_by(path=path).first()
     if checker != None:
         db.session.delete(checker)
@@ -149,21 +147,28 @@ def regenerateGraphs():
     for i, img in enumerate(split_images):
         graph = Graphs.query.filter_by(path = ("./static/graphs/" + images[i])).first()
         title = graph.title
+    graphs = Graphs.query.all()
+    for graph in graphs:
+        img = graph.path.replace('./static/graphs/', '')[:-4].split('_')
         type= img[-1]
-        print({'IMG: ' : img, 'TYPE: ' : img[-1]})
+        title = graph.title
+        useQuantity = graph.useQuantity
         if type == 'stackedBar':
             columnName1 = img[0]
             columnName2 = img[1]
             imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
+            stackedBarChart(columnName1, columnName2, imageName, title, useQuantity)
             stackedBarChart(columnName1, columnName2, imageName, title, False)
         else:
             columnName1 = img[0]
             if type == 'pie' or type == 'treemap' or type == 'bar':
                 imageName = makeImageName(columnName1, type, False)
                 singleCategoryGraph(type, columnName1, imageName, title, False)
+                singleCategoryGraph(type, columnName1, imageName, title, useQuantity)
             if type == 'histogram':
                 imageName = makeImageName(columnName1, type, False)
                 histogram(columnName1, imageName, title, False)
+                histogram(columnName1, imageName, title)
 
 # ____HELPER_FUNCTIONS_END____
 
@@ -174,8 +179,7 @@ def regenerateGraphs():
 def home():
     graphsFromDb = Graphs.query.filter_by(currently_displayed = 1).all()
     graphs_by_group = GraphGroup.query.filter_by(currently_displayed = 1).all()
-
-    return render_template('home.html', graphs=graphsFromDb, graphGroups = graphs_by_group)
+    return render_template('home.html', graphs=graphsFromDb, graphGroups=graphs_by_group)
 
 @app.route('/filterGraphs', methods=['GET', 'POST'])
 def filterGraphs():
@@ -274,7 +278,6 @@ def updatePass():
 @login_required
 def create():
     admins = User.query.filter(User.admin != 1).all()
-    print(admins)
     if request.method == 'POST':
         email = request.form['email']
         password = cipher.encrypt(request.form['pWord'])
@@ -287,8 +290,6 @@ def create():
         else:
             db.session.add(temp)
             db.session.commit()
-            # user = User.query.filter_by(email=request.form['email']).first()
-            # login_user(user)
             return flask.redirect('/createAdmin')
 
     return render_template('createAdmin.html', admins=admins)
@@ -393,7 +394,7 @@ def createGraph():
                 imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, unique)
                 dbDescription = stackedBarChart(primaryCategory, secondaryCategory, imageName, dbTitle, useQuantity)
             dbTitle = dbTitle if not dbTitle == "" else imageName.replace('.png', '')
-            addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription, type=chartType)
+            addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription, type=chartType, useQuantity=useQuantity)
             return redirect("/uploadGraphs")
         except Exception as e:
             print(traceback.format_exc())
@@ -457,9 +458,9 @@ def removeDisplayGraph(graph_id):
         group.currently_displayed = 0
         db.session.add(group)
         db.session.commit()
-        return jsonify({'message': 'Group displayed successfully'}), 200
+        return jsonify({'message': 'Graph displayed successfully'}), 200
     except:
-        return jsonify({'message': 'Error displaying group'}), 500
+        return jsonify({'message': 'Error displaying graph'}), 500
 
 @app.route('/updateGraphInfo/<graph_id>', methods=['POST'])
 @login_required
