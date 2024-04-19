@@ -377,7 +377,7 @@ def createGraph():
             chartType = request.form.get('chartType')
             dbTitle = request.form.get('title')
             useQuantity = ("quantity" in request.form)
-            unique = (("overwrite" not in request.form) and useQuantity)
+            unique = (("overwrite" not in request.form) or useQuantity)
             dbDescription = ""
             if (chartType == 'pie' or chartType =='treemap' or chartType == 'bar'):
                 category = request.form.get('singleCategory')
