@@ -2,116 +2,183 @@
 {% block content %}
 <style>
     .group-container {
-      border: 3px solid #ccc;
-      padding: 20px;
-      margin-bottom: 30px;
-      text-align: center;
+        border: 1px solid #ccc;
+        padding: 20px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     .group-container h2 {
-      font-size: 24px;
-      margin-top: 0;
-      margin-bottom: 20px;
+        font-size: 24px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: #333;
     }
 
     .graph-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      grid-gap: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        grid-gap: 30px;
     }
 
     .group-graph-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-gap: 20px;
-      align-items: start;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: 20px;
+        align-items: start;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     }
 
     .thumbnail-img {
-      max-width: 100%;
+        max-width: 100%;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .thumbnail-img:hover {
+        transform: scale(1.05);
     }
 
     .content-wrapper {
-      flex-grow: 1;
-      margin-left: 20px;
-      text-align: left;
+        flex-grow: 1;
+        text-align: left;
+        margin-top: 20px;
     }
 
     .title-container {
-      font-weight: bold;
-      font-size: 20px;
+        font-weight: bold;
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 10px;
+        text-decoration: underline;
     }
 
     .description-container {
-      max-width: 500px;
-      word-wrap: break-word;
-      white-space: normal;
+        max-width: 500px;
+        word-wrap: break-word;
+        white-space: normal;
     }
 
     .description-quote {
         width: 550px;
         height: 350px;
-        border: 1px solid;
-        overflow: scroll;
+        border: 1px solid #ccc;
+        overflow: auto;
         scrollbar-color: gray white;
         scrollbar-width: thin;
         word-wrap: break-word;
+        padding: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        background-color: #f9f9f9;
+        font-family: 'Roboto', sans-serif;
+        line-height: 1.5;
     }
 
     .other {
         background-color: #f1f1f1;
-        font-color: white;
-        padding: 10px
+        color: #333;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
+    .footer {
+        text-align: center;
+        margin-top: 30px;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-content {
+        margin: auto;
+        display: block;
+        max-width: 80%;
+        max-height: 80%;
+    }
+
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
 </style>
 
 <body>
     {% if graphs %}
-        {% for graph in graphs %}
         <div class="group-container">
+            <h2>Individual Graphs</h2>
             <div class="graph-grid">
+                {% for graph in graphs %}
                 <div class="group-graph-container" data-graph-id="{{ graph.id }}">
-                    <img src="{{ graph.path }}" class="thumbnail-img">
+                    <img src="{{ graph.path }}" class="thumbnail-img" alt="{{ graph.title }}" onclick="openModal(this)">
                     <div class="content-wrapper">
-                        <div class="title-container">Graph Title: {{ graph.title }}</div>
+                        <div class="title-container">{{ graph.title }}</div>
                         {% if graph.description %}
-                        <div class="description-container"><b>Description:</b>
-                            <br>
-                            <p class="description-quote">
+                        <div class="description-container">
+                            <b>Description:</b>
+                            <div class="description-quote">
                                 {{ graph.description|safe }}
-                            </p>
+                            </div>
                         </div>
                         {% else %}
                             No Description provided
                         {% endif %}
                     </div>
                 </div>
+                {% endfor %}
             </div>
         </div>
-        {% endfor %}
     {% endif %}
 
     {% if graphGroups %}
         {% for group in graphGroups %}
         <div class="group-container" data-group-id="{{ group.id }}">
-            <h2>Group Name: {{ group.group_name }}</h2>
-            {% for graph in group.graphs %}
+            <h2>{{ group.group_name }}</h2>
             <div class="graph-grid">
+                {% for graph in group.graphs %}
                 <div class="group-graph-container" data-graph-id="{{ graph.id }}">
-                    <img src="{{ graph.path }}" class="thumbnail-img">
+                    <img src="{{ graph.path }}" class="thumbnail-img" alt="{{ graph.title }}">
                     <div class="content-wrapper">
-                        <div class="title-container">Graph Title: {{ graph.title }}</div>
-                        <div class="description-container"><b>Description:</b>
-                            <br>
-                            <blockquote class="description-quote">
+                        <div class="title-container">{{ graph.title }}</div>
+                        <div class="description-container">
+                            <b>Description:</b>
+                            <div class="description-quote">
                                 {{ graph.description|safe }}
-                            </blockquote>
+                            </div>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
         {% endfor %}
     {% endif %}
@@ -124,5 +191,31 @@
     <div class="footer">
         Created by: Nathan Todd, Blake Brown, and Patrick Jirele
     </div>
+
+    <div id="modal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modal-img">
+    </div>
+
+    <script>
+        function openModal(img) {
+            var modal = document.getElementById("modal");
+            var modalImg = document.getElementById("modal-img");
+            modal.style.display = "block";
+            modalImg.src = img.src;
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("modal");
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById("modal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 {% endblock %}
