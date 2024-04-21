@@ -1,22 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
 <style>
-  .admin-list-quote {
-    width: 400px;
-    height: 300px;
-    border: 1px solid;
-    overflow: scroll;
-    scrollbar-color: grey white;
-    scrollbar-width: thin;
-  }
+.create-form-container {
+  display: flex;
+  justify-content: space-between;
+  width: 80%; /* Adjust as needed */
+  max-width: 800px; /* Adjust as needed */
+  margin: auto;
+}
+
+.create-admin,
+.admin-list {
+  width: 48%; /* Adjust as needed */
+  border: 3px solid #ccc;
+  padding: 20px;
+  text-align: center;
+  border-radius: 15px;
+}
+
+.create-admin {
+  margin-right: 2%; /* Adjust as needed */
+}
+
+.admin-list {
+  margin-left: 2%; /* Adjust as needed */
+}
+
+.submit {
+  background: #b3b3b3;
+  width: 100%;
+  height: 30px;
+  border: none;
+  border-radius: 17px;
+  padding-left: 7px;
+  color: blue;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.submit:hover{
+    background-color: #9a9a9a;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+label {
+  margin-bottom: 5px;
+}
+
+.delete-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
 
 </style>
 <body>
-        <form action="/createAdmin" method="POST">
+<div class="create-form-container">
+    <div class="create-admin">
+        <h1>Create Admins</h1>
+        <form action="/createAdmin" method="POST" class="createForm">
             Email: <input type="input" name="email"> <br>
             Password: <input type="input" name="pWord"> <br>
-            <input type="submit" value="submit">
+            <input class='submit' type="submit" value="submit">
         </form>
+    </div>
 
     <div class="admin-list">
         <h1>All Admins</h1>
@@ -24,12 +82,12 @@
             {% for admin in admins %}
                 <div class="admin-container" data-admin-id="{{ admin.id }}">
                     <span class="admin-email">{{ admin.email }}</span>
-                    <button class="delete-admin-button">Delete</button>
+                    <button class="delete-button">Delete</button>
                 </div>
             {% endfor %}
         </blockquote>
     </div>
-
+</div>
     <script>
         //Code to handle deleting groups
         var deleteButtons = document.querySelectorAll(".delete-admin-button");

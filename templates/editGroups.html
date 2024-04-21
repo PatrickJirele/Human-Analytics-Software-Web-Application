@@ -100,8 +100,9 @@
            font-size: 12px;
            cursor: pointer;
          }
-        .add-graph-button {
+        .add-graph-button, .create-group-button {
            background-color: #00A36C;
+           /* background-color: #50C878; */
            color: white;
            border: none;
            padding: 5px 10px;
@@ -116,7 +117,7 @@
         <form action="{{ url_for('createGroup') }}" method="post">
             <label for="new_group_name">Group Name:</label>
             <input type="text" id="new_group_name" name="new_group_name" required>
-            <button type="submit">Create Group</button>
+            <button type="submit" class="create-group-button">Create Group</button>
         </form>
     </div>
     <h1>Edit Groups</h1>
