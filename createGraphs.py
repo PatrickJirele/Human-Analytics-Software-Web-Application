@@ -188,6 +188,7 @@ def treemap(mainColumnName, secondaryColumnName, fileName, customTitle, useQuant
     ax.axis('off')
     plt.axis("off")
     genericTitle = "Average " + secondaryColumnName + " Per " + mainColumnName
+    genericTitle = "% of Employees per " + mainColumnName + " w/ average " + secondaryColumnName
     saveImage(fileName,fig, genericTitle, customTitle)
     return description
 
