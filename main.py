@@ -8,6 +8,7 @@ app = Flask(__name__, static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usersDB.db'
 app.config['SECRET_KEY'] = 'secretKey'
 login_manager = LoginManager(app)
+login_manager = LoginManager(app)
 """
 login view used to redirect unauthorized users from private routes
 """
@@ -223,8 +224,8 @@ def login():
         email = request.form['email']
         if check(email) == True:
             user = User.query.filter_by(email=email).first()
-            userPass = (cipher.decrypt(user.password)).decode('utf-8')
             if user != None:
+                userPass = (cipher.decrypt(user.password)).decode('utf-8')
                 if request.form['pWord'] != userPass:
                     return render_template('login.html')
                 else:
