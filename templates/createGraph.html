@@ -3,9 +3,12 @@
     <head>
         <script>
             function changeGraphType(type) {
-                document.getElementById('singleCategory').style.display = (type == 'singleCategory') ? 'block' : 'none'
-                document.getElementById('doubleCategory').style.display = (type == 'doubleCategory') ? 'block' : 'none'
-                document.getElementById('histogramCategory').style.display = (type == 'histogramCategory') ? 'block' : 'none'
+                value = document.getElementById("chartType").value
+                document.getElementById('singleCategory').style.display = (value == 'Pie' || value == 'Bar') ? 'block' : 'none'
+                document.getElementById('doubleCategory').style.display = (value == 'Stacked Bar') ? 'block' : 'none'
+                document.getElementById('histogramCategory').style.display = (value == 'Histogram') ? 'block' : 'none'
+                document.getElementById('treemapCategory').style.display = (value == 'Treemap') ? 'block' : 'none'
+                document.getElementById('useQuantity').style.visibility = (value == 'Bar' || value == 'Stacked Bar' || value == 'Histogram') ? 'visible' : 'hidden'
             }
         </script>
 
@@ -51,6 +54,12 @@
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
+        #miscCategory {
+            display: inline-block;
+            text-align: left;
+        }
+
         </style>
     </head>
 
@@ -61,50 +70,86 @@
         <div class="form-container">
 
         <form action="/createGraph" method="post">
-            <p>Graph Type:</p>
-            <label><input type='radio' name='chartType' id='pie' value='pie' onclick='changeGraphType("singleCategory")' checked>Pie</label><br>
-            <label><input type='radio' name='chartType' id='treemap' value='treemap' onclick='changeGraphType("singleCategory")'>Treemap</label><br>
-            <label><input type='radio' name='chartType' id='bar' value='bar' onclick='changeGraphType("singleCategory")'>Bar</label><br>
-            <label><input type='radio' name='chartType' id='stackedBar' value='stackedBar' onclick='changeGraphType("doubleCategory")'>Stacked Bar</label><br>
-            <label><input type='radio' name='chartType' id='histogram' value='histogram' onclick='changeGraphType("histogramCategory")'>Histogram</label><br>
-            <br>
-            <div id='singleCategory'>              
-                <p>Select Graphs:</p>
-                <label><input type='radio' name='singleCategory' value='Time Type' checked>Time Type</label><br>
-                <label><input type='radio' name='singleCategory' value='Job Family'>Job Family</label><br>
-                <label><input type='radio' name='singleCategory' value='Department'>Department</label><br>
-                <label><input type='radio' name='singleCategory' value='Race Ethnicity'>Race/Ethnicity</label><br>
-                <label><input type='radio' name='singleCategory' value='Gender'>Gender</label><br>
+            <p>Graph Type:</p>            
+            <select name="chartType" id="chartType" onchange="changeGraphType()" autocomplete="off">
+                <option value="Pie">Pie</option>
+                <option value="Bar">Bar</option>
+                <option value="Histogram">Histogram</option>
+                <option value="Stacked Bar">Stacked Bar</option>
+                <option value="Treemap">Treemap</option>
+            </select>
+            
+            <br><br>
+
+            <div id='categories'>
+                <div id='singleCategory'>              
+                    <p>Select Category:</p>
+                    <select name="singleCategory" id="singleCategory" onchange="changeGraphType()">
+                        <option value="Time Type">Time Type</option>
+                        <option value="Job Family">Job Family</option>
+                        <option value="Department">Department</option>
+                        <option value="Race Ethnicity">Race/Ethnicity</option>
+                        <option value="Gender">Gender</option>
+                    </select>
+                </div>
+
+                <div id='doubleCategory' style='display:none;'>             
+                    <p>Select Primary Category:</p>
+                    <select name="primary" id="primary" onchange="changeGraphType()">
+                        <option value="Time Type">Time Type</option>
+                        <option value="Job Family">Job Family</option>
+                        <option value="Department">Department</option>
+                        <option value="Race Ethnicity">Race/Ethnicity</option>
+                        <option value="Gender">Gender</option>
+                    </select>
+
+                    <p>Select Secondary Category:</p>
+                    <select name="secondary" id="secondary" onchange="changeGraphType()">
+                        <option value="Time Type">Time Type</option>
+                        <option value="Job Family">Job Family</option>
+                        <option value="Department">Department</option>
+                        <option value="Race Ethnicity">Race/Ethnicity</option>
+                        <option value="Gender">Gender</option>
+                    </select>
+                </div>
+
+                <div id='histogramCategory' style='display:none;'>
+                    <p>Select Category:</p>
+                    <select name="histCategory" id="histCategory" onchange="changeGraphType()">
+                        <option value="Years At Western">Years At Western</option>
+                        <option value="Age">Age</option>
+                    </select>
+                </div>
+
+                <div id='treemapCategory' style='display:none;'>             
+                    <p>Select Primary Category:</p>
+                    <select name="primaryTree" id="primaryTree" onchange="changeGraphType()">
+                        <option value="Time Type">Time Type</option>
+                        <option value="Job Family">Job Family</option>
+                        <option value="Department">Department</option>
+                        <option value="Race Ethnicity">Race/Ethnicity</option>
+                        <option value="Gender">Gender</option>
+                    </select>
+
+                    <p>Select Secondary Category:</p>
+                    <select name="secondaryTree" id="secondaryTree" onchange="changeGraphType()">
+                        <option value="Years At Western">Years At Western</option>
+                        <option value="Age">Age</option>
+                    </select>
+                </div>
             </div>
 
-            <div id='doubleCategory' style='display:none;'>             
-                <p>Select Primary Category:</p>
-                <label><input type='radio' name='primary' value='Time Type' checked>Time Type</label><br>
-                <label><input type='radio' name='primary' value='Job Family'>Job Family</label><br>
-                <label><input type='radio' name='primary' value='Department'>Department</label><br>
-                <label><input type='radio' name='primary' value='Race Ethnicity'>Race/Ethnicity</label><br>
-                <label><input type='radio' name='primary' value='Gender'>Gender</label><br>
-
-                <p>Select Secondary Category:</p>
-                <label><input type='radio' name='secondary' value='Time Type' checked>Time Type</label><br>
-                <label><input type='radio' name='secondary' value='Job Family'>Job Family</label><br>
-                <label><input type='radio' name='secondary' value='Department'>Department</label><br>
-                <label><input type='radio' name='secondary' value='Race Ethnicity'>Race/Ethnicity</label><br>
-                <label><input type='radio' name='secondary' value='Gender'>Gender</label><br>
-            </div>
-
-            <div id='histogramCategory' style='display:none;'>
-                <label><input type='radio' name='histCategory' value='Years At Western' checked>Years At Western</label><br>
-                <label><input type='radio' name='histCategory' value='Age'>Age</label><br>
-            </div>
             <br>
 
             <div id='miscCategory'>
-                <p>Miscellaneous Options:</p>
-                <label><input type='checkbox' name='overwrite' id='overwrite' value='overwrite' checked>Remake graph whenever new data is uploaded?</label><br>
-                <label><input type='checkbox' name='quantity' id='quantity' value='overwrite'>Bar graphs use quantity instead of percentage. Graph can not be remade if checked.</label><br>
+                <p style='text-align:center'>Miscellaneous Options:</p>
                 <label><input type='text' name='title' id='title' placeholder='Custom Graph Title'> (Optional)</label><br>
+                <label><input type='checkbox' name='overwrite' id='overwrite' value='overwrite' checked>Remake graph whenever new data is uploaded?</label><br>
+                <label id='useQuantity' style='visibility:hidden;'><input type='checkbox' name='quantity' id='quantity' value='overwrite'>Use exact numbers instead of percentage? (Bar Graphs Only)</label>
             </div>
+
+            <br><br>
+
             <input type="submit" value="Generate">
         </form>
         </div>

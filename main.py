@@ -148,17 +148,20 @@ def regenerateGraphs():
         type= img[-1]
         title = graph.title
         useQuantity = graph.useQuantity
-        if type == 'stackedBar':
+        if type == 'Stacked Bar' or type == 'Treemap':
             columnName1 = img[0]
             columnName2 = img[1]
             imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
-            stackedBarChart(columnName1, columnName2, imageName, title, useQuantity)
+            if (type == 'Stacked Bar'):
+                stackedBarChart(columnName1, columnName2, imageName, title, useQuantity)
+            else:
+                treemap(columnName1, columnName2, imageName, title, useQuantity)
         else:
             columnName1 = img[0]
-            if type == 'pie' or type == 'treemap' or type == 'bar':
+            if type == 'Pie' or type == 'Treemap' or type == 'Bar':
                 imageName = makeImageName(columnName1, type, False)
                 singleCategoryGraph(type, columnName1, imageName, title, useQuantity)
-            if type == 'histogram':
+            if type == 'Histogram':
                 imageName = makeImageName(columnName1, type, False)
                 histogram(columnName1, imageName, title, useQuantity)
 
@@ -368,19 +371,26 @@ def createGraph():
             dbTitle = request.form.get('title')
             useQuantity = ("quantity" in request.form)
             dbDescription = ""
-            if (chartType == 'pie' or chartType =='treemap' or chartType == 'bar'):
+            imageName = None
+            if (chartType == 'Pie' or chartType == 'Bar'):
                 category = request.form.get('singleCategory')
                 imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
+                print(category)
                 dbDescription = singleCategoryGraph(chartType, category, imageName, dbTitle, useQuantity)
-            if (chartType == 'histogram'):
+            if (chartType == 'Histogram'):
                 category = request.form.get('histCategory')
                 imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
                 dbDescription = histogram(category, imageName, dbTitle, useQuantity)
-            if (chartType == 'stackedBar'):
+            if (chartType == 'Stacked Bar'):
                 primaryCategory = request.form.get('primary')
                 secondaryCategory = request.form.get('secondary')
                 imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" not in request.form))
                 dbDescription = stackedBarChart(primaryCategory, secondaryCategory, imageName, dbTitle, useQuantity)
+            if (chartType == 'Treemap'):
+                primaryCategory = request.form.get('primaryTree')
+                secondaryCategory = request.form.get('secondaryTree')
+                imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" not in request.form))
+                dbDescription = treemap(primaryCategory, secondaryCategory, imageName, dbTitle, useQuantity)
             dbTitle = dbTitle if not dbTitle == "" else imageName.replace('.png', '')
             addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription, type=chartType, useQuantity=useQuantity)
             return redirect("/uploadGraphs")
