@@ -3,7 +3,7 @@ from appConfig import *
 dir = os.path.dirname(__file__)
 path = os.path.join(dir,'static', 'datasets', 'current.csv')
 displayedDirPath = os.path.join(dir,'static', 'currentlyDisplayed')
-dfMain = pd.read_csv(path)
+dfMain = None
 
 def updateDB():
     return pd.read_csv(path)
@@ -54,7 +54,7 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
     fig, ax = plt.subplots()
     genericTitle = ""
     match (type):
-        case "pie":
+        case "Pie":
             xLoc = 1
             yLoc = 0.5 if columnName != 'Department' else 0.15
             explode = [0.01 for _ in range(len(keys))]
@@ -62,23 +62,7 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
             plt.legend(keys, loc=(xLoc, yLoc), bbox_transform=plt.gcf().transFigure)
             plt.subplots_adjust(left=0.0, bottom=0.0, right=1.0)
             genericTitle = "% of Employees per " + columnName
-        case "treemap":
-            area = []
-            title = []
-            for i, key in enumerate(keys):
-                size = (1-(len(df) - vals[i]) / len(df))*100
-                area.append(int(size))
-                title.append(key)
-                keys[i] = key + "\n" + "{:1.1f}".format(size) + "%"
-            tempDF = pd.DataFrame({"area":area,"keys":keys, "title":title})
-            cmap = tr.get_colormap("Dark2", tempDF["title"])
-            trc = tr.treemap(ax, tempDF, area="area", labels="keys", fill='title', cmap=cmap,
-                             rectprops={'ec':'w', 'lw':2},
-                             textprops={'c':'k' ,'reflow':True, 'place':'top left', 'max_fontsize':20})
-            ax.axis('off')
-            plt.axis("off")
-            genericTitle = "% of Employees per " + columnName
-        case "bar":
+        case "Bar":
             specialCase = (columnName == 'Race Ethnicity' or columnName == 'Department')
             width = 0.8 if not specialCase else 0.6
             if not useQuantity:
@@ -95,8 +79,10 @@ def singleCategoryGraph(type, columnName, fileName, customTitle, useQuantity):
     return description
 
 
+
 def histogram(columnName, fileName, customTitle, useQuantity):
-    df = updateDB()
+    dfMain = updateDB()
+    df = dfMain.copy()
     unsortedDict = df[columnName].value_counts().to_dict()
     keysMax = max(list(unsortedDict.keys()))
     keysMin = min(list(unsortedDict.keys()))
@@ -171,3 +157,38 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle, 
     plt.legend(loc=(xLoc, yLoc), bbox_transform=plt.gcf().transFigure)
     saveImage(fileName, fig, genericTitle, customTitle)
     return description
+
+def treemap(mainColumnName, secondaryColumnName, fileName, customTitle, useQuantity):
+    df, description = createOther(updateDB(),mainColumnName)
+    dict = df[mainColumnName].value_counts().to_dict()
+    keys = list(dict.keys())
+    vals = list(dict.values())
+    fig, ax = plt.subplots()
+    genericTitle = ""
+    area = []
+    averageList = []
+    for i, key in enumerate(keys):
+        size = (1-(len(df) - vals[i]) / len(df))*100
+        area.append(int(size))
+        keys[i] = key + "\n" + "{:1.1f}".format(size) + "%"
+        average = df.loc[(df[mainColumnName] == key), secondaryColumnName].mean()
+        averageList.append(average)
+    treeDF = pd.DataFrame({"area":area,"keys":keys, "average":averageList})
+    cmapOG = plt.cm.get_cmap('Reds')
+    cmap = plt.cm.colors.ListedColormap(cmapOG(np.linspace(0.05, 0.9, 200)))
+    trc = tr.treemap(ax, treeDF, area="area", labels="keys", fill='average', cmap=cmap,
+                     rectprops={'ec':'w', 'lw':2},
+                     textprops={'c':'k' ,'reflow':True, 'place':'top left', 'max_fontsize':20})
+    
+    
+    cb = fig.colorbar(trc.mappable, ax=ax, shrink=0.8)
+    cb.ax.set_ylabel('Average ' + secondaryColumnName, rotation=270, labelpad=15)
+    cb.outline.set_edgecolor('w')
+    
+    ax.axis('off')
+    plt.axis("off")
+    genericTitle = "Average " + secondaryColumnName + " Per " + mainColumnName
+    genericTitle = "% of Employees per " + mainColumnName + " w/ average " + secondaryColumnName
+    saveImage(fileName,fig, genericTitle, customTitle)
+    return description
+
