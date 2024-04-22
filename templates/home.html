@@ -166,7 +166,7 @@
             <div class="graph-grid">
                 {% for graph in group.graphs %}
                 <div class="group-graph-container" data-graph-id="{{ graph.id }}">
-                    <img src="{{ graph.path }}" class="thumbnail-img" alt="{{ graph.title }}">
+                    <img src="{{ graph.path }}" class="thumbnail-img" alt="{{ graph.title }}" onclick="openModal(this)">
                     <div class="content-wrapper">
                         <div class="title-container">{{ graph.title }}</div>
                         <div class="description-container">
