@@ -69,15 +69,21 @@ class Graphs(db.Model):
 
 #RETURNS all csv files from datasets dir
 def getDatasets():
-    dataset_files = [f for f in os.listdir('./static/datasets') if f.endswith('.csv')]
+    dir = os.path.dirname(__file__)
+    path = os.path.join(dir, 'static', 'datasets')
+    dataset_files = [f for f in os.listdir(path) if f.endswith('.csv')]
+
+    # dataset_files = [f for f in os.listdir('./static/datasets') if f.endswith('.csv')]
     return dataset_files
 
 
 #RETURNS all graphs AND all currently displayed graphs
 def getImgs():
-    images = [f for f in os.listdir('./static/graphs') if
-              os.path.isfile(os.path.join('./static/graphs', f))]  #Sends all images in graphs to uploadGraphs.html
-
+    graphsPath = os.path.dirname(__file__)
+    # images = [f for f in os.listdir('./static/graphs') if
+    #           os.path.isfile(os.path.join('./static/graphs', f))]  #Sends all images in graphs to uploadGraphs.html
+    images = [f for f in os.listdir(graphsPath) if
+              os.path.isfile(os.path.join(graphsPath, f))]  #Sends all images in graphs to uploadGraphs.html
     return images
 
 
@@ -136,7 +142,10 @@ def addGraphToDb(path, title, type, description="", group_id=None, useQuantity=F
 def getGraphsFromDb(listOfGraphs):
     retList = []
     for graph in listOfGraphs:
-        graphPath = './static/graphs/'+graph
+        #graphPath = './static/graphs/'+graph
+        dir = os.path.dirname(__file__)
+        graphPath = os.path.join(dir, 'static', 'graphs', graph)
+
         retList.append(Graphs.query.filter_by(path=graphPath).first())
     return retList
 
@@ -339,13 +348,13 @@ def uploadDataset():
             dataset_files = getDatasets()
             setCurrentDataset(newFileName)
 
-    print("Current dataset", currentCSV_name)
     return render_template('uploadDataset.html', dataset_files=dataset_files, selected_dataset=selected_dataset, current_dataset = currentCSV_name)
 
 @app.route('/deleteDataset', methods=['POST'])
 @login_required
 def delete_file():
     filename = request.json['filename']
+
     normal_file_path = os.path.join('./static/datasets', filename)
     file_path = normal_file_path if os.path.exists(normal_file_path) else ""
 
@@ -358,15 +367,22 @@ def delete_file():
 @app.route("/selectDataset/<filename>", methods=["GET"])
 @login_required
 def selectDataset(filename):
-    normal_file_path = os.path.join('./static/datasets', filename)
+    dir = os.path.dirname(__file__)
+    # normal_file_path = os.path.join('./static/datasets', filename)
+    normal_file_path = os.path.join(dir, 'static', 'datasets', filename)
+
     file_path = normal_file_path if os.path.exists(normal_file_path) else ""
 
     if os.path.exists(file_path):
         # Right here is where we change the graphs and everything
         # Make a current copy to use as the current dataset
         dir = os.path.dirname(__file__)
-        destination = './static/datasets'
-        destinationPath = os.path.join(dir, destination, filename)
+        #destination = './static/datasets'
+        #destinationPath = os.path.join(dir, destination, filename)
+        destination = os.path.join(dir, 'static', 'datasets')
+        destinationPath = os.path.join(destination, filename)
+        print("Destination path: ", destinationPath)
+
         shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
 
         regenerateGraphs()
@@ -391,7 +407,6 @@ def createGraph():
             if (chartType == 'Pie' or chartType == 'Bar'):
                 category = request.form.get('singleCategory')
                 imageName = makeImageName(category, chartType, ("overwrite" not in request.form))
-                print(category)
                 dbDescription = singleCategoryGraph(chartType, category, imageName, dbTitle, useQuantity)
             if (chartType == 'Histogram'):
                 category = request.form.get('histCategory')
@@ -423,11 +438,8 @@ def selectGraphsForDashboard():
 @app.route('/deleteGraph/<graph_id>', methods=['DELETE'])
 @login_required
 def deleteGraph(graph_id):
-    print(graph_id)
     try:
         graphToDelete = Graphs.query.filter_by(id=graph_id).first()
-        print(graphToDelete)
-        print(graphToDelete.path)
         os.remove(graphToDelete.path)
         db.session.delete(graphToDelete)
         db.session.commit()
@@ -439,6 +451,7 @@ def deleteGraph(graph_id):
 @app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
 @login_required
 def editGraph(imgName):
+
     graphDir = './static/graphs/' + imgName
     graphToEdit = Graphs.query.filter_by(path=graphDir).first()
 
