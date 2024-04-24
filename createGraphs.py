@@ -41,7 +41,7 @@ def createOther(df, columnName, description = ""):
         for key in otheredKeys:
             description += "-" + str(key) + "<br>"
     elif (len(otheredKeys) == 1):
-        description = "The 'Other' category consists of one category."
+        description = "The 'Other' category consists of one category. <br>"
     
     return df, description
     
@@ -161,19 +161,29 @@ def stackedBarChart(mainColumnName, secondaryColumnName, fileName, customTitle, 
 def treemap(mainColumnName, secondaryColumnName, fileName, customTitle, useQuantity):
     df, description = createOther(updateDB(),mainColumnName)
     dict = df[mainColumnName].value_counts().to_dict()
+    
     keys = list(dict.keys())
     vals = list(dict.values())
     fig, ax = plt.subplots()
     genericTitle = ""
+    displayedKeys = []
     area = []
     averageList = []
+    firstSmall = True
     for i, key in enumerate(keys):
         size = (1-(len(df) - vals[i]) / len(df))*100
-        area.append(int(size))
-        keys[i] = key + "\n" + "{:1.1f}".format(size) + "%"
-        average = df.loc[(df[mainColumnName] == key), secondaryColumnName].mean()
-        averageList.append(average)
-    treeDF = pd.DataFrame({"area":area,"keys":keys, "average":averageList})
+        if (size >= 4):
+            displayedKeys.append(key)
+            area.append(int(size))
+            keys[i] = key + "\n" + "{:1.1f}".format(size) + "%"
+            average = df.loc[(df[mainColumnName] == key), secondaryColumnName].mean()
+            averageList.append(average)
+        else:
+            if (firstSmall):
+                description += "<br>The following categories are too small to display: <br>"
+                firstSmall = False
+            description += "-" + str(key) + "(" + str("{:1.1f}".format(size)) + "%)<br>"
+    treeDF = pd.DataFrame({"area":area,"keys":displayedKeys, "average":averageList})
     cmapOG = plt.cm.get_cmap('Reds')
     cmap = plt.cm.colors.ListedColormap(cmapOG(np.linspace(0.05, 0.9, 200)))
     trc = tr.treemap(ax, treeDF, area="area", labels="keys", fill='average', cmap=cmap,
