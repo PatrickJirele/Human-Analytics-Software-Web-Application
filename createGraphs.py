@@ -172,7 +172,7 @@ def treemap(mainColumnName, secondaryColumnName, fileName, customTitle, useQuant
     firstSmall = True
     for i, key in enumerate(keys):
         size = (1-(len(df) - vals[i]) / len(df))*100
-        if (size >= 4):
+        if (size >= 2):
             displayedKeys.append(key)
             area.append(int(size))
             keys[i] = key + "\n" + "{:1.1f}".format(size) + "%"
