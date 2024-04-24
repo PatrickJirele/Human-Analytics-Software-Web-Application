@@ -114,8 +114,10 @@
                 {% if file != "current.csv" %}
                 <div class="dataset-file">
                     <span class="file-name">{{ file }}</span>
+                    {% if current_dataset != file %}
                     <button class="select-btn" onclick="selectDataset('{{ file }}')">Select Dataset</button>
                     <button class="delete-btn" onclick="deleteFile('{{ file }}')">Delete</button>
+                    {% endif %}
                 </div>
                 {% endif %}
             {% endfor %}
@@ -151,7 +153,6 @@ function selectDataset(filename) {
         success: function(response) {
             if (response.success) {
                 alert('Dataset selected successfully: ' + response.filename);
-                // Update the content of current.csv
                 $('#current-dataset').text(response.filename);
                         location.reload();
             } else {

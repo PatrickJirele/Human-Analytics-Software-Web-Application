@@ -166,6 +166,17 @@ def regenerateGraphs():
                 imageName = makeImageName(columnName1, type, False)
                 histogram(columnName1, imageName, title, useQuantity)
 
+
+
+#For keeping track of the current.csv
+#Returns the actual dataset name of current.csv
+global currentCSV_name
+currentCSV_name = 'current.csv'
+def setCurrentDataset(dataset):
+    globals()['currentCSV_name'] = dataset
+
+
+
 # ____HELPER_FUNCTIONS_END____
 
 
@@ -326,8 +337,10 @@ def uploadDataset():
             os.remove(newFileName)
             os.remove(file.filename)
             dataset_files = getDatasets()
+            setCurrentDataset(newFileName)
 
-    return render_template('uploadDataset.html', dataset_files=dataset_files, selected_dataset=selected_dataset)
+    print("Current dataset", currentCSV_name)
+    return render_template('uploadDataset.html', dataset_files=dataset_files, selected_dataset=selected_dataset, current_dataset = currentCSV_name)
 
 @app.route('/deleteDataset', methods=['POST'])
 @login_required
@@ -349,7 +362,7 @@ def selectDataset(filename):
     file_path = normal_file_path if os.path.exists(normal_file_path) else ""
 
     if os.path.exists(file_path):
-        # right here is where we change the graphs and everything
+        # Right here is where we change the graphs and everything
         # Make a current copy to use as the current dataset
         dir = os.path.dirname(__file__)
         destination = './static/datasets'
@@ -357,6 +370,8 @@ def selectDataset(filename):
         shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
 
         regenerateGraphs()
+        setCurrentDataset(filename)
+
         # Redirect to the home page or the page where the graphs are displayed
         return jsonify({'success': True, 'filename': filename})
     else:
