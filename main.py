@@ -147,30 +147,36 @@ def getGraphsFromDb(listOfGraphs):
     return retList
 
 
-def regenerateGraphs():
+def regenerateGraphs(specificGraph = None):
     dataset_path = './static/datasets/current.csv'
-    graphs = Graphs.query.all()
+
+    graphs = Graphs.query.all() if specificGraph == None else specificGraph
     for graph in graphs:
         img = graph.path.replace('./static/graphs/', '')[:-4].split('_')
         type= img[-1]
         title = graph.title
+        description = None
         useQuantity = graph.useQuantity
         if type == 'Stacked Bar' or type == 'Treemap':
             columnName1 = img[0]
             columnName2 = img[1]
             imageName = makeImageName(columnName1 + "_" + columnName2, type, False)
             if (type == 'Stacked Bar'):
-                stackedBarChart(columnName1, columnName2, imageName, title, useQuantity)
+                description = stackedBarChart(columnName1, columnName2, imageName, title, useQuantity)
             else:
-                treemap(columnName1, columnName2, imageName, title, useQuantity)
+                description = treemap(columnName1, columnName2, imageName, title, useQuantity)
         else:
             columnName1 = img[0]
-            if type == 'Pie' or type == 'Treemap' or type == 'Bar':
+            if type == 'Pie' or type == 'Bar':
                 imageName = makeImageName(columnName1, type, False)
-                singleCategoryGraph(type, columnName1, imageName, title, useQuantity)
+                description = singleCategoryGraph(type, columnName1, imageName, title, useQuantity)
             if type == 'Histogram':
                 imageName = makeImageName(columnName1, type, False)
-                histogram(columnName1, imageName, title, useQuantity)
+                description = histogram(columnName1, imageName, title, useQuantity)
+        
+        graph.description = description
+        db.session.add(graph)
+        db.session.commit()
 
 
 
@@ -402,7 +408,6 @@ def selectDataset(filename):
         destinationPath = os.path.join(destination, filename)
 
         shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
-
         regenerateGraphs()
         setCurrentDataset(filename)
 
@@ -471,7 +476,6 @@ def editGraph(imgName):
 
     graphDir = './static/graphs/' + imgName
     graphToEdit = Graphs.query.filter_by(path=graphDir).first()
-
     if request.method == 'POST':
         graphToEdit.title = request.form['title']
         graphToEdit.description = request.form['description']
@@ -514,6 +518,7 @@ def updateGraphInfo(graph_id):
     new_description = request.form['new_description']
     graph.title= new_title
     graph.description = new_description
+    regenerateGraphs([graph])
     db.session.add(graph)
     db.session.commit()
     return redirect('/uploadGraphs')
