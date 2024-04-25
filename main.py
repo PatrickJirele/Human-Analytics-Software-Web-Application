@@ -92,10 +92,8 @@ def getImgs():
 def check(email):
     regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     if (re.fullmatch(regex, email)):
-        print("Valid")
         return True
     else:
-        print("Invalid")
         return False
 
 
@@ -115,7 +113,6 @@ def getHistogramCategories(request):
     categories = []
     categories.append('Years At Western') if (request.form.get('yearsAtWestern')) else None
     categories.append('Age') if (request.form.get('age')) else None
-    print(request.form)
     return categories
 
 
@@ -227,12 +224,20 @@ def filterGraphs():
                 messageToSend='Graphs Found from selected field('+fieldSelected+') and selected graph type('+typeSelected+'): '
 
         if graphsOfType != None and graphsOfField == None:
-            messageToSend='Graphs Available from selected type('+typeSelected+'):'
             retGraphs = graphsOfType
+            if len(retGraphs) == 0:
+                retGraphs = None
+                messageToSend='No matches found of graph type('+typeSelected+')'
+            else:
+                messageToSend='Graphs Available from selected type('+typeSelected+'):'
 
         if graphsOfType == None and graphsOfField != None:
-            messageToSend='Graphs Available from selected field('+fieldSelected+'): '
             retGraphs = graphsOfField
+            if len(retGraphs) == 0:
+                retGraphs = None
+                messageToSend='No matches found of graph type('+fieldSelected+')'
+            else:
+                messageToSend='Graphs Available from selected field('+fieldSelected+'): '
 
         return render_template('filterGraphs.html', graphs=retGraphs, message=messageToSend)
 
@@ -320,13 +325,19 @@ def uploadDataset():
         if request.files['file']:
             # Get the excel file from website upload
             file = request.files['file']
+            dir = os.path.dirname(__file__)
             file.save(file.filename)
-            destination = './static/datasets'
+            #destination = './static/datasets'
+            destination = os.path.join(dir, 'static', 'datasets')
             newFileName = str(date.today()) + '.csv'
+            destinationPath = os.path.join(dir, newFileName)
+            if os.path.isfile(destinationPath):
+                os.remove(destinationPath)
+            """
             if os.path.isfile(newFileName):
                 os.remove(newFileName)
+            """
             # Preprocess the excel file and convert to csv
-            dir = os.path.dirname(__file__)
             df = pd.DataFrame(pd.read_excel(file.filename))
             df = removeNaN(df)
             df = combineRaceAndEthnicity(df)
@@ -338,13 +349,18 @@ def uploadDataset():
             df.to_csv(destinationPath, index=False)
 
             # Save the csv file to datasets directory
-            shutil.copy2(newFileName, destination)
+            #shutil.copy2(newFileName, destination)
+            shutil.copy2(destinationPath, destination)
+
             # Make a current copy to use as the current dataset
             shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
 
             # Remove files from main directory
-            os.remove(newFileName)
-            os.remove(file.filename)
+
+            #os.remove(newFileName)
+            #os.remove(file.filename)
+            os.remove(destinationPath)
+            os.remove(os.path.join(dir, '..', file.filename))
             dataset_files = getDatasets()
             setCurrentDataset(newFileName)
 
@@ -355,7 +371,10 @@ def uploadDataset():
 def delete_file():
     filename = request.json['filename']
 
-    normal_file_path = os.path.join('./static/datasets', filename)
+    # normal_file_path = os.path.join('./static/datasets', filename)
+    dir = os.path.dirname(__file__)
+    normal_file_path = os.path.join(dir, 'static', 'datasets', filename)
+
     file_path = normal_file_path if os.path.exists(normal_file_path) else ""
 
     if os.path.exists(file_path):
@@ -381,7 +400,6 @@ def selectDataset(filename):
         #destinationPath = os.path.join(dir, destination, filename)
         destination = os.path.join(dir, 'static', 'datasets')
         destinationPath = os.path.join(destination, filename)
-        print("Destination path: ", destinationPath)
 
         shutil.copy2(destinationPath, os.path.join(destination, 'current.csv'))
 
@@ -391,7 +409,6 @@ def selectDataset(filename):
         # Redirect to the home page or the page where the graphs are displayed
         return jsonify({'success': True, 'filename': filename})
     else:
-        print("File path does not exist:", file_path)
         return jsonify({'success': False, 'error': 'File not found'})
 
 @login_required
@@ -560,7 +577,6 @@ def createGroup():
 @app.route('/deleteGroup/<group_id>', methods=['DELETE'])
 @login_required
 def deleteGroup(group_id):
-    print(group_id)
     try:
         db.session.delete(GraphGroup.query.get(group_id))
         db.session.commit()
@@ -573,7 +589,6 @@ def deleteGroup(group_id):
 @app.route('/displayGroup/<group_id>', methods=['DISPLAY'])
 @login_required
 def displayGroup(group_id):
-    print(group_id)
     try:
         group = GraphGroup.query.filter_by(id=group_id).first()
         group.currently_displayed = 1
@@ -586,7 +601,6 @@ def displayGroup(group_id):
 @app.route('/removeDisplayGroup/<group_id>', methods=['REMOVE'])
 @login_required
 def removeDisplayGroup(group_id):
-    print(group_id)
     try:
         group = GraphGroup.query.filter_by(id=group_id).first()
         group.currently_displayed = 0
