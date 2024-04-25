@@ -176,30 +176,39 @@
     {% endif %}
 
     {% if graphs %}
-    <div class="graph-container">
-        <div class="graph-grid">
-            {% for graph in graphs %}
+        {% set has_displayed_graphs = false %}
+        {% for graph in graphs %}
             {% if graph.currently_displayed == 1 %}
-            <div class="graph-item" data-graph-id="{{ graph.id }}">
-                <img src="{{ graph.path }}" class="thumbnail-img" alt="{{ graph.title }}" onclick="openModal(this)">
-                <div class="content-wrapper">
-                    <div class="title-container">{{ graph.title }}</div>
-                    {% if graph.description %}
-                    <div class="description-container">
-                        <b>Description:</b>
-                        <div class="description-quote">
-                            {{ graph.description|safe }}
-                        </div>
-                    </div>
-                    {% else %}
-                    No Description provided
-                    {% endif %}
+                {% set has_displayed_graphs = true %}
+            {% endif %}
+        {% endfor %}
+
+        {% if has_displayed_graphs %}
+            <div class="graph-container">
+                <div class="graph-grid">
+                    {% for graph in graphs %}
+                        {% if graph.currently_displayed == 1 %}
+                            <div class="graph-item" data-graph-id="{{ graph.id }}">
+                                <img src="{{ graph.path }}" class="thumbnail-img" alt="{{ graph.title }}" onclick="openModal(this)">
+                                <div class="content-wrapper">
+                                    <div class="title-container">{{ graph.title }}</div>
+                                    {% if graph.description %}
+                                        <div class="description-container">
+                                            <b>Description:</b>
+                                            <div class="description-quote">
+                                                {{ graph.description|safe }}
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        No Description provided
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
-            {% endif %}
-            {% endfor %}
-        </div>
-    </div>
+        {% endif %}
     {% endif %}
     <div class="footer">
         Created by: Nathan Todd, Blake Brown, and Patrick Jirele
@@ -227,12 +236,6 @@
                 modal.style.display = "none";
             }
         }
-
-        var gridIsEmpty = document.getElementById('graph-grid').innerHTML === "";
-        if (gridIsEmpty == True){
-            document.getElementById('graph-grid').remove();
-        }
-
     </script>
 
 </body>
