@@ -153,14 +153,15 @@
         <form action="{{ url_for('filterGraphs') }}" method="POST">
             <select id="graphType" name="graphType">
                 <option value="">Select a graph type</option>
-                <option value="pie">Pie Charts</option>
-                <option value="histogram">Histograms</option>
-                <option value="treemap">Treemaps</option>
-                <option value="bar">Bar Charts</option>
-                <option value="stackedBar">Stacked Bars</option>
+                <option value="Pie">Pie Charts</option>
+                <option value="Histogram">Histograms</option>
+                <option value="Treemap">Treemaps</option>
+                <option value="Bar">Bar Charts</option>
+                <option value="Stacked Bar">Stacked Bars</option>
             </select>
             <select id="graphField" name="graphField">
                 <option value="">Select a graph field</option>
+                <option value="Time Type">Time Type</option>
                 <option value="Department">Department</option>
                 <option value="Gender">Gender</option>
                 <option value="Race Ethnicity">Race and Ethnicity</option>
@@ -176,18 +177,11 @@
     {% endif %}
 
     {% if graphs %}
-        {% set has_displayed_graphs = false %}
-        {% for graph in graphs %}
-            {% if graph.currently_displayed == 1 %}
-                {% set has_displayed_graphs = true %}
-            {% endif %}
-        {% endfor %}
-
-        {% if has_displayed_graphs %}
+        {% if has_displayed_graphs == True %}
             <div class="graph-container">
                 <div class="graph-grid">
                     {% for graph in graphs %}
-                        {% if graph.currently_displayed == 1 %}
+                        {% if graph.currently_displayed == True %}
                             <div class="graph-item" data-graph-id="{{ graph.id }}">
                                 <img src="{{ graph.path }}" class="thumbnail-img" alt="{{ graph.title }}" onclick="openModal(this)">
                                 <div class="content-wrapper">

@@ -244,8 +244,14 @@ def filterGraphs():
                 messageToSend='No matches found of graph type('+fieldSelected+')'
             else:
                 messageToSend='Graphs Available from selected field('+fieldSelected+'): '
-
-        return render_template('filterGraphs.html', graphs=retGraphs, message=messageToSend)
+        
+        hasDisplayedGraphs = False
+        if retGraphs != None:
+            for graph in retGraphs:
+                if (graph.currently_displayed == True):
+                    hasDisplayedGraphs = True
+        
+        return render_template('filterGraphs.html', graphs=retGraphs, message=messageToSend, has_displayed_graphs = hasDisplayedGraphs)
 
     return render_template('filterGraphs.html')
 
