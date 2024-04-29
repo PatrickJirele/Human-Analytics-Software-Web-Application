@@ -7,7 +7,7 @@ from createGraphs import *
 app = Flask(__name__, static_url_path='/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///usersDB.db'
 app.config['SECRET_KEY'] = 'secretKey'
-login_manager = LoginManager(app)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 login_manager = LoginManager(app)
 """
 login view used to redirect unauthorized users from private routes
@@ -188,6 +188,11 @@ def setCurrentDataset(dataset):
 
 # ____ROUTES_START____
 
+# @app.before_request
+# def make_session_permanent():
+#     session.permanent = True
+#     app.permanent_session_lifetime = timedelta(minutes=5)
+
 @app.route('/')
 def home():
     graphsFromDb = Graphs.query.filter_by(currently_displayed = 1).all()
@@ -257,7 +262,8 @@ def login():
                     user.authenticated = True
                     db.session.add(user)
                     db.session.commit()
-                    login_user(user, remember=True)
+                    login_user(user)
+                    session.permanent = True
                     return flask.redirect('/')
             return render_template('login.html')
         else:
