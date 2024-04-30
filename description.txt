@@ -16,10 +16,14 @@ Logout:
 
 Update password:
     Allows user to change their password.
+        -First enter current password
+        -Second enter new password
 
 Create Admin:
     Allows only users with their admin field marked true to create and delete other administrators, for
     initial deployment this will only be Marita Whalen.
+
+
 
 Upload Dataset:
     This page is split into 2 different parts, dataset upload and dateset modification.
@@ -65,6 +69,30 @@ Upload Graphs:
         Each graph has a button beneath the title, but above the picture. This button will either be a green
         'Display Graph' button or an orange 'Remove Graph From Display' button. To add a graph to the dashboard click
         the green button, to remove a graph from the display click the orange button.
+
+    3. Deleting
+        To delete a graph, simply just click the delete button.
+
+Edit Groups:
+    This page is where everything related to graph groups lives, you can add, edit, and delete groups here.
+
+    1. Creating Groups
+        At the top of the page there is a text input box with a green create button next to it. This is where you
+        will name your group, and click the button to create it.
+
+    2. Adding Graphs to Group
+        Once a group is created there will be a dropdown selection of all created graph titles, select a graph from
+        here and it will be added to the group. A graph cannot exist in multiple groups, if you wish to have the
+        same graph in multiple groups you will have to create a unique copy of the graph you want to add.
+
+    3. Displaying
+        Similar to the Upload Graphs page, each group will have either a green 'Display Group' or a orange 'Remove
+        Graph From Display'. Click the green button to display or the orange button to remove the graph from display.
+
+    4. Deleting
+        To delete a group just click the delete button.
+
+
 
 
 
