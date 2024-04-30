@@ -121,6 +121,7 @@ def makeImageName(category, type, isUnique):
     return category + "_" + type + ("_" + datetime.now().strftime("%m_%d_%Y_%H;%M;%S") + ".png" if isUnique else ".png")
 
 
+
 def addGraphToDb(path, title, type, description="", group_id=None, useQuantity=False):
     if group_id == None:
         temp = Graphs(path=path, title=title, type=type, description=description, useQuantity=useQuantity)
@@ -193,11 +194,6 @@ def setCurrentDataset(dataset):
 
 
 # ____ROUTES_START____
-
-# @app.before_request
-# def make_session_permanent():
-#     session.permanent = True
-#     app.permanent_session_lifetime = timedelta(minutes=5)
 
 @app.route('/')
 def home():
@@ -521,6 +517,7 @@ def removeDisplayGraph(graph_id):
         return jsonify({'message': 'Graph displayed successfully'}), 200
     except:
         return jsonify({'message': 'Error displaying graph'}), 500
+
 
 @app.route('/updateGraphInfo/<graph_id>', methods=['POST'])
 @login_required

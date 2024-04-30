@@ -1,2 +1,71 @@
 Human analytics web application description
 
+
+Home:
+    Home page contains all graphs and graph groups that are selected to be currently displayed.
+
+Filter Graphs:
+    Allows the user to filter graphs based on the type of graph or the field. Only returns graphs that are marked
+    to be currently displayed.
+
+Login:
+    Page for administrators to log in, must enter valid email and password associated.
+
+Logout:
+    Logs the current user out.
+
+Update password:
+    Allows user to change their password.
+
+Create Admin:
+    Allows only users with their admin field marked true to create and delete other administrators, for
+    initial deployment this will only be Marita Whalen.
+
+Upload Dataset:
+    This page is split into 2 different parts, dataset upload and dateset modification.
+    1. Upload
+        For the uploading functionality of this page, the administrator is able to select an Excel spreadsheet
+        to upload to the site. This spreadsheet will be automatically pre-processed and will display itself with
+        the other datasets on the right half of the page. When a dataset is uploaded it is set to the current
+        dataset.
+    2. Modification
+        All datasets available will be displayed on the right half of the page. Administrators will be able to
+        delete these datasets with the delete button next to each individual dataset. Administrators will also
+        be able to 'select' a dataset, this will regenerate all the non-unique graphs to be updated with the
+        dataset selected. When graphs are regenerated, the title in the picture is updated with the title
+        given to the graph.
+
+Create Graphs:
+    This page is where graphs are created. Graphs will be created using the currently selected dataset. To create
+    a graph, you must fill out the form with:
+        -Type of graph you want to create.
+        -What field(s) you want to create the graph on. The number of fields depends on type of graph.
+        -(Optional) Custom title, graph will initially generate with custom title in image.
+        -(Optional) Checkbox(s), the number of checkboxes depends on what type graph you are creating. All graphs
+        will have one, which if checked will mark the graph as non-unique, if it is unchecked the graph will be
+        marked as unique and will not be regenerated when a new dataset is uploaded.
+
+    Once all required fields are filled out, click the submit button and the graph will be created and will show
+    up on the Upload Graphs page
+
+Upload Graphs:
+    This page is where graphs can be edited, selected to be displayed, and deleted. Each graph on the page will
+    have a button for each functionality.
+
+    1. Editing Graphs
+        Each graph will have a blue 'Edit' button. When this button is clicked a pop-up will be displayed with the
+        graphs current title and description. You are able to edit these fields, and click the update button to
+        change them. If you do not wish to edit the graph, you can simply close the pop-up.
+
+        NOTE: When you read a few descriptions you may see "<br>", this is how a new line is created in the
+        descriptions. Without this "<br>" the text will all join together and look messy. If you want a newline in
+        the description, you must add the "<br>" yourself.
+
+    2. Selecting Graphs to be Displayed
+        Each graph has a button beneath the title, but above the picture. This button will either be a green
+        'Display Graph' button or an orange 'Remove Graph From Display' button. To add a graph to the dashboard click
+        the green button, to remove a graph from the display click the orange button.
+
+
+
+
