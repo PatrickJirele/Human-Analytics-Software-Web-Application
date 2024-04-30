@@ -153,7 +153,7 @@ def regenerateGraphs(specificGraph = None):
 
     graphs = Graphs.query.all() if specificGraph == None else specificGraph
     for graph in graphs:
-        img = graph.path.replace('./static/graphs/', '')[:-4].split('_')
+        img = graph.path.replace('static/graphs/', '')[:-4].split('_')
         type= img[-1]
         title = graph.title
         description = None
@@ -174,7 +174,7 @@ def regenerateGraphs(specificGraph = None):
             if type == 'Histogram':
                 imageName = makeImageName(columnName1, type, False)
                 description = histogram(columnName1, imageName, title, useQuantity)
-        
+
         graph.description = description
         db.session.add(graph)
         db.session.commit()
@@ -245,13 +245,13 @@ def filterGraphs():
                 messageToSend='No matches found of graph type('+fieldSelected+')'
             else:
                 messageToSend='Graphs Available from selected field('+fieldSelected+'): '
-        
+
         hasDisplayedGraphs = False
         if retGraphs != None:
             for graph in retGraphs:
                 if (graph.currently_displayed == True):
                     hasDisplayedGraphs = True
-        
+
         return render_template('filterGraphs.html', graphs=retGraphs, message=messageToSend, has_displayed_graphs = hasDisplayedGraphs)
 
     return render_template('filterGraphs.html')
@@ -453,8 +453,10 @@ def createGraph():
                 imageName = makeImageName(primaryCategory+"_"+secondaryCategory, chartType, ("overwrite" not in request.form))
                 dbDescription = treemap(primaryCategory, secondaryCategory, imageName, dbTitle, useQuantity)
             dbTitle = dbTitle if not dbTitle == "" else imageName.replace('.png', '')
-            addGraphToDb(path="./static/graphs/"+imageName, title=dbTitle, description=dbDescription, type=chartType, useQuantity=useQuantity)
+            imagePath = os.path.join('static', 'graphs', imageName)
+            addGraphToDb(path=imagePath, title=dbTitle, description=dbDescription, type=chartType, useQuantity=useQuantity)
             return redirect("/uploadGraphs")
+
         except Exception as e:
             print(traceback.format_exc())
     return render_template('createGraph.html')
@@ -470,27 +472,27 @@ def selectGraphsForDashboard():
 def deleteGraph(graph_id):
     try:
         graphToDelete = Graphs.query.filter_by(id=graph_id).first()
-        os.remove(graphToDelete.path)
-        db.session.delete(graphToDelete)
-        db.session.commit()
-        return jsonify({'message': 'Graph deleted successfully'}), 200
-    except:
+        file_path = graphToDelete.path
+        dir = os.path.dirname(__file__)
+        file_path = os.path.join(dir, file_path)
+
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                db.session.delete(graphToDelete)
+                db.session.commit()
+                return jsonify({'message': 'Graph deleted successfully'}), 200
+            except OSError as e:
+                print(f"Error deleting file: {e}")
+                return jsonify({'message': 'Error deleting graph file'}), 500
+        else:
+            print("File not found")
+            return jsonify({'message': 'Graph file not found'}), 404
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
         return jsonify({'message': 'Error deleting graph'}), 500
 
-
-@app.route('/editGraph/<imgName>', methods=['GET', 'POST'])
-@login_required
-def editGraph(imgName):
-
-    graphDir = './static/graphs/' + imgName
-    graphToEdit = Graphs.query.filter_by(path=graphDir).first()
-    if request.method == 'POST':
-        graphToEdit.title = request.form['title']
-        graphToEdit.description = request.form['description']
-        db.session.commit()
-        return redirect('/uploadGraphs')
-
-    return render_template('editGraph.html', graphToEdit=graphToEdit)
 
 
 @app.route('/displayGraph/<graph_id>', methods=['DISPLAY'])
@@ -526,8 +528,8 @@ def updateGraphInfo(graph_id):
     new_title = request.form['new_title']
     new_description = request.form['new_description']
     graph.title= new_title
-    graph.description = new_description
     regenerateGraphs([graph])
+    graph.description = new_description
     db.session.add(graph)
     db.session.commit()
     return redirect('/uploadGraphs')
