@@ -2,22 +2,22 @@ Human analytics web application description
 
 
 Home:
-    Home page contains all graphs and graph groups that are selected to be currently displayed.
+    The home page contains all graphs and graph groups that are selected to be currently displayed.
 
 Filter Graphs:
     Allows the user to filter graphs based on the type of graph or the field. Only returns graphs that are marked
     to be currently displayed.
 
 Login:
-    Page for administrators to log in, must enter valid email and password associated.
+    A page for administrators to log in must enter a valid email and password associated.
 
 Logout:
     Logs the current user out.
 
 Update password:
-    Allows user to change their password.
-        -First enter current password
-        -Second enter new password
+    Allows the user to change their password.
+        -First, enter current password
+        -Second, enter a new password
 
 Create Admin:
     Allows only users with their admin field marked true to create and delete other administrators, for
@@ -26,7 +26,7 @@ Create Admin:
 
 
 Upload Dataset:
-    This page is split into 2 different parts, dataset upload and dateset modification.
+    This page is split into 2 different parts, dataset upload and dataset modification.
     1. Upload
         For the uploading functionality of this page, the administrator is able to select an Excel spreadsheet
         to upload to the site. This spreadsheet will be automatically pre-processed and will display itself with
@@ -43,9 +43,9 @@ Create Graphs:
     This page is where graphs are created. Graphs will be created using the currently selected dataset. To create
     a graph, you must fill out the form with:
         -Type of graph you want to create.
-        -What field(s) you want to create the graph on. The number of fields depends on type of graph.
-        -(Optional) Custom title, graph will initially generate with custom title in image.
-        -(Optional) Checkbox(s), the number of checkboxes depends on what type graph you are creating. All graphs
+        -What field(s) do you want to create the graph on? The number of fields depends on the type of graph.
+        -(Optional) Custom title, the graph will initially generate with custom title in the image.
+        -(Optional) Checkbox(s), the number of checkboxes depends on what type of graph you are creating. All graphs
         will have one, which if checked will mark the graph as non-unique, if it is unchecked the graph will be
         marked as unique and will not be regenerated when a new dataset is uploaded.
 
@@ -58,15 +58,15 @@ Upload Graphs:
 
     1. Editing Graphs
         Each graph will have a blue 'Edit' button. When this button is clicked a pop-up will be displayed with the
-        graphs current title and description. You are able to edit these fields, and click the update button to
+        graph's current title and description. You are able to edit these fields and click the update button to
         change them. If you do not wish to edit the graph, you can simply close the pop-up.
 
         NOTE: When you read a few descriptions you may see "<br>", this is how a new line is created in the
-        descriptions. Without this "<br>" the text will all join together and look messy. If you want a newline in
+        descriptions. Without this "<br>" the text will all join together and look messy. If you want a new line in
         the description, you must add the "<br>" yourself.
 
     2. Selecting Graphs to be Displayed
-        Each graph has a button beneath the title, but above the picture. This button will either be a green
+        Each graph has a button beneath the title but above the picture. This button will either be a green
         'Display Graph' button or an orange 'Remove Graph From Display' button. To add a graph to the dashboard click
         the green button, to remove a graph from the display click the orange button.
 
@@ -77,7 +77,7 @@ Edit Groups:
     This page is where everything related to graph groups lives, you can add, edit, and delete groups here.
 
     1. Creating Groups
-        At the top of the page there is a text input box with a green create button next to it. This is where you
+        At the top of the page, there is a text input box with a green create button next to it. This is where you
         will name your group, and click the button to create it.
 
     2. Adding Graphs to Group
@@ -86,8 +86,8 @@ Edit Groups:
         same graph in multiple groups you will have to create a unique copy of the graph you want to add.
 
     3. Displaying
-        Similar to the Upload Graphs page, each group will have either a green 'Display Group' or a orange 'Remove
-        Graph From Display'. Click the green button to display or the orange button to remove the graph from display.
+        Similar to the Upload Graphs page, each group will have either a green 'Display Group' or an orange 'Remove
+        Graph From Display'. Click the green button to display or the orange button to remove the graph from the display.
 
     4. Deleting
         To delete a group just click the delete button.
