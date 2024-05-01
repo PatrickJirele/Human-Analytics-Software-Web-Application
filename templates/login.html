@@ -51,19 +51,25 @@
         background-color: #9a9a9a;
     }
 
+    .error{
+        color: red;
+    }
+
 </style>
 <div class="login-form-container">
     <form action="/login" method="POST">
         <label><b>Email
         </b>
         </label>
-        <input type="input" name="email" class="email" placeholder="Email">
+        <input type="email" name="email" class="email" placeholder="Email">
         <br><br>
         <label><b>Password
         </b>
         </label>
         <input type="Password" name="pWord" class="pWord" placeholder="Password">
         <br><br>
+        {% if error %}<b class="error">{{error}}</b>{% endif %}<br>
+        <br>
         <input type="submit" class="submit" value="Login">
     </form>
 </div>

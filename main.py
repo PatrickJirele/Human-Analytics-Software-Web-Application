@@ -258,6 +258,7 @@ def filterGraphs():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    error = None
     if request.method == 'POST':
         email = request.form['email']
         if check(email) == True:
@@ -265,7 +266,8 @@ def login():
             if user != None:
                 userPass = (cipher.decrypt(user.password)).decode('utf-8')
                 if request.form['pWord'] != userPass:
-                    return render_template('login.html')
+                    error = "Incorrect Password"
+                    return render_template('login.html', error=error)
                 else:
                     user.authenticated = True
                     db.session.add(user)
@@ -273,10 +275,14 @@ def login():
                     login_user(user)
                     session.permanent = True
                     return flask.redirect('/')
-            return render_template('login.html')
+            else:
+                error = "No Existing User"
+                return render_template('login.html', error=error)
         else:
-            return render_template('login.html')
-    return render_template('login.html')
+            error = "Invalid Email"
+            return render_template('login.html', error=error)
+
+    return render_template('login.html', error=error)
 
 
 @login_manager.user_loader
@@ -298,15 +304,17 @@ def logout():
 @app.route('/updatePassword', methods=['GET', 'POST'])
 @login_required
 def updatePass():
+    error = None
     if request.method == 'POST':
         oldPassword = request.form['oldP']
-        if cipher.decrypt(current_user.password) != oldPassword:
-            return render_template('updatePassword.html')
+        if cipher.decrypt(current_user.password).decode('utf-8') != oldPassword:
+            error = "Incorrect Password Entered"
+            return render_template('updatePassword.html', error=error)
         updatedUser = User.query.filter_by(id=current_user.id).first()
         updatedUser.password = cipher.encrypt(request.form['newP'])
         db.session.commit()
         return flask.redirect('/')
-    return render_template('updatePassword.html')
+    return render_template('updatePassword.html', error=error)
 
 
 @app.route('/createAdmin', methods=['GET', 'POST'])
